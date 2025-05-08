@@ -1,6 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
+import { useFavicon } from '@/utils/updateFavicon';
 import Index from '@/pages/Index';
 import Solucoes from '@/pages/Solucoes';
 import Contato from '@/pages/Contato';
@@ -15,6 +16,9 @@ import Login from '@/pages/Admin/Login';
 import SiteSettings from '@/pages/Admin/SiteSettings';
 
 function App() {
+  // Use the custom favicon hook
+  useFavicon();
+  
   return (
     <Router>
       <Routes>
