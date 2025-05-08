@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
@@ -124,7 +123,7 @@ export default function Solucoes() {
               A sua assistente de AI
             </p>
             <Link to="/contato">
-              <CustomButton variant="primary" icon={<ArrowRight className="ml-1" size={18} />} className="mt-8">
+              <CustomButton variant="primary" className="mt-8">
                 Contrate uma AI Poderosa!
               </CustomButton>
             </Link>

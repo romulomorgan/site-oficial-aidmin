@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationBar } from '@/components/ui/NavigationBar';
@@ -225,7 +224,7 @@ export default function Index() {
 
               <div className="flex w-full items-stretch gap-4 flex-wrap mt-[40px] max-md:mt-8">
                 <Link to="/solucoes">
-                  <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a1248679ed61fe6b54e693d50e9e1c968633d2bd?placeholderIfAbsent=true">
+                  <CustomButton variant="primary">
                     Soluções de AI
                   </CustomButton>
                 </Link>
@@ -358,12 +357,12 @@ export default function Index() {
             </p>
             <div className="flex gap-4 mt-8">
               <Link to="/solucoes">
-                <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/ac165d09e5068cc1de628bc20e34c4869eebef04?placeholderIfAbsent=true">
+                <CustomButton variant="primary">
                   Soluções de AI
                 </CustomButton>
               </Link>
               <Link to="/contato">
-                <CustomButton variant="secondary" icon={<ArrowRight className="ml-1" size={18} />}>
+                <CustomButton variant="secondary">
                   Contrate uma AI Poderosa!
                 </CustomButton>
               </Link>
@@ -411,7 +410,7 @@ export default function Index() {
                 {siteTexts.footerAbout}
               </p>
               <Link to="/contato">
-                <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
+                <CustomButton variant="primary" className="mt-8">
                   {siteTexts.footerButtonText}
                 </CustomButton>
               </Link>
