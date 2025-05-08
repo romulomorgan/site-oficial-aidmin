@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/Admin/Dashboard";
 import EditTexts from "./pages/Admin/EditTexts";
 import Testimonials from "./pages/Admin/Testimonials";
 import FAQ from "./pages/Admin/FAQ";
+import Messages from "./pages/Admin/Messages";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="editar-textos" element={<EditTexts />} />
             <Route path="depoimentos" element={<Testimonials />} />
             <Route path="faq" element={<FAQ />} />
+            <Route path="mensagens" element={<Messages />} />
           </Route>
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

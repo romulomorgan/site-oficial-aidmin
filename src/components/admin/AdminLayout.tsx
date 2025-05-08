@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, Outlet } from 'react-router-dom';
-import { Menu, X, Home, Settings, LogOut } from 'lucide-react';
+import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { Menu, X, Home, Settings, LogOut, FileText, MessageSquare } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
     // Check if authenticated
@@ -18,6 +19,10 @@ export const AdminLayout: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('adminAuthenticated');
     navigate('/admin');
+  };
+
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -45,7 +50,11 @@ export const AdminLayout: React.FC = () => {
         <nav className="mt-5 px-4">
           <Link 
             to="/admin/dashboard" 
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#FF196E] hover:text-white rounded-md transition-colors mb-1"
+            className={`flex items-center px-4 py-2 rounded-md transition-colors mb-1 ${
+              isActiveRoute('/admin/dashboard') 
+                ? 'bg-[#FF196E] text-white' 
+                : 'text-gray-700 hover:bg-[#FF196E] hover:text-white'
+            }`}
           >
             <Home className="mr-3 h-5 w-5" />
             Dashboard
@@ -53,7 +62,11 @@ export const AdminLayout: React.FC = () => {
           
           <Link 
             to="/admin/editar-textos" 
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#FF196E] hover:text-white rounded-md transition-colors mb-1"
+            className={`flex items-center px-4 py-2 rounded-md transition-colors mb-1 ${
+              isActiveRoute('/admin/editar-textos') 
+                ? 'bg-[#FF196E] text-white' 
+                : 'text-gray-700 hover:bg-[#FF196E] hover:text-white'
+            }`}
           >
             <Settings className="mr-3 h-5 w-5" />
             Editar Textos
@@ -61,18 +74,38 @@ export const AdminLayout: React.FC = () => {
           
           <Link 
             to="/admin/depoimentos" 
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#FF196E] hover:text-white rounded-md transition-colors mb-1"
+            className={`flex items-center px-4 py-2 rounded-md transition-colors mb-1 ${
+              isActiveRoute('/admin/depoimentos') 
+                ? 'bg-[#FF196E] text-white' 
+                : 'text-gray-700 hover:bg-[#FF196E] hover:text-white'
+            }`}
           >
-            <Settings className="mr-3 h-5 w-5" />
+            <FileText className="mr-3 h-5 w-5" />
             Depoimentos
           </Link>
           
           <Link 
             to="/admin/faq" 
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#FF196E] hover:text-white rounded-md transition-colors mb-1"
+            className={`flex items-center px-4 py-2 rounded-md transition-colors mb-1 ${
+              isActiveRoute('/admin/faq') 
+                ? 'bg-[#FF196E] text-white' 
+                : 'text-gray-700 hover:bg-[#FF196E] hover:text-white'
+            }`}
           >
             <Settings className="mr-3 h-5 w-5" />
             Perguntas FAQ
+          </Link>
+          
+          <Link 
+            to="/admin/mensagens" 
+            className={`flex items-center px-4 py-2 rounded-md transition-colors mb-1 ${
+              isActiveRoute('/admin/mensagens') 
+                ? 'bg-[#FF196E] text-white' 
+                : 'text-gray-700 hover:bg-[#FF196E] hover:text-white'
+            }`}
+          >
+            <MessageSquare className="mr-3 h-5 w-5" />
+            Mensagens
           </Link>
 
           <div className="mt-8 border-t pt-4">

@@ -1,10 +1,30 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+
+interface SiteTexts {
+  whyUsImage: string;
+}
 
 export default function Solucoes() {
+  const [siteTexts, setSiteTexts] = useState<SiteTexts>({
+    whyUsImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'
+  });
+  
+  useEffect(() => {
+    // Load saved texts from localStorage for images
+    const savedTexts = localStorage.getItem('siteTexts');
+    if (savedTexts) {
+      const parsedTexts = JSON.parse(savedTexts);
+      if (parsedTexts.whyUsImage) {
+        setSiteTexts(prev => ({...prev, whyUsImage: parsedTexts.whyUsImage}));
+      }
+    }
+  }, []);
+
   return (
     <main className="flex flex-col items-center bg-white">
       {/* Hero Section with Background Gradient */}
@@ -37,8 +57,8 @@ export default function Solucoes() {
             <div className="w-full md:w-[400px] relative">
               <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png"
-                  alt="AI Connection" 
+                  src={siteTexts.whyUsImage}
+                  alt="AI Robot" 
                   className="w-2/3 object-contain"
                 />
               </div>
@@ -104,8 +124,8 @@ export default function Solucoes() {
               A sua assistente de AI
             </p>
             <Link to="/contato">
-              <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
-                Contrate sua AI!
+              <CustomButton variant="primary" icon={<ArrowRight className="ml-1" size={18} />} className="mt-8">
+                Contrate uma AI Poderosa!
               </CustomButton>
             </Link>
           </div>
