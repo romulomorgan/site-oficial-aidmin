@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Button } from './Button';
+import { CustomButton } from './CustomButton';
 
 export const NavigationBar: React.FC = () => {
   return (
@@ -31,9 +32,9 @@ export const NavigationBar: React.FC = () => {
         </div>
       </div>
 
-      <Button variant="primary">
+      <CustomButton variant="primary">
         Soluções
-      </Button>
+      </CustomButton>
     </nav>
   );
 };

@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Header } from '@/components/layout/Header';
 import { TestimonialCard } from '@/components/ui/TestimonialCard';
 import { FAQAccordion } from '@/components/ui/FAQAccordion';
 import { ContactForm } from '@/components/ui/ContactForm';
-import { Button } from '@/components/ui/Button';
+import { CustomButton } from '@/components/ui/CustomButton';
 
 const testimonials = [
   {
@@ -84,12 +85,12 @@ export default function Index() {
                 gerencie conversas com eficiência.
               </p>
               <div className="flex gap-4 mt-8">
-                <Button variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/ac165d09e5068cc1de628bc20e34c4869eebef04?placeholderIfAbsent=true">
+                <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/ac165d09e5068cc1de628bc20e34c4869eebef04?placeholderIfAbsent=true">
                   Soluções de AI
-                </Button>
-                <Button variant="secondary">
+                </CustomButton>
+                <CustomButton variant="secondary">
                   Contrate uma AI Poderosa!
-                </Button>
+                </CustomButton>
               </div>
             </div>
             <div className="shadow-lg rounded-lg overflow-hidden">
@@ -136,9 +137,9 @@ export default function Index() {
                 <p className="text-[#220b13] mt-2">
                   A sua assistente de AI
                 </p>
-                <Button variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
+                <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
                   Contrate sua AI!
-                </Button>
+                </CustomButton>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-[#220b13]">

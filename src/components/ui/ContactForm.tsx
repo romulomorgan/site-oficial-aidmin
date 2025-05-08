@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Button } from './Button';
+import { CustomButton } from './CustomButton';
 
 export const ContactForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
@@ -18,9 +19,9 @@ export const ContactForm: React.FC = () => {
         className="items-stretch border-white min-w-[240px] min-h-[52px] flex-1 px-[25px] py-[17px] rounded-lg border border-solid bg-transparent"
         required
       />
-      <Button type="submit" variant="primary">
+      <CustomButton type="submit" variant="primary">
         Enviar
-      </Button>
+      </CustomButton>
     </form>
   );
 };

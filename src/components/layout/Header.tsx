@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Button } from '../ui/Button';
+import { CustomButton } from '../ui/CustomButton';
 import { NavigationBar } from '../ui/NavigationBar';
 
 export const Header: React.FC = () => {
@@ -28,12 +29,12 @@ export const Header: React.FC = () => {
         </p>
 
         <div className="flex w-full items-stretch gap-[15px] flex-wrap mt-[50px] max-md:max-w-full max-md:mt-10">
-          <Button variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a1248679ed61fe6b54e693d50e9e1c968633d2bd?placeholderIfAbsent=true">
+          <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a1248679ed61fe6b54e693d50e9e1c968633d2bd?placeholderIfAbsent=true">
             Soluções de AI
-          </Button>
-          <Button variant="secondary">
+          </CustomButton>
+          <CustomButton variant="secondary">
             Contrate uma AI Poderosa!
-          </Button>
+          </CustomButton>
         </div>
       </div>
 
