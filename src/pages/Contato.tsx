@@ -1,19 +1,72 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+import { saveContactMessage, getSiteTexts, getWebhookUrl } from '@/utils/localStorage';
+import { ContactForm } from '@/components/ui/ContactForm';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Contato() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission in the future
-  };
+  const [siteTexts, setSiteTexts] = useState({
+    footerPhoneNumber: '(11) 93956-965',
+    footerEmail: 'iadminassistant@gmail.com',
+    footerAbout: 'A sua assistente de AI',
+    footerButtonText: 'Contrate uma AI Poderosa!',
+    contactImage: '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'
+  });
+  const [themeColors, setThemeColors] = useState({
+    primaryColor: '#FF196E',
+    secondaryColor: '#2D0A16',
+    accentColor: '#FF4F8E',
+    backgroundColor: '#FFFFFF',
+    textColor: '#222222'
+  });
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    // Load saved texts from localStorage
+    const savedTexts = getSiteTexts();
+    setSiteTexts(prev => ({...prev, ...savedTexts}));
+    
+    // Load theme colors
+    const selectedTemplate = localStorage.getItem('selectedTemplate');
+    if (selectedTemplate) {
+      // Check default templates
+      const savedTemplates = localStorage.getItem('siteTemplates');
+      const defaultTemplates = JSON.parse(localStorage.getItem('defaultTemplates') || '[]');
+      let allTemplates = defaultTemplates;
+      
+      if (savedTemplates) {
+        allTemplates = [...defaultTemplates, ...JSON.parse(savedTemplates)];
+      }
+      
+      // Get the selected template
+      const template = allTemplates.find(t => t.id === selectedTemplate);
+      
+      // If template found, apply colors
+      if (template) {
+        setThemeColors({
+          primaryColor: template.primaryColor,
+          secondaryColor: template.secondaryColor,
+          accentColor: template.accentColor,
+          backgroundColor: template.backgroundColor,
+          textColor: template.textColor
+        });
+      }
+    }
+  }, []);
 
   return (
     <main className="flex flex-col items-center bg-white">
       {/* Hero Section with Background Gradient */}
-      <section className="relative w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] py-[60px] px-5">
+      <section 
+        className="relative w-full py-[60px] px-5" 
+        style={{
+          background: `linear-gradient(to bottom right, ${themeColors.secondaryColor}, ${themeColors.primaryColor})`
+        }}
+      >
         {/* Navigation */}
         <NavigationBar />
         
@@ -37,7 +90,7 @@ export default function Contato() {
             {/* Left side - Image */}
             <div className="w-full md:w-[400px]">
               <img 
-                src="/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png" 
+                src={siteTexts.contactImage || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'} 
                 alt="Atendente de contato" 
                 className="w-full h-full object-cover"
               />
@@ -48,74 +101,7 @@ export default function Contato() {
               <h2 className="text-[#222] text-[32px] font-semibold mb-8">
                 Contato
               </h2>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="firstname" className="block text-sm font-medium text-gray-700 mb-1">
-                      Primeiro Nome
-                    </label>
-                    <input
-                      type="text"
-                      id="firstname"
-                      placeholder="Primeiro Nome"
-                      className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-1">
-                      Sobrenome
-                    </label>
-                    <input
-                      type="text"
-                      id="lastname"
-                      placeholder="Sobrenome"
-                      className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      E-mail
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      placeholder="E-mail"
-                      className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Telefone
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      placeholder="Telefone"
-                      className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                    Mensagem
-                  </label>
-                  <textarea
-                    id="message"
-                    placeholder="Digite aqui sua mensagem..."
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                  ></textarea>
-                </div>
-
-                <CustomButton type="submit" variant="primary" className="w-full">
-                  Enviar
-                </CustomButton>
-              </form>
+              <ContactForm />
             </div>
           </div>
         </div>
@@ -125,31 +111,31 @@ export default function Contato() {
       <footer className="w-full bg-white py-12 mt-20">
         <div className="max-w-[1140px] mx-auto px-5 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h2 className="text-[32px] font-semibold text-[#ff196e]">
+            <h2 className="text-[32px] font-semibold" style={{color: themeColors.primaryColor}}>
               IAdmin
             </h2>
-            <p className="text-[#220b13] mt-2">
-              A sua assistente de AI
+            <p style={{color: themeColors.secondaryColor}} className="mt-2">
+              {siteTexts.footerAbout}
             </p>
             <Link to="/contato">
-              <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
-                Contrate sua AI!
+              <CustomButton variant="primary" className="mt-8">
+                {siteTexts.footerButtonText}
               </CustomButton>
             </Link>
           </div>
           <div className="flex justify-between md:justify-end">
             <div className="mr-8">
-              <h3 className="text-lg font-semibold text-[#220b13]">
+              <h3 className="text-lg font-semibold" style={{color: themeColors.secondaryColor}}>
                 Contato
               </h3>
-              <div className="mt-4">
-                <p>(11) 93956-965</p>
-                <p>iadminassistant@gmail.com</p>
+              <div className="mt-4" style={{color: themeColors.textColor}}>
+                <p>{siteTexts.footerPhoneNumber}</p>
+                <p>{siteTexts.footerEmail}</p>
               </div>
             </div>
-            {location.pathname === "/" && (
+            {!isMobile && (
               <div>
-                <Link to="/admin" className="text-[#220b13] hover:text-[#ff196e] transition-colors">
+                <Link to="/admin" className="hover:text-[#ff196e] transition-colors" style={{color: themeColors.secondaryColor}}>
                   Login
                 </Link>
               </div>

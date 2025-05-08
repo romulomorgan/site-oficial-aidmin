@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { useFavicon } from '@/utils/updateFavicon';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import Index from '@/pages/Index';
 import Solucoes from '@/pages/Solucoes';
 import Contato from '@/pages/Contato';
@@ -26,7 +27,11 @@ function App() {
         <Route path="/solucoes" element={<Solucoes />} />
         <Route path="/contato" element={<Contato />} />
         <Route path="/admin/login" element={<Login />} />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={
+          <SidebarProvider defaultOpen={true}>
+            <AdminLayout />
+          </SidebarProvider>
+        }>
           <Route index element={<Dashboard />} />
           <Route path="editar-textos" element={<EditTexts />} />
           <Route path="depoimentos" element={<Testimonials />} />

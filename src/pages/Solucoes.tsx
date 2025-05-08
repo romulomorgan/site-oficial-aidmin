@@ -3,20 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
+import { getSiteTexts, saveEmailSubscription } from '@/utils/localStorage';
 import { ThemeTemplate } from '@/utils/themeTemplates';
-
-interface SiteTexts {
-  whyUsImage: string;
-  footerAbout: string;
-  footerButtonText: string;
-  footerPhoneNumber: string;
-  footerEmail: string;
-  faviconUrl?: string;
-}
+import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
 
 export default function Solucoes() {
-  const [siteTexts, setSiteTexts] = useState<SiteTexts>({
-    whyUsImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [siteTexts, setSiteTexts] = useState<Record<string, string>>({
+    robotImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
     footerAbout: 'A sua assistente de AI',
     footerButtonText: 'Contrate uma AI Poderosa!',
     footerPhoneNumber: '(11) 93956-965',
@@ -31,44 +27,27 @@ export default function Solucoes() {
     textColor: '#222222'
   });
   
+  const isMobile = useIsMobile();
+  
   useEffect(() => {
     // Load saved texts from localStorage for images and other texts
-    const savedTexts = localStorage.getItem('siteTexts');
-    if (savedTexts) {
-      const parsedTexts = JSON.parse(savedTexts);
-      setSiteTexts(prev => ({...prev, ...parsedTexts}));
-      
-      // Set the favicon if defined
-      if (parsedTexts.faviconUrl) {
-        const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
-        if (link) {
-          link.href = parsedTexts.faviconUrl;
-        } else {
-          const newLink = document.createElement('link');
-          newLink.rel = 'icon';
-          newLink.href = parsedTexts.faviconUrl;
-          document.head.appendChild(newLink);
-        }
-      }
-    }
+    const savedTexts = getSiteTexts();
+    setSiteTexts(prev => ({...prev, ...savedTexts}));
     
     // Load theme colors
     const selectedTemplate = localStorage.getItem('selectedTemplate');
     if (selectedTemplate) {
       // Check default templates
       const savedTemplates = localStorage.getItem('siteTemplates');
-      let allTemplates = [];
+      const defaultTemplates = JSON.parse(localStorage.getItem('defaultTemplates') || '[]');
+      let allTemplates = defaultTemplates;
       
       if (savedTemplates) {
-        allTemplates = JSON.parse(savedTemplates);
+        allTemplates = [...defaultTemplates, ...JSON.parse(savedTemplates)];
       }
       
-      // Check for template in localStorage
-      let template: ThemeTemplate | undefined;
-      
-      if (allTemplates.length > 0) {
-        template = allTemplates.find((t: ThemeTemplate) => t.id === selectedTemplate);
-      }
+      // Get selected template
+      const template = allTemplates.find((t: ThemeTemplate) => t.id === selectedTemplate);
       
       // If template found, apply colors
       if (template) {
@@ -90,12 +69,33 @@ export default function Solucoes() {
     }
   }, []);
   
+  const handleSubscribeEmail = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast.error('Por favor, insira seu e-mail.');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    // Save subscription to localStorage
+    saveEmailSubscription(email, 'Página de Soluções');
+    
+    setTimeout(() => {
+      toast.success('E-mail cadastrado com sucesso!');
+      setEmail('');
+      setIsSubmitting(false);
+    }, 1000);
+  };
+  
   return (
     <main className="flex flex-col items-center bg-white">
       {/* Hero Section with Background Gradient */}
-      <section className="relative w-full py-[60px] px-5 animate-fade-in" 
+      <section className="relative w-full animate-fade-in" 
         style={{
-          background: `linear-gradient(to bottom right, ${themeColors.secondaryColor}, ${themeColors.primaryColor})`
+          background: `linear-gradient(to bottom right, ${themeColors.secondaryColor}, ${themeColors.primaryColor})`,
+          padding: '60px 20px'
         }}
       >
         {/* Navigation */}
@@ -119,14 +119,14 @@ export default function Solucoes() {
             ADOTE A NOSSA AI
           </h2>
           <h3 className="text-[46px] font-semibold mb-8" style={{color: themeColors.textColor}}>
-            Conectamos a nossa AI aos seus<br />processos operacionais
+            Conectamos a nossa AI aos seus<br className="hidden md:block" />processos operacionais
           </h3>
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="w-full md:w-[400px] relative hover-scale">
               <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
                 <img 
-                  src={siteTexts.whyUsImage}
+                  src={siteTexts.robotImage || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'}
                   alt="AI Robot" 
                   className="w-2/3 object-contain"
                 />
@@ -171,16 +171,23 @@ export default function Solucoes() {
             Entraremos em contato brevemente!
           </p>
           <div className="flex justify-center">
-            <div className="w-full max-w-[444px]">
+            <form onSubmit={handleSubscribeEmail} className="w-full max-w-[444px]">
               <input
                 type="email"
                 placeholder="E-mail"
-                className="w-full h-12 px-5 rounded-lg bg-transparent border border-white text-white mb-4"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-12 px-5 rounded-lg bg-transparent border border-white text-white mb-4 placeholder:text-white/70"
               />
-              <CustomButton type="button" variant="primary" className="w-full">
-                Enviar
+              <CustomButton 
+                type="submit" 
+                variant="primary" 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Enviando..." : "Enviar"}
               </CustomButton>
-            </div>
+            </form>
           </div>
         </div>
       </section>
@@ -206,14 +213,14 @@ export default function Solucoes() {
               <h3 className="text-lg font-semibold" style={{color: themeColors.secondaryColor}}>
                 Contato
               </h3>
-              <div className="mt-4">
+              <div className="mt-4" style={{color: themeColors.textColor}}>
                 <p>{siteTexts.footerPhoneNumber}</p>
                 <p>{siteTexts.footerEmail}</p>
               </div>
             </div>
-            {location.pathname === "/" && (
+            {!isMobile && (
               <div>
-                <Link to="/admin" className="hover-text transition-colors" style={{color: themeColors.secondaryColor}}>
+                <Link to="/admin" className="hover:text-[#ff196e] transition-colors" style={{color: themeColors.secondaryColor}}>
                   Login
                 </Link>
               </div>

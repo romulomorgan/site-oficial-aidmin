@@ -4,7 +4,11 @@ import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { defaultTemplates, ThemeTemplate } from '@/utils/themeTemplates';
-import { Check, Trash, X, Plus, Edit } from 'lucide-react';
+import { Check, Trash, X, Plus, Edit, Globe, Send } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { getSiteTexts, updateSiteTexts, testWebhookUrl } from '@/utils/localStorage';
 import {
   Dialog,
   DialogContent,
@@ -13,8 +17,6 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export default function SiteSettings() {
   const [templates, setTemplates] = useState<ThemeTemplate[]>(defaultTemplates);
@@ -29,11 +31,19 @@ export default function SiteSettings() {
     textColor: "#222222",
     buttonTextColor: "#FFFFFF"
   });
-  const [editing, setEditing] = useState<ThemeTemplate | null>(null);
+  const [editingTemplate, setEditingTemplate] = useState<ThemeTemplate | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
+  const [faviconUrl, setFaviconUrl] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [robotImage, setRobotImage] = useState("");
+  const [contactImage, setContactImage] = useState("");
+  const [testingWebhook, setTestingWebhook] = useState(false);
+  const [webhookTestResult, setWebhookTestResult] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // Save default templates to localStorage
+    localStorage.setItem('defaultTemplates', JSON.stringify(defaultTemplates));
+    
     // Load saved templates and selected template from localStorage
     const savedTemplates = localStorage.getItem('siteTemplates');
     if (savedTemplates) {
@@ -47,18 +57,36 @@ export default function SiteSettings() {
       setSelectedTemplate(savedSelectedTemplate);
     }
     
-    // Load favicon URL
-    const savedTexts = localStorage.getItem('siteTexts');
-    if (savedTexts) {
-      const parsedTexts = JSON.parse(savedTexts);
-      if (parsedTexts.faviconUrl) {
-        setFaviconUrl(parsedTexts.faviconUrl);
-      }
+    // Load site texts
+    const siteTexts = getSiteTexts();
+    if (siteTexts.faviconUrl) {
+      setFaviconUrl(siteTexts.faviconUrl);
+    }
+    if (siteTexts.webhookUrl) {
+      setWebhookUrl(siteTexts.webhookUrl);
+    }
+    if (siteTexts.robotImage) {
+      setRobotImage(siteTexts.robotImage);
+    }
+    if (siteTexts.contactImage) {
+      setContactImage(siteTexts.contactImage);
     }
   }, []);
 
   const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFaviconUrl(e.target.value);
+  };
+
+  const handleWebhookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWebhookUrl(e.target.value);
+  };
+
+  const handleRobotImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRobotImage(e.target.value);
+  };
+
+  const handleContactImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContactImage(e.target.value);
   };
 
   const saveSettings = () => {
@@ -71,17 +99,13 @@ export default function SiteSettings() {
     localStorage.setItem('siteTemplates', JSON.stringify(customTemplates));
     localStorage.setItem('selectedTemplate', selectedTemplate);
     
-    // Save favicon URL to siteTexts
-    const savedTexts = localStorage.getItem('siteTexts');
-    if (savedTexts) {
-      const parsedTexts = JSON.parse(savedTexts);
-      parsedTexts.faviconUrl = faviconUrl;
-      localStorage.setItem('siteTexts', JSON.stringify(parsedTexts));
-    } else {
-      localStorage.setItem('siteTexts', JSON.stringify({
-        faviconUrl: faviconUrl
-      }));
-    }
+    // Save favicon URL and webhook URL to siteTexts
+    updateSiteTexts({
+      faviconUrl: faviconUrl,
+      webhookUrl: webhookUrl,
+      robotImage: robotImage,
+      contactImage: contactImage
+    });
     
     setTimeout(() => {
       toast.success('Configurações salvas com sucesso!');
@@ -105,9 +129,9 @@ export default function SiteSettings() {
   };
   
   const handleUpdateTemplate = () => {
-    if (editing) {
-      setTemplates(templates.map(t => t.id === editing.id ? editing : t));
-      setEditing(null);
+    if (editingTemplate) {
+      setTemplates(templates.map(t => t.id === editingTemplate.id ? editingTemplate : t));
+      setEditingTemplate(null);
     }
   };
   
@@ -134,7 +158,34 @@ export default function SiteSettings() {
       return;
     }
     
-    setEditing({...template});
+    setEditingTemplate({...template});
+  };
+
+  const handleTestWebhook = async () => {
+    if (!webhookUrl) {
+      toast.error("Por favor, insira uma URL de webhook para testar.");
+      return;
+    }
+
+    setTestingWebhook(true);
+    setWebhookTestResult(null);
+
+    try {
+      const result = await testWebhookUrl(webhookUrl);
+      setWebhookTestResult(result);
+      
+      if (result) {
+        toast.success("Teste de webhook bem-sucedido!");
+      } else {
+        toast.error("Falha ao testar o webhook.");
+      }
+    } catch (error) {
+      setWebhookTestResult(false);
+      toast.error("Erro ao testar o webhook.");
+      console.error("Webhook test error:", error);
+    } finally {
+      setTestingWebhook(false);
+    }
   };
 
   return (
@@ -145,7 +196,9 @@ export default function SiteSettings() {
         <Tabs defaultValue="appearance">
           <TabsList className="border-b w-full rounded-t-lg">
             <TabsTrigger value="appearance">Aparência</TabsTrigger>
+            <TabsTrigger value="images">Imagens</TabsTrigger>
             <TabsTrigger value="favicon">Favicon</TabsTrigger>
+            <TabsTrigger value="integration">Integração</TabsTrigger>
           </TabsList>
           
           <TabsContent value="appearance" className="p-6 space-y-6">
@@ -334,6 +387,24 @@ export default function SiteSettings() {
                           />
                         </div>
                       </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="buttonTextColor">Cor do Texto de Botão</Label>
+                        <div className="flex col-span-3 gap-2 items-center">
+                          <Input
+                            type="color"
+                            id="buttonTextColor"
+                            value={customTemplate.buttonTextColor}
+                            onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
+                            className="w-12 h-10 p-1"
+                          />
+                          <Input
+                            type="text"
+                            value={customTemplate.buttonTextColor}
+                            onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
                     </div>
                     <DialogFooter>
                       <CustomButton type="button" variant="secondary" onClick={() => {}}>
@@ -345,6 +416,83 @@ export default function SiteSettings() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="images" className="p-6 space-y-6">
+            <div>
+              <h2 className="text-xl font-medium text-gray-800 mb-4">Imagens do Site</h2>
+              <p className="text-gray-500 mb-6">
+                Configure as imagens que serão exibidas nas diferentes seções do site.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Imagem do Robô</h3>
+                  <p className="text-sm text-gray-500">
+                    Esta imagem é exibida na seção "A Quem Atendemos" do site.
+                  </p>
+                  
+                  <div>
+                    <Label htmlFor="robotImage" className="block text-sm font-medium text-gray-700 mb-1">
+                      URL da Imagem do Robô
+                    </Label>
+                    <Input
+                      id="robotImage"
+                      type="text"
+                      value={robotImage}
+                      onChange={handleRobotImageChange}
+                      placeholder="/lovable-uploads/robot-image.png"
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div className="border rounded-lg p-4 bg-gray-50">
+                    <img
+                      src={robotImage || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'}
+                      alt="Imagem do Robô"
+                      className="h-40 object-contain mx-auto"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png';
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Imagem de Contato</h3>
+                  <p className="text-sm text-gray-500">
+                    Esta imagem é exibida no formulário de contato.
+                  </p>
+                  
+                  <div>
+                    <Label htmlFor="contactImage" className="block text-sm font-medium text-gray-700 mb-1">
+                      URL da Imagem de Contato
+                    </Label>
+                    <Input
+                      id="contactImage"
+                      type="text"
+                      value={contactImage}
+                      onChange={handleContactImageChange}
+                      placeholder="/lovable-uploads/contact-image.png"
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div className="border rounded-lg p-4 bg-gray-50">
+                    <img
+                      src={contactImage || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'}
+                      alt="Imagem de Contato"
+                      className="h-40 object-contain mx-auto"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png';
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
@@ -366,7 +514,7 @@ export default function SiteSettings() {
                       type="text"
                       value={faviconUrl}
                       onChange={handleFaviconChange}
-                      placeholder="/favicon.png ou URL externa"
+                      placeholder="/lovable-uploads/favicon.png ou URL externa"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     />
                     <p className="text-xs text-gray-500 mt-1">
@@ -380,15 +528,21 @@ export default function SiteSettings() {
                     </label>
                     <div className="border rounded-lg p-4 bg-gray-50 flex flex-col items-center justify-center">
                       <div className="border bg-white rounded p-2 mb-2 flex items-center justify-center">
-                        <img
-                          src={faviconUrl}
-                          alt="Favicon"
-                          className="w-8 h-8 object-contain"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/favicon.ico';
-                          }}
-                        />
+                        {faviconUrl ? (
+                          <img
+                            src={faviconUrl}
+                            alt="Favicon"
+                            className="w-8 h-8 object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/public/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-8 h-8 flex items-center justify-center text-gray-400">
+                            <Globe size={24} />
+                          </div>
+                        )}
                       </div>
                       <div className="text-xs text-gray-500 text-center">
                         Prévia da visualização no navegador
@@ -402,7 +556,84 @@ export default function SiteSettings() {
                   <ul className="text-xs text-gray-500 list-disc pl-4">
                     <li>/lovable-uploads/meu-favicon.png</li>
                     <li>https://exemplo.com/imagens/favicon.png</li>
+                    <li>/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png</li>
                   </ul>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="integration" className="p-6 space-y-6">
+            <div>
+              <h2 className="text-xl font-medium text-gray-800 mb-4">Configurações de Integração</h2>
+              <p className="text-gray-500 mb-6">
+                Configure integrações com serviços externos para ampliar as funcionalidades do site.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="bg-gray-50 p-6 rounded-lg border">
+                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                    <Send className="h-5 w-5" /> 
+                    Webhook para Mensagens
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Configure um endpoint para receber automaticamente as mensagens enviadas pelo formulário de contato.
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="webhookUrl" className="block text-sm font-medium text-gray-700 mb-1">
+                        URL do Webhook
+                      </Label>
+                      <Input
+                        id="webhookUrl"
+                        type="url"
+                        value={webhookUrl}
+                        onChange={handleWebhookChange}
+                        placeholder="https://sua-api.com/webhook"
+                        className="w-full"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Ex: https://sua-api.com/webhook, https://hooks.zapier.com/...
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-col md:flex-row gap-3">
+                      <CustomButton
+                        type="button"
+                        variant="secondary"
+                        onClick={handleTestWebhook}
+                        disabled={testingWebhook || !webhookUrl}
+                        className="w-full md:w-auto"
+                      >
+                        {testingWebhook ? "Testando..." : "Testar Webhook"}
+                      </CustomButton>
+                      
+                      {webhookTestResult !== null && (
+                        <Alert className={webhookTestResult ? "bg-green-50" : "bg-red-50"}>
+                          <AlertDescription className="text-sm">
+                            {webhookTestResult 
+                              ? "O teste foi bem-sucedido! Seu webhook está funcionando." 
+                              : "Falha no teste do webhook. Verifique a URL e tente novamente."}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mt-3 mb-1">Formato do Payload</h4>
+                      <pre className="bg-black/90 text-white rounded-md p-3 overflow-x-auto text-sm">
+{`{
+  "firstName": "Nome do Usuário",
+  "lastName": "Sobrenome do Usuário",
+  "email": "email@exemplo.com",
+  "phone": "11912345678",
+  "message": "Mensagem enviada pelo usuário",
+  "date": "2024-05-08T14:30:00.000Z"
+}`}
+                      </pre>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -421,8 +652,8 @@ export default function SiteSettings() {
       </form>
       
       {/* Dialog for editing templates */}
-      {editing && (
-        <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+      {editingTemplate && (
+        <Dialog open={!!editingTemplate} onOpenChange={(open) => !open && setEditingTemplate(null)}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Editar Template</DialogTitle>
@@ -432,8 +663,8 @@ export default function SiteSettings() {
                 <Label htmlFor="editTemplateName">Nome</Label>
                 <Input
                   id="editTemplateName"
-                  value={editing.name}
-                  onChange={(e) => setEditing({...editing, name: e.target.value})}
+                  value={editingTemplate.name}
+                  onChange={(e) => setEditingTemplate({...editingTemplate, name: e.target.value})}
                   className="col-span-3"
                 />
               </div>
@@ -443,14 +674,14 @@ export default function SiteSettings() {
                   <Input
                     type="color"
                     id="editPrimaryColor"
-                    value={editing.primaryColor}
-                    onChange={(e) => setEditing({...editing, primaryColor: e.target.value})}
+                    value={editingTemplate.primaryColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, primaryColor: e.target.value})}
                     className="w-12 h-10 p-1"
                   />
                   <Input
                     type="text"
-                    value={editing.primaryColor}
-                    onChange={(e) => setEditing({...editing, primaryColor: e.target.value})}
+                    value={editingTemplate.primaryColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, primaryColor: e.target.value})}
                     className="flex-1"
                   />
                 </div>
@@ -461,14 +692,14 @@ export default function SiteSettings() {
                   <Input
                     type="color"
                     id="editSecondaryColor"
-                    value={editing.secondaryColor}
-                    onChange={(e) => setEditing({...editing, secondaryColor: e.target.value})}
+                    value={editingTemplate.secondaryColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, secondaryColor: e.target.value})}
                     className="w-12 h-10 p-1"
                   />
                   <Input
                     type="text"
-                    value={editing.secondaryColor}
-                    onChange={(e) => setEditing({...editing, secondaryColor: e.target.value})}
+                    value={editingTemplate.secondaryColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, secondaryColor: e.target.value})}
                     className="flex-1"
                   />
                 </div>
@@ -479,14 +710,14 @@ export default function SiteSettings() {
                   <Input
                     type="color"
                     id="editAccentColor"
-                    value={editing.accentColor}
-                    onChange={(e) => setEditing({...editing, accentColor: e.target.value})}
+                    value={editingTemplate.accentColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, accentColor: e.target.value})}
                     className="w-12 h-10 p-1"
                   />
                   <Input
                     type="text"
-                    value={editing.accentColor}
-                    onChange={(e) => setEditing({...editing, accentColor: e.target.value})}
+                    value={editingTemplate.accentColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, accentColor: e.target.value})}
                     className="flex-1"
                   />
                 </div>
@@ -497,14 +728,14 @@ export default function SiteSettings() {
                   <Input
                     type="color"
                     id="editBackgroundColor"
-                    value={editing.backgroundColor}
-                    onChange={(e) => setEditing({...editing, backgroundColor: e.target.value})}
+                    value={editingTemplate.backgroundColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, backgroundColor: e.target.value})}
                     className="w-12 h-10 p-1"
                   />
                   <Input
                     type="text"
-                    value={editing.backgroundColor}
-                    onChange={(e) => setEditing({...editing, backgroundColor: e.target.value})}
+                    value={editingTemplate.backgroundColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, backgroundColor: e.target.value})}
                     className="flex-1"
                   />
                 </div>
@@ -515,21 +746,39 @@ export default function SiteSettings() {
                   <Input
                     type="color"
                     id="editTextColor"
-                    value={editing.textColor}
-                    onChange={(e) => setEditing({...editing, textColor: e.target.value})}
+                    value={editingTemplate.textColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, textColor: e.target.value})}
                     className="w-12 h-10 p-1"
                   />
                   <Input
                     type="text"
-                    value={editing.textColor}
-                    onChange={(e) => setEditing({...editing, textColor: e.target.value})}
+                    value={editingTemplate.textColor}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, textColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editButtonTextColor">Cor do Texto de Botão</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editButtonTextColor"
+                    value={editingTemplate.buttonTextColor || "#FFFFFF"}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, buttonTextColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editingTemplate.buttonTextColor || "#FFFFFF"}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, buttonTextColor: e.target.value})}
                     className="flex-1"
                   />
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <CustomButton type="button" variant="secondary" onClick={() => setEditing(null)}>
+              <CustomButton type="button" variant="secondary" onClick={() => setEditingTemplate(null)}>
                 Cancelar
               </CustomButton>
               <CustomButton type="button" variant="primary" onClick={handleUpdateTemplate}>
