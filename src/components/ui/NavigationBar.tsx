@@ -1,11 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CustomButton } from './CustomButton';
+import { Menu, X } from 'lucide-react';
 
 export const NavigationBar: React.FC = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <nav className="items-center absolute z-10 flex w-full max-w-[1140px] mx-auto text-base text-white leading-loose flex-wrap justify-between top-[30px] inset-x-0 md:px-5">
@@ -45,11 +51,62 @@ export const NavigationBar: React.FC = () => {
         </div>
       </div>
 
-      <Link to="/solucoes">
-        <CustomButton variant="primary">
-          Soluções
-        </CustomButton>
-      </Link>
+      {/* Mobile menu button */}
+      <div className="md:hidden">
+        <button 
+          onClick={toggleMenu}
+          className="text-white p-2"
+        >
+          {isMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-gradient-to-br from-[#2D0A16] to-[#FF196E] z-50 md:hidden">
+          <div className="flex justify-end p-5">
+            <button onClick={toggleMenu} className="text-white">
+              <X size={24} />
+            </button>
+          </div>
+          <div className="flex flex-col items-center gap-6 mt-20">
+            <Link 
+              to="/" 
+              onClick={toggleMenu}
+              className={`text-2xl ${isActive('/') ? 'text-[#ff196e]' : 'text-white'}`}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/solucoes" 
+              onClick={toggleMenu}
+              className={`text-2xl ${isActive('/solucoes') ? 'text-[#ff196e]' : 'text-white'}`}
+            >
+              Soluções
+            </Link>
+            <Link 
+              to="/contato" 
+              onClick={toggleMenu}
+              className={`text-2xl ${isActive('/contato') ? 'text-[#ff196e]' : 'text-white'}`}
+            >
+              Contato
+            </Link>
+            <Link to="/solucoes" onClick={toggleMenu} className="mt-4">
+              <CustomButton variant="primary">
+                Soluções
+              </CustomButton>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      <div className="hidden md:block">
+        <Link to="/solucoes">
+          <CustomButton variant="primary">
+            Soluções
+          </CustomButton>
+        </Link>
+      </div>
     </nav>
   );
 };

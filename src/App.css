@@ -1,42 +1,79 @@
+
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  text-align: left;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Removendo alguns estilos desnecessários do template original */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Adiciona estilo de transição suave para links e botões */
+a, button {
+  transition: all 0.3s ease;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Animações para elementos com hover */
+.hover-grow {
+  transition: transform 0.3s ease;
 }
 
-.card {
-  padding: 2em;
+.hover-grow:hover {
+  transform: scale(1.03);
 }
 
-.read-the-docs {
-  color: #888;
+/* Estilos para o gradiente principal */
+.main-gradient {
+  background-image: linear-gradient(to bottom right, #2D0A16, #FF196E);
+}
+
+/* Estilos para o degradê da imagem de fundo */
+.overlay-blend {
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+}
+
+/* Estilo para borda semi-transparente */
+.transparent-border {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para backdrop blur */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+}
+
+/* Estilos para o menu principal */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #ff196e;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Efeito de card hover */
+.feature-card {
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }

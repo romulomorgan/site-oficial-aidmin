@@ -18,9 +18,9 @@ export const CustomButton: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        "justify-center items-center flex min-h-[52px] gap-2 px-6 py-[13px] rounded-lg",
-        variant === 'primary' && "bg-[#FF196E] text-white",
-        variant === 'secondary' && "border border-white text-white",
+        "justify-center items-center flex min-h-[52px] gap-2 px-6 py-[13px] rounded-lg transition-all duration-300 hover:scale-[1.03]",
+        variant === 'primary' && "bg-[#FF196E] text-white hover:bg-[#ff3582] hover:shadow-md",
+        variant === 'secondary' && "border border-white text-white hover:bg-white/10 hover:shadow-md",
         className
       )}
       {...props}
