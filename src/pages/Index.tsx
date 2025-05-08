@@ -325,8 +325,9 @@ export default function Index() {
         </footer>
       </div>
 
-      {/* CSS para animações */}
-      <style jsx>{`
+      {/* CSS para animações - Fix the style tag by removing the jsx attribute */}
+      <style>
+        {`
         .reveal {
           position: relative;
           opacity: 0;
@@ -338,7 +339,9 @@ export default function Index() {
           opacity: 1;
           transform: translateY(0);
         }
-      `}</style>
+        `}
+      </style>
     </main>
   );
 }
+
