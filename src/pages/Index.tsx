@@ -1,12 +1,11 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Header } from '@/components/layout/Header';
+import { NavigationBar } from '@/components/ui/NavigationBar';
 import { TestimonialCard } from '@/components/ui/TestimonialCard';
 import { FAQAccordion } from '@/components/ui/FAQAccordion';
 import { ContactForm } from '@/components/ui/ContactForm';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { NavigationBar } from '@/components/ui/NavigationBar';
 
 const testimonials = [
   {
@@ -53,6 +52,8 @@ const faqItems = [
 ];
 
 export default function Index() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
   // Scroll reveal animation effect
   useEffect(() => {
     const revealElements = document.querySelectorAll('.reveal');
@@ -75,16 +76,23 @@ export default function Index() {
     return () => window.removeEventListener('scroll', revealOnScroll);
   }, []);
 
+  // Check if user is already authenticated from localStorage
+  useEffect(() => {
+    const adminAuthenticated = localStorage.getItem('adminAuthenticated');
+    if (adminAuthenticated === 'true') {
+      setIsAdmin(true);
+    }
+  }, []);
+
   return (
     <main className="flex flex-col bg-white">
       <div className="relative w-full max-w-[1920px] mx-auto max-md:max-w-full">
         {/* Hero Section */}
         <section className="relative w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] min-h-[600px]">
-          <div className="absolute inset-0 bg-[url('/lovable-uploads/9f855b72-1dc3-430d-a32c-5f078ffca423.png')] bg-cover bg-center opacity-30 mix-blend-overlay"></div>
-          <div className="max-w-[1140px] mx-auto relative px-5 pt-[150px] pb-[80px] flex flex-col md:flex-row items-center gap-12 md:gap-16">
-            {/* Navigation */}
-            <NavigationBar />
+          {/* Navigation */}
+          <NavigationBar />
 
+          <div className="max-w-[1140px] mx-auto relative px-5 pt-[150px] pb-[80px] flex flex-col md:flex-row items-center gap-12 md:gap-16">
             {/* Left Content */}
             <div className="max-w-[524px] z-10 w-full">
               <h1 className="text-[56px] font-semibold leading-[1.2] text-white pb-px max-md:text-[40px] max-md:leading-[1.2]">
@@ -104,32 +112,27 @@ export default function Index() {
                     Soluções de AI
                   </CustomButton>
                 </Link>
-                <a href="https://youtu.be/fWzFvNAkHuQ" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-[#ff196e] transition-colors">
-                  <div className="rounded-full bg-white/20 p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                  </div>
-                  <span>Entenda o que AI Generativa é</span>
-                </a>
+                <Link to="/contato">
+                  <CustomButton variant="secondary">
+                    Contrate uma AI Poderosa!
+                  </CustomButton>
+                </Link>
               </div>
             </div>
 
-            {/* Right Content - Video */}
+            {/* Right Content - Embedded YouTube Video */}
             <div className="relative z-10 w-full max-w-[460px]">
               <div className="relative aspect-video w-full">
-                <img
-                  src="/lovable-uploads/232e98e1-6691-4748-89c8-dd6300343696.png"
-                  alt="Demo video thumbnail"
-                  className="absolute inset-0 w-full h-full object-cover rounded-lg shadow-lg"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <a href="https://youtu.be/fWzFvNAkHuQ" target="_blank" rel="noopener noreferrer" className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="5 3 19 12 5 21 5 3" fill="#fff"></polygon>
-                    </svg>
-                  </a>
-                </div>
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src="https://www.youtube.com/embed/fWzFvNAkHuQ" 
+                  title="AI Generativa" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                  className="rounded-lg shadow-lg absolute inset-0"
+                ></iframe>
               </div>
             </div>
           </div>
@@ -210,9 +213,7 @@ export default function Index() {
         </section>
 
         {/* Testimonials Section */}
-        <section className="bg-gradient-to-br from-[#2D0A16] to-[#FF196E] mt-[80px] py-[60px] relative overflow-hidden reveal">
-          <div className="absolute inset-0 bg-[url('/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
-          
+        <section className="bg-gradient-to-br from-[#2D0A16] to-[#FF196E] mt-[80px] py-[60px] relative reveal">
           <div className="relative z-10 max-w-[1180px] mx-auto px-5">
             <h2 className="text-white text-center text-lg font-semibold mb-2">
               Depoimentos
@@ -285,11 +286,8 @@ export default function Index() {
           <p className="text-[#d8d0d2] mb-8">
             Entraremos em contato brevemente!
           </p>
-          <div className="relative">
-            <div className="absolute inset-0 bg-[url('/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
-            <div className="relative z-10 flex items-center justify-center">
-              <ContactForm />
-            </div>
+          <div className="relative z-10 flex items-center justify-center">
+            <ContactForm />
           </div>
         </section>
 
@@ -309,13 +307,20 @@ export default function Index() {
                 </CustomButton>
               </Link>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-[#220b13]">
-                Contato
-              </h3>
-              <div className="mt-4">
-                <p>(11) 93956-965</p>
-                <p>iadminassistant@gmail.com</p>
+            <div className="flex justify-between md:justify-end">
+              <div className="mr-8">
+                <h3 className="text-lg font-semibold text-[#220b13]">
+                  Contato
+                </h3>
+                <div className="mt-4">
+                  <p>(11) 93956-965</p>
+                  <p>iadminassistant@gmail.com</p>
+                </div>
+              </div>
+              <div>
+                <Link to="/admin" className="text-[#220b13] hover:text-[#ff196e] transition-colors">
+                  Login
+                </Link>
               </div>
             </div>
           </div>
@@ -325,7 +330,7 @@ export default function Index() {
         </footer>
       </div>
 
-      {/* CSS para animações - Fix the style tag by removing the jsx attribute */}
+      {/* CSS para animações */}
       <style>
         {`
         .reveal {
@@ -344,4 +349,3 @@ export default function Index() {
     </main>
   );
 }
-

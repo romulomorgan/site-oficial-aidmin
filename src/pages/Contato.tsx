@@ -2,7 +2,7 @@
 import React from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { ContactForm } from '@/components/ui/ContactForm';
+import { Link } from 'react-router-dom';
 
 export default function Contato() {
   const handleSubmit = (e: React.FormEvent) => {
@@ -13,9 +13,7 @@ export default function Contato() {
   return (
     <main className="flex flex-col items-center bg-white">
       {/* Hero Section with Background Gradient */}
-      <section className="relative w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] py-[60px] px-5 md:px-20">
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png')] bg-cover bg-center opacity-30 mix-blend-overlay"></div>
-        
+      <section className="relative w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] py-[60px] px-5">
         {/* Navigation */}
         <NavigationBar />
         
@@ -123,32 +121,8 @@ export default function Contato() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] py-[60px] text-center mt-20">
-        <div className="max-w-[1140px] mx-auto px-5">
-          <h2 className="text-white text-[40px] font-semibold mb-2">
-            Deixe seu contato
-          </h2>
-          <p className="text-white/80 mb-8">
-            Entraremos em contato brevemente!
-          </p>
-          <div className="flex justify-center">
-            <div className="w-full max-w-[444px]">
-              <input
-                type="email"
-                placeholder="E-mail"
-                className="w-full h-12 px-5 rounded-lg bg-transparent border border-white text-white mb-4"
-              />
-              <CustomButton type="button" variant="primary" className="w-full">
-                Enviar
-              </CustomButton>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="w-full bg-white py-12">
+      <footer className="w-full bg-white py-12 mt-20">
         <div className="max-w-[1140px] mx-auto px-5 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h2 className="text-[32px] font-semibold text-[#ff196e]">
@@ -157,18 +131,29 @@ export default function Contato() {
             <p className="text-[#220b13] mt-2">
               A sua assistente de AI
             </p>
-            <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
-              Contrate sua AI!
-            </CustomButton>
+            <Link to="/contato">
+              <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a6a8d0c78b77435f1a23d0754afe4db5508c6bd9?placeholderIfAbsent=true" className="mt-8">
+                Contrate sua AI!
+              </CustomButton>
+            </Link>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-[#220b13]">
-              Contato
-            </h3>
-            <div className="mt-4">
-              <p>(11) 93956-965</p>
-              <p>iadminassistant@gmail.com</p>
+          <div className="flex justify-between md:justify-end">
+            <div className="mr-8">
+              <h3 className="text-lg font-semibold text-[#220b13]">
+                Contato
+              </h3>
+              <div className="mt-4">
+                <p>(11) 93956-965</p>
+                <p>iadminassistant@gmail.com</p>
+              </div>
             </div>
+            {location.pathname === "/" && (
+              <div>
+                <Link to="/admin" className="text-[#220b13] hover:text-[#ff196e] transition-colors">
+                  Login
+                </Link>
+              </div>
+            )}
           </div>
         </div>
         <div className="border-t border-[#D8D0D2] mt-12 pt-8 pb-8 text-center text-[#220b13] max-w-[1140px] mx-auto">

@@ -18,7 +18,7 @@ export const CustomButton: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        "justify-center items-center flex min-h-[52px] gap-2 px-6 py-[13px] rounded-lg transition-all duration-300 hover:scale-[1.03]",
+        "justify-center items-center flex min-h-[52px] gap-2 px-6 py-3 rounded-lg transition-all duration-300 hover:scale-[1.03]",
         variant === 'primary' && "bg-[#FF196E] text-white hover:bg-[#ff3582] hover:shadow-md",
         variant === 'secondary' && "border border-white text-white hover:bg-white/10 hover:shadow-md",
         className
@@ -26,13 +26,13 @@ export const CustomButton: React.FC<ButtonProps> = ({
       {...props}
     >
       {icon && (
-        <div className="max-w-5 self-stretch min-h-5 overflow-hidden flex-1 shrink basis-[0%] my-auto">
-          <img src={icon} alt="" className="aspect-[1] object-contain w-full" />
-        </div>
+        <span className="max-w-5 self-stretch overflow-hidden flex-1 shrink basis-[0%] my-auto">
+          <img src={icon} alt="" className="aspect-[1] object-contain w-5 h-5" />
+        </span>
       )}
-      <div className="text-base font-medium leading-loose">
+      <span className="text-base font-medium leading-normal">
         {children}
-      </div>
+      </span>
     </button>
   );
 };
