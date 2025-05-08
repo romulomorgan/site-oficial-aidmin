@@ -419,126 +419,126 @@ export default function SiteSettings() {
           </CustomButton>
         </div>
       </form>
+      
+      {/* Dialog for editing templates */}
+      {editing && (
+        <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Template</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editTemplateName">Nome</Label>
+                <Input
+                  id="editTemplateName"
+                  value={editing.name}
+                  onChange={(e) => setEditing({...editing, name: e.target.value})}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editPrimaryColor">Cor Primária</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editPrimaryColor"
+                    value={editing.primaryColor}
+                    onChange={(e) => setEditing({...editing, primaryColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editing.primaryColor}
+                    onChange={(e) => setEditing({...editing, primaryColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editSecondaryColor">Cor Secundária</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editSecondaryColor"
+                    value={editing.secondaryColor}
+                    onChange={(e) => setEditing({...editing, secondaryColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editing.secondaryColor}
+                    onChange={(e) => setEditing({...editing, secondaryColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editAccentColor">Cor de Destaque</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editAccentColor"
+                    value={editing.accentColor}
+                    onChange={(e) => setEditing({...editing, accentColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editing.accentColor}
+                    onChange={(e) => setEditing({...editing, accentColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editBackgroundColor">Cor de Fundo</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editBackgroundColor"
+                    value={editing.backgroundColor}
+                    onChange={(e) => setEditing({...editing, backgroundColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editing.backgroundColor}
+                    onChange={(e) => setEditing({...editing, backgroundColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editTextColor">Cor de Texto</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editTextColor"
+                    value={editing.textColor}
+                    onChange={(e) => setEditing({...editing, textColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editing.textColor}
+                    onChange={(e) => setEditing({...editing, textColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <CustomButton type="button" variant="secondary" onClick={() => setEditing(null)}>
+                Cancelar
+              </CustomButton>
+              <CustomButton type="button" variant="primary" onClick={handleUpdateTemplate}>
+                Salvar Alterações
+              </CustomButton>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
-
-{/* Dialog for editing templates */}
-{editing && (
-  <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Editar Template</DialogTitle>
-      </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="editTemplateName">Nome</Label>
-          <Input
-            id="editTemplateName"
-            value={editing.name}
-            onChange={(e) => setEditing({...editing, name: e.target.value})}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="editPrimaryColor">Cor Primária</Label>
-          <div className="flex col-span-3 gap-2 items-center">
-            <Input
-              type="color"
-              id="editPrimaryColor"
-              value={editing.primaryColor}
-              onChange={(e) => setEditing({...editing, primaryColor: e.target.value})}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={editing.primaryColor}
-              onChange={(e) => setEditing({...editing, primaryColor: e.target.value})}
-              className="flex-1"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="editSecondaryColor">Cor Secundária</Label>
-          <div className="flex col-span-3 gap-2 items-center">
-            <Input
-              type="color"
-              id="editSecondaryColor"
-              value={editing.secondaryColor}
-              onChange={(e) => setEditing({...editing, secondaryColor: e.target.value})}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={editing.secondaryColor}
-              onChange={(e) => setEditing({...editing, secondaryColor: e.target.value})}
-              className="flex-1"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="editAccentColor">Cor de Destaque</Label>
-          <div className="flex col-span-3 gap-2 items-center">
-            <Input
-              type="color"
-              id="editAccentColor"
-              value={editing.accentColor}
-              onChange={(e) => setEditing({...editing, accentColor: e.target.value})}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={editing.accentColor}
-              onChange={(e) => setEditing({...editing, accentColor: e.target.value})}
-              className="flex-1"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="editBackgroundColor">Cor de Fundo</Label>
-          <div className="flex col-span-3 gap-2 items-center">
-            <Input
-              type="color"
-              id="editBackgroundColor"
-              value={editing.backgroundColor}
-              onChange={(e) => setEditing({...editing, backgroundColor: e.target.value})}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={editing.backgroundColor}
-              onChange={(e) => setEditing({...editing, backgroundColor: e.target.value})}
-              className="flex-1"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="editTextColor">Cor de Texto</Label>
-          <div className="flex col-span-3 gap-2 items-center">
-            <Input
-              type="color"
-              id="editTextColor"
-              value={editing.textColor}
-              onChange={(e) => setEditing({...editing, textColor: e.target.value})}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={editing.textColor}
-              onChange={(e) => setEditing({...editing, textColor: e.target.value})}
-              className="flex-1"
-            />
-          </div>
-        </div>
-      </div>
-      <DialogFooter>
-        <CustomButton type="button" variant="secondary" onClick={() => setEditing(null)}>
-          Cancelar
-        </CustomButton>
-        <CustomButton type="button" variant="primary" onClick={handleUpdateTemplate}>
-          Salvar Alterações
-        </CustomButton>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
-)}
