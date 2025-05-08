@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { trash } from 'lucide-react';
+import { Trash } from 'lucide-react';
 
 interface Testimonial {
   id: number;
@@ -209,7 +208,7 @@ export default function Testimonials() {
                     className="text-red-500 hover:text-red-700 transition-colors"
                     aria-label="Excluir depoimento"
                   >
-                    <trash className="h-5 w-5" />
+                    <Trash className="h-5 w-5" />
                   </button>
                 </div>
                 <p className="text-gray-700">{testimonial.testimonial}</p>
