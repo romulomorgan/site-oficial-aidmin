@@ -1,0 +1,40 @@
+import React from 'react';
+
+interface TestimonialCardProps {
+  name: string;
+  role: string;
+  testimonial: string;
+  avatarUrl: string;
+}
+
+export const TestimonialCard: React.FC<TestimonialCardProps> = ({
+  name,
+  role,
+  testimonial,
+  avatarUrl
+}) => {
+  return (
+    <div className="backdrop-blur-[10px] flex w-full flex-col items-stretch bg-[rgba(255,255,255,0.05)] px-6 py-[30px] rounded-xl">
+      <div className="flex items-stretch gap-2.5">
+        <div className="max-w-[45px] overflow-hidden rounded-[76px]">
+          <img
+            src={avatarUrl}
+            alt={`${name}'s avatar`}
+            className="aspect-[1] object-contain w-[45px] max-w-[45px]"
+          />
+        </div>
+        <div className="flex flex-col items-stretch text-white font-normal">
+          <div className="text-base font-normal leading-[24px]">
+            {name}
+          </div>
+          <div className="text-xs font-normal leading-[18px]">
+            {role}
+          </div>
+        </div>
+      </div>
+      <div className="text-white text-lg font-normal leading-[27.9px] mt-4">
+        {testimonial}
+      </div>
+    </div>
+  );
+};
