@@ -1,102 +1,90 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { toast } from 'sonner';
 
-export default function AdminLogin() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+export default function Login() {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const adminAuthenticated = localStorage.getItem('adminAuthenticated');
-    if (adminAuthenticated === 'true') {
-      navigate('/admin/dashboard');
-    }
-  }, [navigate]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simple authentication
-    if (email === 'romulosistemas@hotmail.com' && password === 'senha123') {
-      // Set admin as authenticated
-      localStorage.setItem('adminAuthenticated', 'true');
-      
-      // Show success message
-      toast.success('Login realizado com sucesso!');
-      
-      // Redirect to admin dashboard
-      setTimeout(() => {
-        navigate('/admin/dashboard');
-      }, 1000);
-    } else {
-      toast.error('Credenciais inválidas. Por favor, tente novamente.');
+    // Simple authentication for demo purposes
+    // In a real app, this would be replaced with proper authentication
+    setTimeout(() => {
+      if (username === 'admin' && password === 'admin') {
+        toast.success('Login efetuado com sucesso!');
+        navigate('/admin');
+      } else {
+        toast.error('Credenciais inválidas. Tente novamente.');
+      }
       setIsLoading(false);
-    }
+    }, 1000);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2D0A16] to-[#FF196E] p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6 md:p-8">
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-pink-100">
-              <span className="text-[#FF196E] text-xl font-semibold">
-                IAdmin
-              </span>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div>
+          <h2 className="text-center text-3xl font-semibold text-gray-900">
+            Painel Administrativo
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Entre com suas credenciais para acessar o painel
+          </p>
+        </div>
+        <form className="mt-8 space-y-6 bg-white p-8 shadow rounded-lg" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                Usuário
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#ff196e] focus:outline-none focus:ring-1 focus:ring-[#ff196e]"
+                placeholder="Seu usuário"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Senha
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#ff196e] focus:outline-none focus:ring-1 focus:ring-[#ff196e]"
+                placeholder="Sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
           </div>
-          
-          <h1 className="text-2xl font-semibold text-center text-gray-800 mb-8">
-            Login Administrativo
-          </h1>
-          
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF196E] focus:border-transparent"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Senha
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF196E] focus:border-transparent"
-                  required
-                />
-              </div>
-              
-              <div>
-                <CustomButton
-                  type="submit"
-                  variant="primary"
-                  disabled={isLoading}
-                  className="w-full justify-center"
-                >
-                  {isLoading ? 'Entrando...' : 'Entrar'}
-                </CustomButton>
-              </div>
-            </div>
-          </form>
-        </div>
+
+          <div>
+            <CustomButton
+              type="submit"
+              variant="primary"
+              disabled={isLoading}
+              className="w-full"
+            >
+              {isLoading ? "Entrando..." : "Entrar"}
+            </CustomButton>
+          </div>
+        </form>
       </div>
     </div>
   );

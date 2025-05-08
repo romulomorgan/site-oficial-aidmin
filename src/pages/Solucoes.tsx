@@ -1,33 +1,103 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ThemeTemplate } from '@/utils/themeTemplates';
 
 interface SiteTexts {
   whyUsImage: string;
+  footerAbout: string;
+  footerButtonText: string;
+  footerPhoneNumber: string;
+  footerEmail: string;
+  faviconUrl?: string;
 }
 
 export default function Solucoes() {
   const [siteTexts, setSiteTexts] = useState<SiteTexts>({
-    whyUsImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'
+    whyUsImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+    footerAbout: 'A sua assistente de AI',
+    footerButtonText: 'Contrate uma AI Poderosa!',
+    footerPhoneNumber: '(11) 93956-965',
+    footerEmail: 'iadminassistant@gmail.com'
+  });
+  
+  const [themeColors, setThemeColors] = useState({
+    primaryColor: '#FF196E',
+    secondaryColor: '#2D0A16',
+    accentColor: '#FF4F8E',
+    backgroundColor: '#FFFFFF',
+    textColor: '#222222'
   });
   
   useEffect(() => {
-    // Load saved texts from localStorage for images
+    // Load saved texts from localStorage for images and other texts
     const savedTexts = localStorage.getItem('siteTexts');
     if (savedTexts) {
       const parsedTexts = JSON.parse(savedTexts);
-      if (parsedTexts.whyUsImage) {
-        setSiteTexts(prev => ({...prev, whyUsImage: parsedTexts.whyUsImage}));
+      setSiteTexts(prev => ({...prev, ...parsedTexts}));
+      
+      // Set the favicon if defined
+      if (parsedTexts.faviconUrl) {
+        const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+        if (link) {
+          link.href = parsedTexts.faviconUrl;
+        } else {
+          const newLink = document.createElement('link');
+          newLink.rel = 'icon';
+          newLink.href = parsedTexts.faviconUrl;
+          document.head.appendChild(newLink);
+        }
+      }
+    }
+    
+    // Load theme colors
+    const selectedTemplate = localStorage.getItem('selectedTemplate');
+    if (selectedTemplate) {
+      // Check default templates
+      const savedTemplates = localStorage.getItem('siteTemplates');
+      let allTemplates = [];
+      
+      if (savedTemplates) {
+        allTemplates = JSON.parse(savedTemplates);
+      }
+      
+      // Check for template in localStorage
+      let template: ThemeTemplate | undefined;
+      
+      if (allTemplates.length > 0) {
+        template = allTemplates.find((t: ThemeTemplate) => t.id === selectedTemplate);
+      }
+      
+      // If template found, apply colors
+      if (template) {
+        setThemeColors({
+          primaryColor: template.primaryColor,
+          secondaryColor: template.secondaryColor,
+          accentColor: template.accentColor,
+          backgroundColor: template.backgroundColor,
+          textColor: template.textColor
+        });
+        
+        // Apply colors to CSS variables
+        document.documentElement.style.setProperty('--primary-color', template.primaryColor);
+        document.documentElement.style.setProperty('--secondary-color', template.secondaryColor);
+        document.documentElement.style.setProperty('--accent-color', template.accentColor);
+        document.documentElement.style.setProperty('--background-color', template.backgroundColor);
+        document.documentElement.style.setProperty('--text-color', template.textColor);
       }
     }
   }, []);
-
+  
   return (
     <main className="flex flex-col items-center bg-white">
       {/* Hero Section with Background Gradient */}
-      <section className="relative w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] py-[60px] px-5">
+      <section className="relative w-full py-[60px] px-5 animate-fade-in" 
+        style={{
+          background: `linear-gradient(to bottom right, ${themeColors.secondaryColor}, ${themeColors.primaryColor})`
+        }}
+      >
         {/* Navigation */}
         <NavigationBar />
         
@@ -43,17 +113,17 @@ export default function Solucoes() {
       </section>
 
       {/* Main Content */}
-      <section className="w-full max-w-[1140px] px-5 py-16">
+      <section className="w-full max-w-[1140px] px-5 py-16 animate-fade-in" style={{animationDelay: '0.2s'}}>
         <div className="mb-16">
-          <h2 className="text-[#FF196E] text-lg font-medium uppercase mb-4">
+          <h2 className="text-lg font-medium uppercase mb-4" style={{color: themeColors.primaryColor}}>
             ADOTE A NOSSA AI
           </h2>
-          <h3 className="text-[#222] text-[46px] font-semibold mb-8">
+          <h3 className="text-[46px] font-semibold mb-8" style={{color: themeColors.textColor}}>
             Conectamos a nossa AI aos seus<br />processos operacionais
           </h3>
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
-            <div className="w-full md:w-[400px] relative">
+            <div className="w-full md:w-[400px] relative hover-scale">
               <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
                 <img 
                   src={siteTexts.whyUsImage}
@@ -64,12 +134,12 @@ export default function Solucoes() {
             </div>
 
             <div className="flex-1">
-              <p className="text-[#222] leading-relaxed mb-4">
+              <p className="leading-relaxed mb-4" style={{color: themeColors.textColor}}>
                 Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos
                 operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.
               </p>
               
-              <p className="text-[#222] leading-relaxed mb-4">
+              <p className="leading-relaxed mb-4" style={{color: themeColors.textColor}}>
                 Por meio do <strong>BPO-PN (Business Process Optimization - Processos de Negócios)</strong>, otimizamos
                 fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de
                 custos. Já com o <strong>BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento)</strong>,
@@ -77,7 +147,7 @@ export default function Solucoes() {
                 insights para um planejamento mais assertivo.
               </p>
               
-              <p className="text-[#222] leading-relaxed mb-4">
+              <p className="leading-relaxed mb-4" style={{color: themeColors.textColor}}>
                 Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são
                 utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no
                 mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia
@@ -89,7 +159,10 @@ export default function Solucoes() {
       </section>
 
       {/* Contact Section */}
-      <section className="w-full bg-gradient-to-br from-[#2D0A16] to-[#FF196E] py-[60px] text-center">
+      <section className="w-full py-[60px] text-center animate-fade-in" style={{
+          background: `linear-gradient(to bottom right, ${themeColors.secondaryColor}, ${themeColors.primaryColor})`,
+          animationDelay: '0.3s'
+        }}>
         <div className="max-w-[1140px] mx-auto px-5">
           <h2 className="text-white text-[40px] font-semibold mb-2">
             Deixe seu contato
@@ -113,41 +186,41 @@ export default function Solucoes() {
       </section>
 
       {/* Footer */}
-      <footer className="w-full bg-white py-12">
+      <footer className="w-full py-12" style={{backgroundColor: themeColors.backgroundColor}}>
         <div className="max-w-[1140px] mx-auto px-5 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h2 className="text-[32px] font-semibold text-[#ff196e]">
+            <h2 className="text-[32px] font-semibold" style={{color: themeColors.primaryColor}}>
               IAdmin
             </h2>
-            <p className="text-[#220b13] mt-2">
-              A sua assistente de AI
+            <p style={{color: themeColors.secondaryColor}} className="mt-2">
+              {siteTexts.footerAbout}
             </p>
             <Link to="/contato">
               <CustomButton variant="primary" className="mt-8">
-                Contrate uma AI Poderosa!
+                {siteTexts.footerButtonText}
               </CustomButton>
             </Link>
           </div>
           <div className="flex justify-between md:justify-end">
             <div className="mr-8">
-              <h3 className="text-lg font-semibold text-[#220b13]">
+              <h3 className="text-lg font-semibold" style={{color: themeColors.secondaryColor}}>
                 Contato
               </h3>
               <div className="mt-4">
-                <p>(11) 93956-965</p>
-                <p>iadminassistant@gmail.com</p>
+                <p>{siteTexts.footerPhoneNumber}</p>
+                <p>{siteTexts.footerEmail}</p>
               </div>
             </div>
             {location.pathname === "/" && (
               <div>
-                <Link to="/admin" className="text-[#220b13] hover:text-[#ff196e] transition-colors">
+                <Link to="/admin" className="hover-text transition-colors" style={{color: themeColors.secondaryColor}}>
                   Login
                 </Link>
               </div>
             )}
           </div>
         </div>
-        <div className="border-t border-[#D8D0D2] mt-12 pt-8 pb-8 text-center text-[#220b13] max-w-[1140px] mx-auto">
+        <div className="border-t border-[#D8D0D2] mt-12 pt-8 pb-8 text-center max-w-[1140px] mx-auto" style={{color: themeColors.secondaryColor}}>
           © Todos os direitos reservados - IAdmin 2024
         </div>
       </footer>

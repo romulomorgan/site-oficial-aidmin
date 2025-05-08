@@ -1,103 +1,168 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { CustomButton } from './CustomButton';
 
 interface ContactFormProps {
-  variant?: 'simple' | 'full';
+  className?: string;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ variant = 'simple' }) => {
-  const handleSubmit = (e: React.FormEvent) => {
+export function ContactForm({ className = '' }: ContactFormProps) {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState('');
+  
+  useEffect(() => {
+    // Load webhook URL from localStorage
+    const savedTexts = localStorage.getItem('siteTexts');
+    if (savedTexts) {
+      const parsedTexts = JSON.parse(savedTexts);
+      if (parsedTexts.webhookUrl) {
+        setWebhookUrl(parsedTexts.webhookUrl);
+      }
+    }
+  }, []);
+  
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission
+    
+    if (!firstName || !email || !message) {
+      toast.error('Por favor, preencha os campos obrigatórios.');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    // Create new message object
+    const newMessage = {
+      id: Date.now(),
+      firstName,
+      lastName,
+      email,
+      phone,
+      message,
+      date: new Date().toISOString(),
+      read: false
+    };
+    
+    // Save to localStorage
+    const savedMessages = localStorage.getItem('contactMessages');
+    let messages = [];
+    
+    if (savedMessages) {
+      messages = JSON.parse(savedMessages);
+    }
+    
+    messages.push(newMessage);
+    localStorage.setItem('contactMessages', JSON.stringify(messages));
+    
+    // If webhook URL is defined, send message to webhook
+    if (webhookUrl) {
+      try {
+        console.log('Sending message to webhook:', webhookUrl, newMessage);
+        // In a real application, you would do a fetch here
+        // Since we're just simulating, we'll add a delay
+      } catch (error) {
+        console.error('Error sending message to webhook:', error);
+      }
+    }
+    
+    setTimeout(() => {
+      toast.success('Mensagem enviada com sucesso!');
+      
+      // Reset form
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPhone('');
+      setMessage('');
+      setIsSubmitting(false);
+    }, 1000);
   };
-
-  if (variant === 'simple') {
-    return (
-      <form
-        onSubmit={handleSubmit}
-        className="justify-center z-10 flex w-[444px] max-w-full gap-4 text-base text-white whitespace-nowrap"
-      >
-        <input
-          type="email"
-          placeholder="E-mail"
-          className="items-stretch border-white min-w-[240px] min-h-[52px] flex-1 px-[25px] py-[17px] rounded-lg border border-solid bg-transparent"
-          required
-        />
-        <CustomButton type="submit" variant="primary">
-          Enviar
-        </CustomButton>
-      </form>
-    );
-  }
-
+  
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="firstname" className="block text-sm font-medium text-gray-700 mb-1">
-            Primeiro Nome
-          </label>
-          <input
-            type="text"
-            id="firstname"
-            placeholder="Primeiro Nome"
-            className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-          />
+    <div className={`${className}`}>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label htmlFor="firstName" className="block text-gray-800 mb-1">Primeiro Nome</label>
+            <input
+              id="firstName"
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded"
+              placeholder="Primeiro Nome"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-gray-800 mb-1">Sobrenome</label>
+            <input
+              id="lastName"
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded"
+              placeholder="Sobrenome"
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-1">
-            Sobrenome
-          </label>
-          <input
-            type="text"
-            id="lastname"
-            placeholder="Sobrenome"
-            className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-          />
+  
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+          <div>
+            <label htmlFor="email" className="block text-gray-800 mb-1">E-mail</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded"
+              placeholder="E-mail"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-gray-800 mb-1">Telefone</label>
+            <input
+              id="phone"
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded"
+              placeholder="Telefone"
+            />
+          </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            E-mail
-          </label>
-          <input
-            type="email"
-            id="email"
-            placeholder="E-mail"
-            className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-          />
+  
+        <div className="mt-5">
+          <label htmlFor="message" className="block text-gray-800 mb-1">Mensagem</label>
+          <textarea
+            id="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded"
+            placeholder="Digite aqui sua mensagem..."
+            rows={5}
+            required
+          ></textarea>
         </div>
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-            Telefone
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            placeholder="Telefone"
-            className="w-full h-12 px-4 border border-gray-300 rounded-lg"
-          />
+  
+        <div className="mt-5">
+          <CustomButton
+            type="submit"
+            variant="primary"
+            disabled={isSubmitting}
+            className="w-full"
+          >
+            {isSubmitting ? "Enviando..." : "Enviar"}
+          </CustomButton>
         </div>
-      </div>
-
-      <div>
-        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-          Mensagem
-        </label>
-        <textarea
-          id="message"
-          placeholder="Digite aqui sua mensagem..."
-          rows={5}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-        ></textarea>
-      </div>
-
-      <CustomButton type="submit" variant="primary" className="w-full">
-        Enviar
-      </CustomButton>
-    </form>
+      </form>
+    </div>
   );
-};
+}

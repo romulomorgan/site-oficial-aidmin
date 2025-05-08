@@ -1,50 +1,40 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import Contato from "./pages/Contato";
-import Solucoes from "./pages/Solucoes";
-import NotFound from "./pages/NotFound";
-import AdminLogin from "./pages/Admin/Login";
-import { AdminLayout } from "./components/admin/AdminLayout";
-import AdminDashboard from "./pages/Admin/Dashboard";
-import EditTexts from "./pages/Admin/EditTexts";
-import Testimonials from "./pages/Admin/Testimonials";
-import FAQ from "./pages/Admin/FAQ";
-import Messages from "./pages/Admin/Messages";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
+import Index from '@/pages/Index';
+import Solucoes from '@/pages/Solucoes';
+import Contato from '@/pages/Contato';
+import NotFound from '@/pages/NotFound';
+import AdminLayout from '@/components/admin/AdminLayout';
+import Dashboard from '@/pages/Admin/Dashboard';
+import EditTexts from '@/pages/Admin/EditTexts';
+import Testimonials from '@/pages/Admin/Testimonials';
+import FAQ from '@/pages/Admin/FAQ';
+import Messages from '@/pages/Admin/Messages';
+import Login from '@/pages/Admin/Login';
+import SiteSettings from '@/pages/Admin/SiteSettings';
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/contato" element={<Contato />} />
-          <Route path="/solucoes" element={<Solucoes />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="editar-textos" element={<EditTexts />} />
-            <Route path="depoimentos" element={<Testimonials />} />
-            <Route path="faq" element={<FAQ />} />
-            <Route path="mensagens" element={<Messages />} />
-          </Route>
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/solucoes" element={<Solucoes />} />
+        <Route path="/contato" element={<Contato />} />
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="editar-textos" element={<EditTexts />} />
+          <Route path="depoimentos" element={<Testimonials />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="mensagens" element={<Messages />} />
+          <Route path="configuracoes" element={<SiteSettings />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Toaster position="bottom-right" />
+    </Router>
+  );
+}
 
 export default App;
