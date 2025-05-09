@@ -31,7 +31,7 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
 }
 
 // Função para adicionar uma nova FAQ
-export async function addFAQ(faq: Omit<FAQItem, 'id'> & { active?: boolean }): Promise<boolean> {
+export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
   try {
     console.log('Adicionando FAQ:', faq);
     const { error } = await supabase

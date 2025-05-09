@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { fetchFAQs, addFAQ, updateFAQ, deleteFAQ } from '@/utils/supabaseClient';
 import { PlusCircle, Edit, Trash, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { FAQItem } from '@/utils/supabase/types';
 
 interface FAQSectionProps {
   sections: Record<string, string>;
@@ -17,9 +19,9 @@ const FAQSection: React.FC<FAQSectionProps> = ({
   isLoading, 
   handleSaveSection 
 }) => {
-  const [faqs, setFaqs] = useState<any[]>([]);
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loadingFaqs, setLoadingFaqs] = useState(false);
-  const [editingFaq, setEditingFaq] = useState<any | null>(null);
+  const [editingFaq, setEditingFaq] = useState<FAQItem | null>(null);
   const [newFaq, setNewFaq] = useState<{question: string, answer: string}>({
     question: '',
     answer: ''
@@ -54,7 +56,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
   const handleEditFaqChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditingFaq(prev => ({
-      ...prev,
+      ...prev!,
       [name]: value
     }));
   };
@@ -68,7 +70,8 @@ const FAQSection: React.FC<FAQSectionProps> = ({
     try {
       await addFAQ({
         question: newFaq.question,
-        answer: newFaq.answer
+        answer: newFaq.answer,
+        active: true
       });
       
       setNewFaq({ question: '', answer: '' });

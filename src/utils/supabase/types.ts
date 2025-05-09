@@ -32,6 +32,8 @@ export interface FAQItem {
   id: string;
   question: string;
   answer: string;
+  active?: boolean;
+  order_index?: number;
 }
 
 // Tipos para inscrições de email
