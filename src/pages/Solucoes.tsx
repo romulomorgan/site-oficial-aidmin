@@ -3,10 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
-import { fetchSiteTexts, fetchColorTemplates, SiteTexts, ColorTemplate } from '@/utils/supabaseClient';
+import { fetchSiteTexts, fetchColorTemplates, SiteTexts, ColorTemplate, saveEmailSubscription } from '@/utils/supabaseClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/supabase/client";
 
 export default function Solucoes() {
   const [email, setEmail] = useState('');
@@ -83,19 +82,15 @@ export default function Solucoes() {
     setIsSubmitting(true);
     
     try {
-      // Salvar a inscrição no Supabase
-      const { error } = await supabase
-        .from('site_email_subscriptions')
-        .insert({
-          email,
-          source: 'Página de Soluções',
-          created_at: new Date().toISOString()
-        });
-        
-      if (error) throw error;
+      // Usar a função do arquivo supabaseClient para salvar a inscrição
+      const success = await saveEmailSubscription(email, 'Página de Soluções');
       
-      toast.success('E-mail cadastrado com sucesso!');
-      setEmail('');
+      if (success) {
+        toast.success('E-mail cadastrado com sucesso!');
+        setEmail('');
+      } else {
+        throw new Error('Falha ao cadastrar email');
+      }
     } catch (error) {
       console.error('Erro ao cadastrar e-mail:', error);
       toast.error('Ocorreu um erro ao cadastrar seu e-mail. Tente novamente.');

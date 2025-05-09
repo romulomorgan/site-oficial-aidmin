@@ -652,9 +652,11 @@ export type Database = {
         Row: {
           accent_color: string
           background_color: string
+          button_text_color: string | null
           created_at: string
           id: string
           is_default: boolean
+          menu_text_color: string | null
           name: string
           primary_color: string
           secondary_color: string
@@ -664,9 +666,11 @@ export type Database = {
         Insert: {
           accent_color: string
           background_color: string
+          button_text_color?: string | null
           created_at?: string
           id?: string
           is_default?: boolean
+          menu_text_color?: string | null
           name: string
           primary_color: string
           secondary_color: string
@@ -676,9 +680,11 @@ export type Database = {
         Update: {
           accent_color?: string
           background_color?: string
+          button_text_color?: string | null
           created_at?: string
           id?: string
           is_default?: boolean
+          menu_text_color?: string | null
           name?: string
           primary_color?: string
           secondary_color?: string
@@ -708,6 +714,27 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json | null
+        }
+        Relationships: []
+      }
+      site_email_subscriptions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          source?: string | null
         }
         Relationships: []
       }

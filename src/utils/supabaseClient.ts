@@ -383,13 +383,17 @@ export async function saveEmbedConfig(config: EmbedConfig): Promise<boolean> {
 // Função para salvar inscrição de email
 export async function saveEmailSubscription(email: string, source: string): Promise<boolean> {
   try {
+    // Depois que a tabela site_email_subscriptions foi criada no banco de dados,
+    // podemos usar esta função para salvar as inscrições de email
     const { error } = await supabase
       .from('site_email_subscriptions')
-      .insert({
-        email,
-        source,
-        created_at: new Date().toISOString()
-      });
+      .insert([
+        {
+          email,
+          source,
+          created_at: new Date().toISOString()
+        }
+      ]);
 
     if (error) {
       console.error('Erro ao salvar inscrição de email:', error);
