@@ -380,6 +380,47 @@ export async function saveEmbedConfig(config: EmbedConfig): Promise<boolean> {
   }
 }
 
+// Função para salvar inscrição de email
+export async function saveEmailSubscription(email: string, source: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('site_email_subscriptions')
+      .insert({
+        email,
+        source,
+        created_at: new Date().toISOString()
+      });
+
+    if (error) {
+      console.error('Erro ao salvar inscrição de email:', error);
+      throw error;
+    }
+    return true;
+  } catch (error) {
+    console.error('Erro ao cadastrar email:', error);
+    return false;
+  }
+}
+
+// Função para testar webhook URL
+export async function testWebhookUrl(url: string): Promise<boolean> {
+  try {
+    // Simular teste de webhook
+    const testData = { test: true, timestamp: new Date().toISOString() };
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testData)
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Erro ao testar webhook:', error);
+    return false;
+  }
+}
+
 // ===== FUNÇÕES DE FALLBACK PARA LOCALSTORAGE =====
 
 // Função para obter textos do localStorage (fallback)

@@ -33,7 +33,7 @@ export function useFavicon() {
 
   useEffect(() => {
     if (faviconUrl) {
-      const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
       link.type = 'image/png';
       link.rel = 'shortcut icon';
       link.href = faviconUrl;

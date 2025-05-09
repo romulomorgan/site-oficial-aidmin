@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
-import { fetchSiteTexts, fetchColorTemplates, SiteTexts, ColorTemplate, saveEmailSubscription } from '@/utils/supabaseClient';
+import { fetchSiteTexts, fetchColorTemplates, SiteTexts, ColorTemplate } from '@/utils/supabaseClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Solucoes() {
   const [email, setEmail] = useState('');
@@ -82,8 +83,17 @@ export default function Solucoes() {
     setIsSubmitting(true);
     
     try {
-      // Salvar a inscrição
-      await saveEmailSubscription(email, 'Página de Soluções');
+      // Salvar a inscrição no Supabase
+      const { error } = await supabase
+        .from('site_email_subscriptions')
+        .insert({
+          email,
+          source: 'Página de Soluções',
+          created_at: new Date().toISOString()
+        });
+        
+      if (error) throw error;
+      
       toast.success('E-mail cadastrado com sucesso!');
       setEmail('');
     } catch (error) {
