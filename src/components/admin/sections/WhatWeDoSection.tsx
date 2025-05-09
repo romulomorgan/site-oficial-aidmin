@@ -1,15 +1,9 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface WhatWeDoSectionProps {
-  sections: Record<string, string>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({ 
+const WhatWeDoSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -26,7 +20,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
             <input
               type="text"
               name="whatWeDoSubtitle"
-              value={sections.whatWeDoSubtitle}
+              value={sections.whatWeDoSubtitle as string}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
@@ -37,7 +31,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
             <input
               type="text"
               name="whatWeDoTitle"
-              value={sections.whatWeDoTitle}
+              value={sections.whatWeDoTitle as string}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
@@ -53,7 +47,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
               <input
                 type="text"
                 name="assistantCardTitle"
-                value={sections.assistantCardTitle}
+                value={sections.assistantCardTitle as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -64,7 +58,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
               <input
                 type="text"
                 name="assistantCardImage"
-                value={sections.assistantCardImage}
+                value={sections.assistantCardImage as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -75,7 +69,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
             <textarea
               name="assistantCardDescription"
-              value={sections.assistantCardDescription}
+              value={sections.assistantCardDescription as string}
               onChange={handleInputChange}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -92,7 +86,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
               <input
                 type="text"
                 name="bpoProcessosCardTitle"
-                value={sections.bpoProcessosCardTitle}
+                value={sections.bpoProcessosCardTitle as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -103,7 +97,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
               <input
                 type="text"
                 name="bpoProcessosCardImage"
-                value={sections.bpoProcessosCardImage}
+                value={sections.bpoProcessosCardImage as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -114,7 +108,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
             <textarea
               name="bpoProcessosCardDescription"
-              value={sections.bpoProcessosCardDescription}
+              value={sections.bpoProcessosCardDescription as string}
               onChange={handleInputChange}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -131,7 +125,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
               <input
                 type="text"
                 name="bpoProjetosCardTitle"
-                value={sections.bpoProjetosCardTitle}
+                value={sections.bpoProjetosCardTitle as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -142,7 +136,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
               <input
                 type="text"
                 name="bpoProjetosCardImage"
-                value={sections.bpoProjetosCardImage}
+                value={sections.bpoProjetosCardImage as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -153,7 +147,7 @@ const WhatWeDoSection: React.FC<WhatWeDoSectionProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
             <textarea
               name="bpoProjetosCardDescription"
-              value={sections.bpoProjetosCardDescription}
+              value={sections.bpoProjetosCardDescription as string}
               onChange={handleInputChange}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"

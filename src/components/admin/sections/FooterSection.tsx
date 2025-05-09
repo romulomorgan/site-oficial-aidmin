@@ -2,16 +2,9 @@
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Switch } from '@/components/ui/switch';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface FooterSectionProps {
-  sections: Record<string, string | boolean>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSwitchChange?: (name: string, checked: boolean) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const FooterSection: React.FC<FooterSectionProps> = ({ 
+const FooterSection: React.FC<SectionProps> = ({ 
   sections, 
   handleInputChange,
   handleSwitchChange,
@@ -98,7 +91,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">Facebook</label>
               <Switch 
-                checked={sections.facebookActive === true}
+                checked={sections.facebookActive as boolean}
                 onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('facebookActive', checked)}
                 id="facebook-active"
               />
@@ -117,7 +110,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">Instagram</label>
               <Switch 
-                checked={sections.instagramActive === true}
+                checked={sections.instagramActive as boolean}
                 onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('instagramActive', checked)}
                 id="instagram-active"
               />
@@ -136,7 +129,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">Twitter</label>
               <Switch 
-                checked={sections.twitterActive === true}
+                checked={sections.twitterActive as boolean}
                 onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('twitterActive', checked)}
                 id="twitter-active"
               />

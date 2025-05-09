@@ -1,15 +1,9 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface HeaderSectionProps {
-  sections: Record<string, string>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const HeaderSection: React.FC<HeaderSectionProps> = ({ 
+const HeaderSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -25,7 +19,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           <input
             type="text"
             name="siteTitle"
-            value={sections.siteTitle}
+            value={sections.siteTitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="Nome do site/empresa"
@@ -38,14 +32,14 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           <input
             type="text"
             name="logoUrl"
-            value={sections.logoUrl}
+            value={sections.logoUrl as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="URL da imagem do logo"
           />
           {sections.logoUrl && (
             <div className="mt-2 flex justify-center">
-              <img src={sections.logoUrl} alt="Preview do Logo" className="h-16 w-16 object-contain border rounded" />
+              <img src={sections.logoUrl as string} alt="Preview do Logo" className="h-16 w-16 object-contain border rounded" />
             </div>
           )}
         </div>
@@ -55,7 +49,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           <input
             type="text"
             name="faviconUrl"
-            value={sections.faviconUrl}
+            value={sections.faviconUrl as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="URL do ícone do site (formato PNG recomendado)"
@@ -63,7 +57,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           <p className="text-xs text-gray-500 mt-1">O favicon é o ícone que aparece na aba do navegador. Recomendamos imagens PNG quadradas.</p>
           {sections.faviconUrl && (
             <div className="mt-2 flex justify-center">
-              <img src={sections.faviconUrl} alt="Preview do Favicon" className="h-8 w-8 object-contain border rounded" />
+              <img src={sections.faviconUrl as string} alt="Preview do Favicon" className="h-8 w-8 object-contain border rounded" />
             </div>
           )}
         </div>

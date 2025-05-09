@@ -1,15 +1,9 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface ContactSectionProps {
-  sections: Record<string, string>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const ContactSection: React.FC<ContactSectionProps> = ({ 
+const ContactSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -25,7 +19,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({
           <input
             type="text"
             name="contactTitle"
-            value={sections.contactTitle}
+            value={sections.contactTitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -36,7 +30,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({
           <input
             type="text"
             name="contactSubtitle"
-            value={sections.contactSubtitle}
+            value={sections.contactSubtitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -47,7 +41,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({
           <input
             type="text"
             name="contactButtonText"
-            value={sections.contactButtonText}
+            value={sections.contactButtonText as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />

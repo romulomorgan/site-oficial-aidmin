@@ -50,6 +50,8 @@ export interface EmbedConfig {
   code: string;
   isActive: boolean;
   position: 'left' | 'right';
+  buttonColor?: string;
+  buttonIcon?: string;
 }
 
 // Tipos para webhooks
@@ -65,4 +67,13 @@ export interface Webhook {
 export interface SocialMediaConfig {
   url: string;
   isActive: boolean;
+}
+
+// Tipo para seções da página inicial
+export interface SectionProps {
+  sections: Record<string, string | boolean>;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSwitchChange?: (name: string, checked: boolean) => void;
+  isLoading: boolean;
+  handleSaveSection: (section: string) => void;
 }

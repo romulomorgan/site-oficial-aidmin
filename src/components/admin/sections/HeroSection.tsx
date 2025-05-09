@@ -1,15 +1,9 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface HeroSectionProps {
-  sections: Record<string, string>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const HeroSection: React.FC<HeroSectionProps> = ({ 
+const HeroSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -25,7 +19,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <input
             type="text"
             name="heroTitle"
-            value={sections.heroTitle}
+            value={sections.heroTitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -35,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">Subtítulo</label>
           <textarea
             name="heroSubtitle"
-            value={sections.heroSubtitle}
+            value={sections.heroSubtitle as string}
             onChange={handleInputChange}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -47,7 +41,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <input
             type="text"
             name="heroButtonText"
-            value={sections.heroButtonText}
+            value={sections.heroButtonText as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -58,7 +52,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <input
             type="text"
             name="heroButtonLink"
-            value={sections.heroButtonLink}
+            value={sections.heroButtonLink as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -69,7 +63,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <input
             type="text"
             name="heroVideoUrl"
-            value={sections.heroVideoUrl}
+            value={sections.heroVideoUrl as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="https://www.youtube.com/watch?v=XXXXXX ou https://youtu.be/XXXXXX"
@@ -80,7 +74,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="mt-3 p-2 border rounded-md">
               <p className="text-sm font-medium mb-1">Preview:</p>
               <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                <p className="text-gray-500">URL de vídeo configurada: {sections.heroVideoUrl}</p>
+                <p className="text-gray-500">URL de vídeo configurada: {sections.heroVideoUrl as string}</p>
               </div>
             </div>
           )}

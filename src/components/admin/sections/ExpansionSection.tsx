@@ -1,15 +1,9 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface ExpansionSectionProps {
-  sections: Record<string, string>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const ExpansionSection: React.FC<ExpansionSectionProps> = ({ 
+const ExpansionSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -25,7 +19,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
           <input
             type="text"
             name="expansionSubtitle"
-            value={sections.expansionSubtitle}
+            value={sections.expansionSubtitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -36,7 +30,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
           <input
             type="text"
             name="expansionTitle"
-            value={sections.expansionTitle}
+            value={sections.expansionTitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -46,7 +40,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
           <textarea
             name="expansionDescription"
-            value={sections.expansionDescription}
+            value={sections.expansionDescription as string}
             onChange={handleInputChange}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -58,7 +52,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
           <input
             type="text"
             name="expansionImage"
-            value={sections.expansionImage}
+            value={sections.expansionImage as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -73,7 +67,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
               <input
                 type="text"
                 name="statsYears"
-                value={sections.statsYears}
+                value={sections.statsYears as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -84,7 +78,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
               <input
                 type="text"
                 name="statsProjects"
-                value={sections.statsProjects}
+                value={sections.statsProjects as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -95,7 +89,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
               <input
                 type="text"
                 name="statsCompanies"
-                value={sections.statsCompanies}
+                value={sections.statsCompanies as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -106,7 +100,7 @@ const ExpansionSection: React.FC<ExpansionSectionProps> = ({
               <input
                 type="text"
                 name="statsAutomations"
-                value={sections.statsAutomations}
+                value={sections.statsAutomations as string}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />

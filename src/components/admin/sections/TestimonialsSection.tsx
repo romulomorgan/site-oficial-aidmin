@@ -1,15 +1,9 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { SectionProps } from '@/utils/supabase/types';
 
-interface TestimonialsSectionProps {
-  sections: Record<string, string>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
-}
-
-const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ 
+const TestimonialsSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -25,7 +19,7 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
           <input
             type="text"
             name="testimonialsTitle"
-            value={sections.testimonialsTitle}
+            value={sections.testimonialsTitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
