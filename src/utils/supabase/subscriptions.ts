@@ -41,6 +41,9 @@ export async function addEmailSubscription(email: string, source: string = 'Foot
   }
 }
 
+// Export the saveEmailSubscription function for backward compatibility
+export const saveEmailSubscription = addEmailSubscription;
+
 // Função para buscar inscrições de email
 export async function fetchEmailSubscriptions(): Promise<EmailSubscription[]> {
   try {

@@ -54,7 +54,7 @@ export async function updateSiteText(key: string, content: string): Promise<bool
         .from('site_texts')
         .update({ 
           content,
-          updated_at: new Date()
+          updated_at: new Date().toISOString() // Changed from Date object to ISO string
         })
         .eq('key', key);
     } else {
