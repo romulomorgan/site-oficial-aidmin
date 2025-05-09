@@ -12,7 +12,10 @@ export const Footer = () => {
     footerEmail: 'lucas@gmail.com',
     copyrightText: '© Todos os direitos reservados - IAdmin 2025',
     companyName: 'IAdmin',
-    footerButtonText: 'Contrate uma AI Poderosa!'
+    footerButtonText: 'Contrate uma AI Poderosa!',
+    facebookUrl: 'https://facebook.com',
+    instagramUrl: 'https://instagram.com',
+    twitterUrl: 'https://twitter.com'
   });
 
   const isMobile = useIsMobile();
@@ -27,7 +30,10 @@ export const Footer = () => {
           footerEmail: typeof siteTexts.footerEmail === 'string' ? siteTexts.footerEmail : 'lucas@gmail.com',
           copyrightText: typeof siteTexts.copyrightText === 'string' ? siteTexts.copyrightText : '© Todos os direitos reservados - IAdmin 2025',
           companyName: typeof siteTexts.companyName === 'string' ? siteTexts.companyName : 'IAdmin',
-          footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!'
+          footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!',
+          facebookUrl: typeof siteTexts.facebookUrl === 'string' ? siteTexts.facebookUrl : 'https://facebook.com',
+          instagramUrl: typeof siteTexts.instagramUrl === 'string' ? siteTexts.instagramUrl : 'https://instagram.com', 
+          twitterUrl: typeof siteTexts.twitterUrl === 'string' ? siteTexts.twitterUrl : 'https://twitter.com'
         });
       } catch (error) {
         console.error('Erro ao carregar textos:', error);
@@ -36,6 +42,12 @@ export const Footer = () => {
     
     loadTexts();
   }, []);
+
+  const handleSocialClick = (url: string) => {
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <footer className="bg-secondary-color text-white">
@@ -93,15 +105,27 @@ export const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">{texts.copyrightText}</p>
             <div className="flex gap-4 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-primary-color transition-colors">
+              <button 
+                onClick={() => handleSocialClick(texts.facebookUrl)}
+                className="text-gray-400 hover:text-primary-color transition-colors"
+                aria-label="Facebook"
+              >
                 <Facebook size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary-color transition-colors">
+              </button>
+              <button 
+                onClick={() => handleSocialClick(texts.instagramUrl)}
+                className="text-gray-400 hover:text-primary-color transition-colors"
+                aria-label="Instagram"
+              >
                 <Instagram size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary-color transition-colors">
+              </button>
+              <button 
+                onClick={() => handleSocialClick(texts.twitterUrl)}
+                className="text-gray-400 hover:text-primary-color transition-colors"
+                aria-label="Twitter"
+              >
                 <Twitter size={20} />
-              </a>
+              </button>
             </div>
           </div>
         </div>

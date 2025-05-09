@@ -85,6 +85,46 @@ const FooterSection: React.FC<FooterSectionProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
+
+        <hr className="my-4" />
+        
+        <h3 className="text-md font-medium text-gray-800 mb-2">Redes Sociais</h3>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Facebook</label>
+          <input
+            type="url"
+            name="facebookUrl"
+            value={sections.facebookUrl || ''}
+            onChange={handleInputChange}
+            placeholder="https://facebook.com/suapagina"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Instagram</label>
+          <input
+            type="url"
+            name="instagramUrl"
+            value={sections.instagramUrl || ''}
+            onChange={handleInputChange}
+            placeholder="https://instagram.com/suapagina"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Twitter</label>
+          <input
+            type="url"
+            name="twitterUrl"
+            value={sections.twitterUrl || ''}
+            onChange={handleInputChange}
+            placeholder="https://twitter.com/suapagina"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
         
         <div className="flex justify-end">
           <CustomButton 

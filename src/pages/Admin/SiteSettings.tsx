@@ -15,7 +15,9 @@ import {
   fetchColorTemplates, 
   saveColorTemplate, 
   ColorTemplate,
-  testWebhookUrl 
+  testWebhookUrl,
+  getWebhookLogs,
+  clearWebhookLogs
 } from '@/utils/supabaseClient';
 import {
   Dialog,
@@ -26,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function SiteSettings() {
   const [templates, setTemplates] = useState<ColorTemplate[]>([]);
@@ -50,12 +53,14 @@ export default function SiteSettings() {
   const [siteTitle, setSiteTitle] = useState("");
   const [copyrightText, setCopyrightText] = useState("");
   const [testingWebhook, setTestingWebhook] = useState(false);
-  const [webhookTestResult, setWebhookTestResult] = useState<boolean | null>(null);
+  const [webhookTestResult, setWebhookTestResult] = useState<{success: boolean, status?: number, message?: string, payload?: any} | null>(null);
   const [embedCode, setEmbedCode] = useState("");
   const [embedPosition, setEmbedPosition] = useState<'left' | 'right'>('right');
   const [embedActive, setEmbedActive] = useState(false);
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
+  const [showWebhookLogs, setShowWebhookLogs] = useState(false);
 
   useEffect(() => {
     // Carregar dados do site
@@ -91,6 +96,10 @@ export default function SiteSettings() {
         if (savedSelectedTemplate) {
           setSelectedTemplate(savedSelectedTemplate);
         }
+        
+        // Carregar logs de webhook
+        const logs = getWebhookLogs();
+        setWebhookLogs(logs);
       } catch (error) {
         console.error('Erro ao carregar dados do site:', error);
         toast.error('Erro ao carregar configurações do site');
@@ -258,17 +267,33 @@ export default function SiteSettings() {
       const result = await testWebhookUrl(webhookUrl);
       setWebhookTestResult(result);
       
-      if (result) {
+      // Atualizar logs de webhook
+      const logs = getWebhookLogs();
+      setWebhookLogs(logs);
+      
+      if (result.success) {
         toast.success("Teste de webhook bem-sucedido!");
       } else {
         toast.error("Falha ao testar o webhook.");
       }
     } catch (error) {
-      setWebhookTestResult(false);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setWebhookTestResult({
+        success: false,
+        message: errorMessage
+      });
       toast.error("Erro ao testar o webhook.");
       console.error("Webhook test error:", error);
     } finally {
       setTestingWebhook(false);
+    }
+  };
+  
+  const handleClearWebhookLogs = () => {
+    if (window.confirm("Tem certeza que deseja limpar todos os logs de webhook? Esta ação não pode ser desfeita.")) {
+      clearWebhookLogs();
+      setWebhookLogs([]);
+      toast.success("Logs de webhook limpos com sucesso");
     }
   };
 
@@ -284,11 +309,9 @@ export default function SiteSettings() {
         <Tabs defaultValue="appearance">
           <TabsList className="border-b w-full rounded-t-lg">
             <TabsTrigger value="appearance">Aparência</TabsTrigger>
-            <TabsTrigger value="images">Imagens</TabsTrigger>
             <TabsTrigger value="favicon">Favicon</TabsTrigger>
             <TabsTrigger value="integration">Integração</TabsTrigger>
             <TabsTrigger value="embed">Embed</TabsTrigger>
-            <TabsTrigger value="geral">Geral</TabsTrigger>
           </TabsList>
           
           <TabsContent value="appearance" className="p-6 space-y-6">
@@ -377,88 +400,11 @@ export default function SiteSettings() {
             </div>
           </TabsContent>
           
-          <TabsContent value="images" className="p-6 space-y-6">
-            <div>
-              <h2 className="text-xl font-medium text-gray-800 mb-4">Imagens do Site</h2>
-              <p className="text-gray-500 mb-6">
-                Configure as imagens que serão exibidas nas diferentes seções do site.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Imagem do Robô</h3>
-                  <p className="text-sm text-gray-500">
-                    Esta imagem é exibida na seção "A Quem Atendemos" do site.
-                  </p>
-                  
-                  <div>
-                    <Label htmlFor="robotImage" className="block text-sm font-medium text-gray-700 mb-1">
-                      URL da Imagem do Robô
-                    </Label>
-                    <Input
-                      id="robotImage"
-                      type="text"
-                      value={robotImage}
-                      onChange={handleRobotImageChange}
-                      placeholder="/lovable-uploads/robot-image.png"
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div className="border rounded-lg p-4 bg-gray-50">
-                    <img
-                      src={robotImage || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'}
-                      alt="Imagem do Robô"
-                      className="h-40 object-contain mx-auto"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png';
-                      }}
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Imagem de Contato</h3>
-                  <p className="text-sm text-gray-500">
-                    Esta imagem é exibida no formulário de contato.
-                  </p>
-                  
-                  <div>
-                    <Label htmlFor="contactImage" className="block text-sm font-medium text-gray-700 mb-1">
-                      URL da Imagem de Contato
-                    </Label>
-                    <Input
-                      id="contactImage"
-                      type="text"
-                      value={contactImage}
-                      onChange={handleContactImageChange}
-                      placeholder="/lovable-uploads/contact-image.png"
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div className="border rounded-lg p-4 bg-gray-50">
-                    <img
-                      src={contactImage || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'}
-                      alt="Imagem de Contato"
-                      className="h-40 object-contain mx-auto"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png';
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-          
           <TabsContent value="favicon" className="p-6 space-y-6">
             <div>
-              <h2 className="text-xl font-medium text-gray-800 mb-4">Favicon do Site</h2>
+              <h2 className="text-xl font-medium text-gray-800 mb-4">Favicon e Título do Site</h2>
               <p className="text-gray-500 mb-4">
-                Defina o ícone que será exibido na aba do navegador.
+                Defina o ícone que será exibido na aba do navegador e o título da página.
               </p>
               
               <div className="space-y-4">
@@ -506,6 +452,40 @@ export default function SiteSettings() {
                       </div>
                     </div>
                   </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="siteTitle" className="block text-sm font-medium text-gray-700 mb-1">
+                    Título do Site
+                  </Label>
+                  <Input
+                    id="siteTitle"
+                    type="text"
+                    value={siteTitle}
+                    onChange={handleSiteTitleChange}
+                    placeholder="IAdmin"
+                    className="w-full"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este título será exibido na barra de navegação e na aba do navegador.
+                  </p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="copyrightText" className="block text-sm font-medium text-gray-700 mb-1">
+                    Texto de Copyright
+                  </Label>
+                  <Input
+                    id="copyrightText"
+                    type="text"
+                    value={copyrightText}
+                    onChange={handleCopyrightTextChange}
+                    placeholder="© Todos os direitos reservados - IAdmin 2024"
+                    className="w-full"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este texto será exibido no rodapé de todas as páginas.
+                  </p>
                 </div>
                 
                 <div className="mt-4">
@@ -566,16 +546,78 @@ export default function SiteSettings() {
                         {testingWebhook ? "Testando..." : "Testar Webhook"}
                       </CustomButton>
                       
+                      <CustomButton
+                        type="button"
+                        variant="secondary"
+                        onClick={() => setShowWebhookLogs(!showWebhookLogs)}
+                        className="w-full md:w-auto"
+                      >
+                        {showWebhookLogs ? "Ocultar Logs" : "Mostrar Logs"}
+                      </CustomButton>
+                      
                       {webhookTestResult !== null && (
-                        <Alert className={webhookTestResult ? "bg-green-50" : "bg-red-50"}>
+                        <Alert className={webhookTestResult.success ? "bg-green-50" : "bg-red-50"}>
                           <AlertDescription className="text-sm">
-                            {webhookTestResult 
+                            {webhookTestResult.success 
                               ? "O teste foi bem-sucedido! Seu webhook está funcionando." 
                               : "Falha no teste do webhook. Verifique a URL e tente novamente."}
                           </AlertDescription>
                         </Alert>
                       )}
                     </div>
+                    
+                    {showWebhookLogs && (
+                      <div className="mt-4 border rounded-md overflow-hidden">
+                        <div className="bg-gray-100 px-4 py-2 flex justify-between items-center border-b">
+                          <h4 className="font-medium">Logs de Webhook</h4>
+                          <CustomButton
+                            type="button"
+                            variant="secondary"
+                            onClick={handleClearWebhookLogs}
+                            className="text-xs"
+                          >
+                            Limpar Logs
+                          </CustomButton>
+                        </div>
+                        
+                        <ScrollArea className="h-60 rounded-b-md">
+                          {webhookLogs.length > 0 ? (
+                            <div className="divide-y">
+                              {webhookLogs.map((log, index) => (
+                                <div key={index} className="p-3 text-sm">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className={`inline-block w-3 h-3 rounded-full ${log.success ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                    <span className="font-medium">
+                                      {new Date(log.timestamp).toLocaleString()} - Status: {log.status || 'N/A'}
+                                    </span>
+                                  </div>
+                                  <div className="ml-5 text-gray-600">
+                                    <div><strong>URL:</strong> {log.url}</div>
+                                    <div className="mt-1">
+                                      <strong>Payload:</strong>
+                                      <pre className="bg-gray-100 p-2 rounded mt-1 overflow-x-auto text-xs">
+                                        {JSON.stringify(log.payload, null, 2)}
+                                      </pre>
+                                    </div>
+                                    <div className="mt-1">
+                                      <strong>Resposta:</strong>
+                                      <div className="bg-gray-100 p-2 rounded mt-1 overflow-x-auto text-xs whitespace-pre-wrap">
+                                        {typeof log.response === 'string' ? log.response.substring(0, 500) : JSON.stringify(log.response)}
+                                        {typeof log.response === 'string' && log.response.length > 500 ? '...' : ''}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="p-4 text-center text-gray-500">
+                              Nenhum log de webhook disponível
+                            </div>
+                          )}
+                        </ScrollArea>
+                      </div>
+                    )}
                     
                     <div>
                       <h4 className="text-sm font-medium mt-3 mb-1">Formato do Payload</h4>
@@ -680,51 +722,6 @@ export default function SiteSettings() {
                       </div>
                     )}
                   </div>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="geral" className="p-6 space-y-6">
-            <div>
-              <h2 className="text-xl font-medium text-gray-800 mb-4">Configurações Gerais</h2>
-              <p className="text-gray-500 mb-6">
-                Personalize as informações gerais do site.
-              </p>
-              
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="siteTitle" className="block text-sm font-medium text-gray-700 mb-1">
-                    Título do Site
-                  </Label>
-                  <Input
-                    id="siteTitle"
-                    type="text"
-                    value={siteTitle}
-                    onChange={handleSiteTitleChange}
-                    placeholder="IAdmin"
-                    className="w-full"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Este título será exibido na barra de navegação e na aba do navegador.
-                  </p>
-                </div>
-                
-                <div>
-                  <Label htmlFor="copyrightText" className="block text-sm font-medium text-gray-700 mb-1">
-                    Texto de Copyright
-                  </Label>
-                  <Input
-                    id="copyrightText"
-                    type="text"
-                    value={copyrightText}
-                    onChange={handleCopyrightTextChange}
-                    placeholder="© Todos os direitos reservados - IAdmin 2024"
-                    className="w-full"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Este texto será exibido no rodapé de todas as páginas.
-                  </p>
                 </div>
               </div>
             </div>
