@@ -1,14 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { fetchEmbedConfig } from '@/utils/supabaseClient';
+import { fetchEmbedConfig } from '@/utils/supabase/embedConfig';
+import { EmbedConfig } from '@/utils/supabase/types';
 
 const EmbedComponent: React.FC = () => {
-  const [embedConfig, setEmbedConfig] = useState<{
-    code: string;
-    position: 'left' | 'right';
-    isActive: boolean;
-  } | null>(null);
+  const [embedConfig, setEmbedConfig] = useState<EmbedConfig | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {

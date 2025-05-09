@@ -23,7 +23,7 @@ export async function fetchEmbedConfig(): Promise<EmbedConfig> {
     
     return {
       code: data.code,
-      position: data.position as 'left' | 'right',
+      position: data.position === 'left' ? 'left' : 'right', // Garantir que position seja 'left' ou 'right'
       isActive: data.is_active
     };
   } catch (error) {

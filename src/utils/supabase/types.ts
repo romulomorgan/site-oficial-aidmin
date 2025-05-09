@@ -47,7 +47,7 @@ export interface EmbedConfig {
   id?: string;
   code: string;
   isActive: boolean;
-  position: string;
+  position: 'left' | 'right';
 }
 
 // Tipos para webhooks
