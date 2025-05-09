@@ -14,7 +14,7 @@ import {
   MessageCircleQuestion,
   Layers
 } from 'lucide-react';
-import { SidebarContext } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar';
 
 type MenuItem = {
   name: string;
@@ -26,7 +26,7 @@ const AdminLayout: React.FC = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isOpen, toggle } = React.useContext(SidebarContext);
+  const { open: isOpen, setOpen: toggle } = useSidebar();
   
   const menuItems: MenuItem[] = [
     {
@@ -87,7 +87,7 @@ const AdminLayout: React.FC = () => {
               <span className="text-xl font-semibold mx-auto">A</span>
             )}
             <button 
-              onClick={toggle}
+              onClick={() => toggle(!isOpen)}
               className="p-1 rounded-md hover:bg-gray-100"
               aria-label="Toggle sidebar"
             >
