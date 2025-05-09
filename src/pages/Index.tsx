@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationBar } from '@/components/ui/NavigationBar';
@@ -8,6 +7,7 @@ import { CustomButton } from '@/components/ui/CustomButton';
 import { ArrowRight, Play, CheckCircle } from 'lucide-react';
 import { fetchSiteTexts, fetchTestimonials, fetchFAQs, Testimonial, FAQItem, saveEmailSubscription } from '@/utils/supabaseClient';
 import { toast } from 'sonner';
+import YouTube from 'react-youtube';
 
 export default function Index() {
   // Estado para armazenar textos do site
@@ -19,6 +19,7 @@ export default function Index() {
   // Estado para armazenar email para inscrição
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [videoId, setVideoId] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
@@ -26,6 +27,15 @@ export default function Index() {
         // Carregar textos do site
         const texts = await fetchSiteTexts();
         setSiteTexts(texts || {});
+        
+        // Extrair o ID do vídeo do YouTube se disponível
+        if (texts.heroVideoUrl) {
+          const videoUrl = texts.heroVideoUrl.toString();
+          const videoIdMatch = videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+          if (videoIdMatch && videoIdMatch[1]) {
+            setVideoId(videoIdMatch[1]);
+          }
+        }
         
         // Carregar depoimentos
         const testimonialData = await fetchTestimonials();
@@ -73,21 +83,28 @@ export default function Index() {
     }
   };
 
+  const youtubeOpts = {
+    height: '100%',
+    width: '100%',
+    playerVars: {
+      autoplay: 0,
+    },
+  };
+
   return (
     <main className="flex flex-col items-center">
       {/* Hero Section com Gradiente e Vídeo */}
       <section
-        className="relative w-full"
+        className="relative w-full pt-28 pb-20"
         style={{
           background: "linear-gradient(to bottom right, #2D0A16, #FF196E)",
-          padding: "60px 20px 80px",
         }}
       >
         {/* Navegação */}
         <NavigationBar />
         
         {/* Conteúdo Hero */}
-        <div className="relative z-10 max-w-[1140px] mx-auto flex flex-col md:flex-row items-center gap-10 mt-16">
+        <div className="relative z-10 max-w-[1140px] mx-auto flex flex-col md:flex-row items-center gap-10 px-4">
           <div className="flex-1 text-white">
             <h1 className="text-white text-[56px] font-semibold leading-tight mb-2 max-md:text-[40px]">
               {siteTexts.heroTitle?.toString() || 'Destrave a fronteira da produtividade.'}
@@ -102,7 +119,7 @@ export default function Index() {
                 </CustomButton>
               </Link>
               <a href="#" className="inline-flex items-center text-white hover:text-white/80 transition-colors">
-                <span className="mr-2">Contrate uma AI Poderosa!</span>
+                <span className="mr-2">{siteTexts.footerButtonText?.toString() || 'Contrate uma AI Poderosa!'}</span>
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
                   <Play size={12} className="text-white ml-0.5" />
                 </div>
@@ -110,17 +127,23 @@ export default function Index() {
             </div>
           </div>
           <div className="flex-1 flex justify-center">
-            <div className="relative w-full max-w-[450px]">
-              <img
-                src="/lovable-uploads/7c1a0429-de82-405f-b7d2-1f9d08e9558e.png"
-                alt="AI Demonstração"
-                className="w-full rounded-lg shadow-lg"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all">
-                  <Play size={24} className="text-white ml-0.5" />
-                </button>
-              </div>
+            <div className="relative w-full max-w-[450px] aspect-video rounded-lg overflow-hidden shadow-lg">
+              {videoId ? (
+                <YouTube videoId={videoId} opts={youtubeOpts} className="w-full h-full" />
+              ) : (
+                <>
+                  <img
+                    src="/lovable-uploads/7c1a0429-de82-405f-b7d2-1f9d08e9558e.png"
+                    alt="AI Demonstração"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all">
+                      <Play size={24} className="text-white ml-0.5" />
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -137,12 +160,14 @@ export default function Index() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-              <img
-                src={siteTexts.assistantCardImage?.toString() || '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png'}
-                alt="Assistente IA"
-                className="w-full aspect-[4/3] object-cover"
-              />
+            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden hover:shadow-md transition-shadow h-full">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={siteTexts.assistantCardImage?.toString() || '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png'}
+                  alt="Assistente IA"
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-2 text-[#222]">{siteTexts.assistantCardTitle?.toString() || 'ASSISTENTE DE IA'}</h3>
                 {siteTexts.assistantCardDescription && (
@@ -151,12 +176,14 @@ export default function Index() {
               </div>
             </div>
             
-            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-              <img
-                src={siteTexts.bpoProcessosCardImage?.toString() || '/lovable-uploads/232e98e1-6691-4748-89c8-dd6300343696.png'}
-                alt="BPO com IA"
-                className="w-full aspect-[4/3] object-cover"
-              />
+            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden hover:shadow-md transition-shadow h-full">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={siteTexts.bpoProcessosCardImage?.toString() || '/lovable-uploads/232e98e1-6691-4748-89c8-dd6300343696.png'}
+                  alt="BPO com IA"
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-2 text-[#222]">{siteTexts.bpoProcessosCardTitle?.toString() || 'BPO COM PROCESSOS DE NEGÓCIOS'}</h3>
                 {siteTexts.bpoProcessosCardDescription && (
@@ -165,12 +192,14 @@ export default function Index() {
               </div>
             </div>
             
-            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-              <img
-                src={siteTexts.bpoProjetosCardImage?.toString() || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'}
-                alt="Sistema de Projetos"
-                className="w-full aspect-[4/3] object-cover"
-              />
+            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden hover:shadow-md transition-shadow h-full">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={siteTexts.bpoProjetosCardImage?.toString() || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'}
+                  alt="Sistema de Projetos"
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-2 text-[#222]">{siteTexts.bpoProjetosCardTitle?.toString() || 'BPO COM PROJETOS E DESENVOLVIMENTO'}</h3>
                 {siteTexts.bpoProjetosCardDescription && (
@@ -193,11 +222,11 @@ export default function Index() {
           </div>
           
           <div className="flex flex-col md:flex-row gap-8 items-center">
-            <div className="flex-1">
+            <div className="flex-1 relative h-[300px]">
               <img
                 src={siteTexts.expansionImage?.toString() || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'}
                 alt="Robô IA"
-                className="max-w-full max-h-[400px]"
+                className="w-full h-full object-contain"
               />
             </div>
             

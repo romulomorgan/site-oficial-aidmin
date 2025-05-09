@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +7,10 @@ import { fetchSiteTexts, updateSiteText } from '@/utils/supabaseClient';
 export default function HomePageSections() {
   const [isLoading, setIsLoading] = useState(false);
   const [sections, setSections] = useState({
+    // Header Section (Novo)
+    logoUrl: '',
+    siteTitle: '',
+    
     // Hero Section
     heroTitle: '',
     heroSubtitle: '',
@@ -74,7 +77,7 @@ export default function HomePageSections() {
     copyrightText: ''
   });
 
-  const [activeTab, setActiveTab] = useState("hero");
+  const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
     const loadData = async () => {
@@ -82,6 +85,10 @@ export default function HomePageSections() {
       try {
         const siteTexts = await fetchSiteTexts();
         setSections({
+          // Header Section
+          logoUrl: siteTexts.logoUrl?.toString() || '',
+          siteTitle: siteTexts.siteTitle?.toString() || 'IAdmin',
+          
           // Hero Section
           heroTitle: siteTexts.heroTitle?.toString() || 'Destrave a fronteira da produtividade.',
           heroSubtitle: siteTexts.heroSubtitle?.toString() || 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.',
@@ -142,10 +149,10 @@ export default function HomePageSections() {
           // Footer Section
           companyName: siteTexts.companyName?.toString() || 'Virtia',
           footerAbout: siteTexts.footerAbout?.toString() || 'A sua assistente de AI',
-          footerPhoneNumber: siteTexts.footerPhoneNumber?.toString() || '(11) 93956-965',
-          footerEmail: siteTexts.footerEmail?.toString() || 'iadminassistant@gmail.com',
+          footerPhoneNumber: siteTexts.footerPhoneNumber?.toString() || '(31) 98767-8307',
+          footerEmail: siteTexts.footerEmail?.toString() || 'lucas@gmail.com',
           footerButtonText: siteTexts.footerButtonText?.toString() || 'Contrate uma AI Poderosa!',
-          copyrightText: siteTexts.copyrightText?.toString() || '© Todos os direitos reservados - IAdmin 2024'
+          copyrightText: siteTexts.copyrightText?.toString() || '© Todos os direitos reservados - IAdmin 2025'
         });
       } catch (error) {
         console.error('Erro ao carregar textos:', error);
@@ -174,6 +181,12 @@ export default function HomePageSections() {
       
       // Determinar quais campos salvar com base na seção
       switch (section) {
+        case 'header':
+          updates = {
+            logoUrl: sections.logoUrl,
+            siteTitle: sections.siteTitle,
+          };
+          break;
         case 'hero':
           updates = {
             heroTitle: sections.heroTitle,
@@ -272,7 +285,8 @@ export default function HomePageSections() {
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Seções da Página Inicial</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-6 overflow-x-auto">
+        <TabsList className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 mb-6 overflow-x-auto">
+          <TabsTrigger value="header">Cabeçalho</TabsTrigger>
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="whatWeDo">O que Fazemos</TabsTrigger>
           <TabsTrigger value="expansion">Em Expansão</TabsTrigger>
@@ -282,6 +296,52 @@ export default function HomePageSections() {
           <TabsTrigger value="contact">Contato</TabsTrigger>
           <TabsTrigger value="footer">Rodapé</TabsTrigger>
         </TabsList>
+        
+        {/* Header Section */}
+        <TabsContent value="header" className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-lg font-medium text-gray-800 mb-4">Cabeçalho do Site</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Título do Site</label>
+              <input
+                type="text"
+                name="siteTitle"
+                value={sections.siteTitle}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="Nome do site/empresa"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Logo</label>
+              <input
+                type="text"
+                name="logoUrl"
+                value={sections.logoUrl}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="URL da imagem do logo"
+              />
+              {sections.logoUrl && (
+                <div className="mt-2 flex justify-center">
+                  <img src={sections.logoUrl} alt="Preview do Logo" className="h-16 w-16 object-contain border rounded" />
+                </div>
+              )}
+            </div>
+            
+            <div className="flex justify-end">
+              <CustomButton 
+                onClick={() => handleSaveSection('header')}
+                variant="primary"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+              </CustomButton>
+            </div>
+          </div>
+        </TabsContent>
         
         {/* Hero Section */}
         <TabsContent value="hero" className="bg-white rounded-lg shadow-sm p-6">
@@ -333,15 +393,26 @@ export default function HomePageSections() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Vídeo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Vídeo do YouTube</label>
               <input
                 type="text"
                 name="heroVideoUrl"
                 value={sections.heroVideoUrl}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="URL do vídeo do YouTube ou outro serviço"
+                placeholder="https://www.youtube.com/watch?v=XXXXXX"
               />
+              <p className="text-xs text-gray-500 mt-1">Digite a URL completa do vídeo do YouTube</p>
+              
+              {sections.heroVideoUrl && (
+                <div className="mt-3 p-2 border rounded-md">
+                  <p className="text-sm font-medium mb-1">Preview:</p>
+                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                    {/* Aqui poderia ser renderizado um preview do vídeo */}
+                    <p className="text-gray-500">URL de vídeo configurada</p>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="flex justify-end">
@@ -356,7 +427,7 @@ export default function HomePageSections() {
           </div>
         </TabsContent>
         
-        {/* O que Fazemos Section */}
+        {/* O que fazemos Section */}
         <TabsContent value="whatWeDo" className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "O que Fazemos de Melhor"</h2>
           
@@ -514,7 +585,7 @@ export default function HomePageSections() {
           </div>
         </TabsContent>
         
-        {/* Em Expansão Section */}
+        {/* Em expansão Section */}
         <TabsContent value="expansion" className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Em Expansão"</h2>
           
