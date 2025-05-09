@@ -4,19 +4,10 @@ export interface SiteTexts {
   [key: string]: string | boolean | undefined;
 }
 
-// Tipos para templates de cores
-export interface ColorTemplate {
-  id: string;
-  name: string;
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  backgroundColor: string;
-  textColor: string;
-  buttonTextColor: string;
-  menuTextColor: string;
+// Tipos para templates de cores (mantido para compatibilidade)
+export type ColorTemplate = import('../themes').ThemeTemplate & {
   isDefault?: boolean;
-}
+};
 
 // Tipos para depoimentos
 export interface Testimonial {
