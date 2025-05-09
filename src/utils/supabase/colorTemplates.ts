@@ -63,16 +63,31 @@ async function insertDefaultTemplates(): Promise<boolean> {
       updated_at: new Date().toISOString()
     }));
 
+    // Verificar templates existentes para evitar duplicações
+    const { data: existingTemplates } = await supabase
+      .from('site_color_templates')
+      .select('id');
+    
+    const existingIds = existingTemplates ? existingTemplates.map(t => t.id) : [];
+    
+    // Filtrar apenas templates que não existem ainda
+    const newTemplates = templatesForDb.filter(t => !existingIds.includes(t.id));
+    
+    if (newTemplates.length === 0) {
+      console.log('Todos os templates padrão já estão inseridos');
+      return true;
+    }
+
     const { error } = await supabase
       .from('site_color_templates')
-      .insert(templatesForDb);
+      .insert(newTemplates);
     
     if (error) {
       console.error('Erro ao inserir templates padrão:', error);
       return false;
     }
     
-    console.log('Templates padrão inseridos com sucesso');
+    console.log(`${newTemplates.length} templates padrão inseridos com sucesso`);
     return true;
   } catch (error) {
     console.error('Erro ao inserir templates padrão:', error);
@@ -84,6 +99,11 @@ async function insertDefaultTemplates(): Promise<boolean> {
 export async function saveColorTemplate(template: ColorTemplate): Promise<boolean> {
   console.log('Salvando template de cores no Supabase:', template.name);
   try {
+    // Gerar um ID único se não existir
+    if (!template.id || template.id === 'custom') {
+      template.id = `custom-${Date.now()}`;
+    }
+    
     // Verificar se o template já existe
     const { data } = await supabase
       .from('site_color_templates')
@@ -136,7 +156,7 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
     }
     
     // Atualizar também no localStorage para fallback
-    const localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== template.id);
+    let localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== template.id);
     localStorage.setItem('siteTemplates', JSON.stringify([...localTemplates, template]));
     
     console.log('Template salvo com sucesso');
@@ -149,23 +169,28 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
 
 // Função para obter templates de cores do localStorage
 export function getColorTemplatesFromLocalStorage(): ColorTemplate[] {
-  const savedTemplates = localStorage.getItem('defaultTemplates');
-  const customTemplates = localStorage.getItem('siteTemplates');
-  let allTemplates: ColorTemplate[] = [];
-  
-  if (savedTemplates) {
-    allTemplates = JSON.parse(savedTemplates);
-  }
-  
-  if (customTemplates) {
-    allTemplates = [...allTemplates, ...JSON.parse(customTemplates)];
-  }
-  
-  if (allTemplates.length === 0) {
+  try {
+    const savedTemplates = localStorage.getItem('defaultTemplates');
+    const customTemplates = localStorage.getItem('siteTemplates');
+    let allTemplates: ColorTemplate[] = [];
+    
+    if (savedTemplates) {
+      allTemplates = JSON.parse(savedTemplates);
+    }
+    
+    if (customTemplates) {
+      allTemplates = [...allTemplates, ...JSON.parse(customTemplates)];
+    }
+    
+    if (allTemplates.length === 0) {
+      return defaultTemplates;
+    }
+    
+    return allTemplates;
+  } catch (error) {
+    console.error('Erro ao ler templates do localStorage:', error);
     return defaultTemplates;
   }
-  
-  return allTemplates;
 }
 
 // Função para excluir um template de cores
@@ -173,8 +198,8 @@ export async function deleteColorTemplate(templateId: string): Promise<boolean> 
   console.log('Excluindo template de cores:', templateId);
   try {
     // Verificar se é um template padrão
-    if (templateId === 'default') {
-      console.error('Não é possível excluir o template padrão');
+    if (templateId === 'default' || defaultTemplates.some(t => t.id === templateId)) {
+      console.error('Não é possível excluir templates padrão');
       return false;
     }
     
@@ -190,8 +215,13 @@ export async function deleteColorTemplate(templateId: string): Promise<boolean> 
     }
     
     // Excluir também do localStorage
-    const localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== templateId);
-    localStorage.setItem('siteTemplates', JSON.stringify(localTemplates.filter(t => t.id !== 'default')));
+    try {
+      const localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== templateId);
+      localStorage.setItem('siteTemplates', JSON.stringify(localTemplates.filter(t => t.id !== 'default')));
+    } catch (e) {
+      console.error('Erro ao atualizar localStorage após exclusão:', e);
+      // Continue mesmo com erro no localStorage
+    }
     
     console.log('Template excluído com sucesso');
     return true;

@@ -1,4 +1,3 @@
-
 export interface ThemeTemplate {
   id: string;
   name: string;
@@ -156,92 +155,59 @@ export const defaultTemplates: ThemeTemplate[] = [
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
   },
-  // Adicionando 8 novos templates super modernos
+  // Adicionando 5 novos templates modernos
   {
-    id: "neon",
-    name: "Neon",
-    primaryColor: "#00F5A0",
-    secondaryColor: "#000B1C",
-    accentColor: "#00D9F5",
-    backgroundColor: "#0A0A0A",
-    textColor: "#FFFFFF",
-    buttonTextColor: "#000B1C",
-    menuTextColor: "#000B1C"
+    id: "gradientPurple",
+    name: "Gradiente Roxo",
+    primaryColor: "#9b87f5",
+    secondaryColor: "#7E69AB",
+    accentColor: "#D6BCFA",
+    backgroundColor: "#F8F9FC",
+    textColor: "#1A1F2C",
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   },
   {
-    id: "coral",
-    name: "Coral",
-    primaryColor: "#FF6F61",
-    secondaryColor: "#455A64",
-    accentColor: "#FFA07A",
+    id: "modernMinimal",
+    name: "Minimalista Moderno",
+    primaryColor: "#3A4750",
+    secondaryColor: "#303841",
+    accentColor: "#00ADB5",
+    backgroundColor: "#F7F7F7",
+    textColor: "#303841",
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
+  },
+  {
+    id: "vibrantGradient",
+    name: "Gradiente Vibrante",
+    primaryColor: "#8B5CF6",
+    secondaryColor: "#D946EF",
+    accentColor: "#F97316",
     backgroundColor: "#FFFFFF",
-    textColor: "#37474F",
+    textColor: "#452C63",
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
   },
   {
-    id: "monochrome",
-    name: "Monocromático",
-    primaryColor: "#10101E",
-    secondaryColor: "#303035",
-    accentColor: "#494950",
-    backgroundColor: "#F5F5F7",
-    textColor: "#10101E",
-    buttonTextColor: "#F5F5F7",
-    menuTextColor: "#F5F5F7"
-  },
-  {
-    id: "cyberpunk",
-    name: "Cyberpunk",
-    primaryColor: "#F4FA9C",
-    secondaryColor: "#242582",
-    accentColor: "#FB62F6",
-    backgroundColor: "#121212",
-    textColor: "#FFFFFF",
-    buttonTextColor: "#121212",
-    menuTextColor: "#121212"
-  },
-  {
-    id: "wellness",
-    name: "Bem-estar",
-    primaryColor: "#78C091",
-    secondaryColor: "#2C5741",
-    accentColor: "#AAD9BB",
-    backgroundColor: "#FAFBF6",
-    textColor: "#383838",
+    id: "softNature",
+    name: "Natureza Suave",
+    primaryColor: "#588157",
+    secondaryColor: "#3A5A40",
+    accentColor: "#A3B18A",
+    backgroundColor: "#F2FCE2",
+    textColor: "#344E41",
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
   },
   {
-    id: "luxury",
-    name: "Luxo",
-    primaryColor: "#C9B037",
-    secondaryColor: "#202020",
-    accentColor: "#D4AF37",
-    backgroundColor: "#FFFFFF",
-    textColor: "#202020",
-    buttonTextColor: "#FFFFFF",
-    menuTextColor: "#FFFFFF"
-  },
-  {
-    id: "autumn",
-    name: "Outono",
-    primaryColor: "#D96941",
-    secondaryColor: "#592C1C",
-    accentColor: "#F2A65A",
-    backgroundColor: "#F8F4E9",
-    textColor: "#402E32",
-    buttonTextColor: "#FFFFFF",
-    menuTextColor: "#FFFFFF"
-  },
-  {
-    id: "future",
-    name: "Futuro",
-    primaryColor: "#3A86FF",
-    secondaryColor: "#1E1E24",
-    accentColor: "#8ECAE6",
-    backgroundColor: "#F8F9FA",
-    textColor: "#1E1E24",
+    id: "oceanBreeze",
+    name: "Brisa Oceânica",
+    primaryColor: "#0EA5E9",
+    secondaryColor: "#0284C7",
+    accentColor: "#38BDF8",
+    backgroundColor: "#F0F9FF",
+    textColor: "#0C4A6E",
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
   }
