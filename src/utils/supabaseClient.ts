@@ -132,6 +132,60 @@ export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
   }
 }
 
+// Função para salvar template de cores
+export async function saveColorTemplate(template: ColorTemplate): Promise<boolean> {
+  try {
+    // Verificar se o template já existe
+    const { data } = await supabase
+      .from('site_color_templates')
+      .select('id')
+      .eq('id', template.id)
+      .maybeSingle();
+    
+    // Preparar o objeto para inserção/atualização no formato do banco
+    const templateData = {
+      id: template.id,
+      name: template.name,
+      primary_color: template.primaryColor,
+      secondary_color: template.secondaryColor,
+      accent_color: template.accentColor,
+      background_color: template.backgroundColor,
+      text_color: template.textColor,
+      button_text_color: template.buttonTextColor || '#FFFFFF',
+      menu_text_color: template.menuTextColor || '#FFFFFF',
+      is_default: template.isDefault || false,
+      updated_at: new Date().toISOString()
+    };
+    
+    if (data) {
+      // Atualizar template existente
+      const { error } = await supabase
+        .from('site_color_templates')
+        .update(templateData)
+        .eq('id', template.id);
+      
+      if (error) throw error;
+    } else {
+      // Inserir novo template
+      templateData.created_at = new Date().toISOString();
+      const { error } = await supabase
+        .from('site_color_templates')
+        .insert([templateData]);
+      
+      if (error) throw error;
+    }
+    
+    // Atualizar também no localStorage para fallback
+    const localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== template.id);
+    localStorage.setItem('siteTemplates', JSON.stringify([...localTemplates, template]));
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao salvar template de cores:', error);
+    return false;
+  }
+}
+
 // Função para obter depoimentos
 export async function fetchTestimonials(): Promise<Testimonial[]> {
   try {
@@ -155,6 +209,52 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
   } catch (error) {
     console.error('Erro ao buscar depoimentos:', error);
     return getTestimonialsFromLocalStorage();
+  }
+}
+
+// Função para adicionar depoimento
+export async function addTestimonial(testimonial: Omit<Testimonial, 'id'>): Promise<boolean> {
+  try {
+    console.log('Adicionando depoimento:', testimonial);
+    
+    // Preparar o objeto para inserção no formato do banco
+    const { error } = await supabase
+      .from('site_testimonials')
+      .insert([{
+        name: testimonial.name,
+        role: testimonial.role,
+        testimonial: testimonial.testimonial,
+        avatar_url: testimonial.avatarUrl,
+        order_index: 0, // Pode ser ajustado conforme a lógica de ordenação
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }]);
+    
+    if (error) {
+      console.error('Erro específico ao adicionar depoimento:', error);
+      throw error;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao adicionar depoimento:', error);
+    return false;
+  }
+}
+
+// Função para excluir depoimento
+export async function deleteTestimonial(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('site_testimonials')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Erro ao excluir depoimento:', error);
+    return false;
   }
 }
 
@@ -183,6 +283,44 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
   }
 }
 
+// Função para adicionar FAQ
+export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('site_faqs')
+      .insert([{
+        question: faq.question,
+        answer: faq.answer,
+        active: true,
+        order_index: 0, // Pode ser ajustado conforme a lógica de ordenação
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }]);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Erro ao adicionar FAQ:', error);
+    return false;
+  }
+}
+
+// Função para excluir FAQ
+export async function deleteFAQ(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('site_faqs')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Erro ao excluir FAQ:', error);
+    return false;
+  }
+}
+
 // Função para salvar inscrição de email
 export async function saveEmailSubscription(email: string, source: string): Promise<boolean> {
   try {
@@ -208,6 +346,116 @@ export async function saveEmailSubscription(email: string, source: string): Prom
     return true;
   } catch (error) {
     console.error('Erro ao cadastrar email:', error);
+    return false;
+  }
+}
+
+// Função para obter configuração de embed
+export async function fetchEmbedConfig(): Promise<EmbedConfig> {
+  try {
+    const { data, error } = await supabase
+      .from('site_embed_config')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Erro ao carregar configuração de embed:', error);
+      return { code: '', position: 'right', isActive: false };
+    }
+    
+    if (!data) {
+      return { code: '', position: 'right', isActive: false };
+    }
+    
+    return {
+      code: data.code,
+      position: data.position as 'left' | 'right',
+      isActive: data.is_active
+    };
+  } catch (error) {
+    console.error('Erro ao buscar configuração de embed:', error);
+    return { code: '', position: 'right', isActive: false };
+  }
+}
+
+// Função para salvar configuração de embed
+export async function saveEmbedConfig(config: EmbedConfig): Promise<boolean> {
+  try {
+    // Verificar se já existe uma configuração
+    const { data, error: selectError } = await supabase
+      .from('site_embed_config')
+      .select('id')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (selectError) throw selectError;
+    
+    if (data) {
+      // Atualizar configuração existente
+      const { error } = await supabase
+        .from('site_embed_config')
+        .update({
+          code: config.code,
+          position: config.position,
+          is_active: config.isActive,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', data.id);
+      
+      if (error) throw error;
+    } else {
+      // Inserir nova configuração
+      const { error } = await supabase
+        .from('site_embed_config')
+        .insert([{
+          code: config.code,
+          position: config.position,
+          is_active: config.isActive,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
+      
+      if (error) throw error;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao salvar configuração de embed:', error);
+    return false;
+  }
+}
+
+// Função para testar URL do webhook
+export async function testWebhookUrl(url: string): Promise<boolean> {
+  try {
+    console.log('Testando webhook URL:', url);
+    
+    // Criar um payload de teste
+    const testPayload = {
+      firstName: 'Teste',
+      lastName: 'Webhook',
+      email: 'teste@exemplo.com',
+      phone: '11912345678',
+      message: 'Mensagem de teste do webhook',
+      date: new Date().toISOString()
+    };
+    
+    // Realizar uma solicitação de teste para o webhook
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(testPayload)
+    });
+    
+    // Considerar sucesso se o status da resposta estiver entre 200 e 299
+    return response.status >= 200 && response.status < 300;
+  } catch (error) {
+    console.error('Erro ao testar webhook:', error);
     return false;
   }
 }
@@ -339,3 +587,4 @@ function getFAQsFromLocalStorage(): FAQItem[] {
 // Exportar as funções para compatibilidade com código existente
 export const getSiteTexts = getSiteTextsFromLocalStorage;
 export const updateSiteTexts = updateSiteTextsInLocalStorage;
+

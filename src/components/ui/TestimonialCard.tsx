@@ -22,6 +22,10 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
             src={avatarUrl}
             alt={`${name}'s avatar`}
             className="aspect-[1] object-contain w-[45px] max-w-[45px]"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true";
+            }}
           />
         </div>
         <div className="flex flex-col items-stretch text-white font-normal">
@@ -39,3 +43,4 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
     </div>
   );
 };
+
