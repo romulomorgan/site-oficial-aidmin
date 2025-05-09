@@ -18,6 +18,7 @@ interface ContactMessage {
 }
 
 interface SiteTexts {
+  siteTitle?: string;
   whyUsImage?: string;
   robotImage?: string;
   contactImage?: string;
@@ -28,7 +29,11 @@ interface SiteTexts {
   faviconUrl?: string;
   logoUrl?: string;
   webhookUrl?: string;
-  [key: string]: string | undefined;
+  copyrightText?: string;
+  embedCode?: string;
+  embedPosition?: 'left' | 'right';
+  embedActive?: boolean;
+  [key: string]: string | boolean | undefined;
 }
 
 // Function to save an email subscription
@@ -106,10 +111,14 @@ export const deleteMessage = (id: number): void => {
 export const getSiteTexts = (): SiteTexts => {
   const savedTexts = localStorage.getItem('siteTexts');
   return savedTexts ? JSON.parse(savedTexts) : {
+    siteTitle: 'IAdmin',
     footerPhoneNumber: '(11) 93956-965',
     footerEmail: 'iadminassistant@gmail.com',
     footerAbout: 'A sua assistente de AI',
-    footerButtonText: 'Contrate uma AI Poderosa!'
+    footerButtonText: 'Contrate uma AI Poderosa!',
+    copyrightText: '© Todos os direitos reservados - IAdmin 2024',
+    embedActive: false,
+    embedPosition: 'right'
   };
 };
 
@@ -134,15 +143,36 @@ export const getEmailSubscriptions = (): EmailSubscription[] => {
 
 // Function to test webhook URL
 export const testWebhookUrl = async (url: string): Promise<boolean> => {
+  if (!url) return false;
+  
   try {
-    // Simulated test - in real app would make actual API call
+    // Para testes reais em produção, deve-se implementar uma chamada real
     console.log(`Testing webhook URL: ${url}`);
-    // Since we can't make actual API calls here, we'll return success after a delay
-    return new Promise(resolve => {
-      setTimeout(() => resolve(true), 1000);
+    
+    // Simulando um payload de teste para enviar ao webhook
+    const testPayload = {
+      firstName: "Teste",
+      lastName: "Webhook",
+      email: "teste@exemplo.com",
+      phone: "11912345678",
+      message: "Esta é uma mensagem de teste do webhook",
+      date: new Date().toISOString()
+    };
+    
+    // Tentativa real de enviar dados para o webhook (comentado para evitar erros de CORS em ambiente de desenvolvimento)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(testPayload),
     });
+    
+    // Verificar se a resposta foi bem-sucedida
+    return response.ok;
   } catch (error) {
-    console.error('Error testing webhook URL:', error);
+    console.error('Erro ao testar webhook URL:', error);
+    // Em caso de erro, retornamos falso indicando falha
     return false;
   }
 };

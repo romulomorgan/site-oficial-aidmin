@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { defaultTemplates, ThemeTemplate } from '@/utils/themeTemplates';
-import { Check, Trash, X, Plus, Edit, Globe, Send } from 'lucide-react';
+import { Check, Trash, X, Plus, Edit, Globe, Send, Code } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -14,9 +14,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 
 export default function SiteSettings() {
   const [templates, setTemplates] = useState<ThemeTemplate[]>(defaultTemplates);
@@ -29,7 +30,8 @@ export default function SiteSettings() {
     accentColor: "#FF4F8E",
     backgroundColor: "#FFFFFF",
     textColor: "#222222",
-    buttonTextColor: "#FFFFFF"
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   });
   const [editingTemplate, setEditingTemplate] = useState<ThemeTemplate | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,8 +39,14 @@ export default function SiteSettings() {
   const [webhookUrl, setWebhookUrl] = useState("");
   const [robotImage, setRobotImage] = useState("");
   const [contactImage, setContactImage] = useState("");
+  const [siteTitle, setSiteTitle] = useState("");
+  const [copyrightText, setCopyrightText] = useState("");
   const [testingWebhook, setTestingWebhook] = useState(false);
   const [webhookTestResult, setWebhookTestResult] = useState<boolean | null>(null);
+  const [embedCode, setEmbedCode] = useState("");
+  const [embedPosition, setEmbedPosition] = useState<'left' | 'right'>('right');
+  const [embedActive, setEmbedActive] = useState(false);
+  const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
   useEffect(() => {
     // Save default templates to localStorage
@@ -71,6 +79,21 @@ export default function SiteSettings() {
     if (siteTexts.contactImage) {
       setContactImage(siteTexts.contactImage);
     }
+    if (siteTexts.siteTitle) {
+      setSiteTitle(siteTexts.siteTitle);
+    }
+    if (siteTexts.copyrightText) {
+      setCopyrightText(siteTexts.copyrightText);
+    }
+    if (siteTexts.embedCode) {
+      setEmbedCode(siteTexts.embedCode);
+    }
+    if (siteTexts.embedPosition) {
+      setEmbedPosition(siteTexts.embedPosition as 'left' | 'right');
+    }
+    if (siteTexts.embedActive !== undefined) {
+      setEmbedActive(!!siteTexts.embedActive);
+    }
   }, []);
 
   const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +111,14 @@ export default function SiteSettings() {
   const handleContactImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setContactImage(e.target.value);
   };
+  
+  const handleSiteTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSiteTitle(e.target.value);
+  };
+  
+  const handleCopyrightTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCopyrightText(e.target.value);
+  };
 
   const saveSettings = () => {
     setIsLoading(true);
@@ -99,12 +130,17 @@ export default function SiteSettings() {
     localStorage.setItem('siteTemplates', JSON.stringify(customTemplates));
     localStorage.setItem('selectedTemplate', selectedTemplate);
     
-    // Save favicon URL and webhook URL to siteTexts
+    // Save all settings to siteTexts
     updateSiteTexts({
       faviconUrl: faviconUrl,
       webhookUrl: webhookUrl,
       robotImage: robotImage,
-      contactImage: contactImage
+      contactImage: contactImage,
+      siteTitle: siteTitle,
+      copyrightText: copyrightText,
+      embedCode: embedCode,
+      embedPosition: embedPosition,
+      embedActive: embedActive
     });
     
     setTimeout(() => {
@@ -126,6 +162,7 @@ export default function SiteSettings() {
     
     setTemplates([...templates, newTemplate]);
     setSelectedTemplate(newTemplate.id);
+    setOpenTemplateDialog(false); // Fechar o diálogo após adicionar
   };
   
   const handleUpdateTemplate = () => {
@@ -199,6 +236,8 @@ export default function SiteSettings() {
             <TabsTrigger value="images">Imagens</TabsTrigger>
             <TabsTrigger value="favicon">Favicon</TabsTrigger>
             <TabsTrigger value="integration">Integração</TabsTrigger>
+            <TabsTrigger value="embed">Embed</TabsTrigger>
+            <TabsTrigger value="geral">Geral</TabsTrigger>
           </TabsList>
           
           <TabsContent value="appearance" className="p-6 space-y-6">
@@ -274,148 +313,15 @@ export default function SiteSettings() {
                   </div>
                 ))}
                 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <div className="border border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-50">
-                      <div className="flex flex-col items-center gap-2 text-gray-500">
-                        <Plus size={24} />
-                        <span>Criar Template Personalizado</span>
-                      </div>
-                    </div>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Criar Template Personalizado</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="templateName">Nome</Label>
-                        <Input
-                          id="templateName"
-                          value={customTemplate.name}
-                          onChange={(e) => setCustomTemplate({...customTemplate, name: e.target.value})}
-                          className="col-span-3"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="primaryColor">Cor Primária</Label>
-                        <div className="flex col-span-3 gap-2 items-center">
-                          <Input
-                            type="color"
-                            id="primaryColor"
-                            value={customTemplate.primaryColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, primaryColor: e.target.value})}
-                            className="w-12 h-10 p-1"
-                          />
-                          <Input
-                            type="text"
-                            value={customTemplate.primaryColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, primaryColor: e.target.value})}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="secondaryColor">Cor Secundária</Label>
-                        <div className="flex col-span-3 gap-2 items-center">
-                          <Input
-                            type="color"
-                            id="secondaryColor"
-                            value={customTemplate.secondaryColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, secondaryColor: e.target.value})}
-                            className="w-12 h-10 p-1"
-                          />
-                          <Input
-                            type="text"
-                            value={customTemplate.secondaryColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, secondaryColor: e.target.value})}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="accentColor">Cor de Destaque</Label>
-                        <div className="flex col-span-3 gap-2 items-center">
-                          <Input
-                            type="color"
-                            id="accentColor"
-                            value={customTemplate.accentColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, accentColor: e.target.value})}
-                            className="w-12 h-10 p-1"
-                          />
-                          <Input
-                            type="text"
-                            value={customTemplate.accentColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, accentColor: e.target.value})}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="backgroundColor">Cor de Fundo</Label>
-                        <div className="flex col-span-3 gap-2 items-center">
-                          <Input
-                            type="color"
-                            id="backgroundColor"
-                            value={customTemplate.backgroundColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, backgroundColor: e.target.value})}
-                            className="w-12 h-10 p-1"
-                          />
-                          <Input
-                            type="text"
-                            value={customTemplate.backgroundColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, backgroundColor: e.target.value})}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="textColor">Cor de Texto</Label>
-                        <div className="flex col-span-3 gap-2 items-center">
-                          <Input
-                            type="color"
-                            id="textColor"
-                            value={customTemplate.textColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, textColor: e.target.value})}
-                            className="w-12 h-10 p-1"
-                          />
-                          <Input
-                            type="text"
-                            value={customTemplate.textColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, textColor: e.target.value})}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="buttonTextColor">Cor do Texto de Botão</Label>
-                        <div className="flex col-span-3 gap-2 items-center">
-                          <Input
-                            type="color"
-                            id="buttonTextColor"
-                            value={customTemplate.buttonTextColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
-                            className="w-12 h-10 p-1"
-                          />
-                          <Input
-                            type="text"
-                            value={customTemplate.buttonTextColor}
-                            onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <CustomButton type="button" variant="secondary" onClick={() => {}}>
-                        Cancelar
-                      </CustomButton>
-                      <CustomButton type="button" variant="primary" onClick={handleAddTemplate}>
-                        Adicionar Template
-                      </CustomButton>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <div 
+                  className="border border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-50"
+                  onClick={() => setOpenTemplateDialog(true)}
+                >
+                  <div className="flex flex-col items-center gap-2 text-gray-500">
+                    <Plus size={24} />
+                    <span>Criar Template Personalizado</span>
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
@@ -535,7 +441,7 @@ export default function SiteSettings() {
                             className="w-8 h-8 object-contain"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
-                              target.src = '/public/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png';
+                              target.src = '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png';
                             }}
                           />
                         ) : (
@@ -638,6 +544,140 @@ export default function SiteSettings() {
               </div>
             </div>
           </TabsContent>
+          
+          <TabsContent value="embed" className="p-6 space-y-6">
+            <div>
+              <h2 className="text-xl font-medium text-gray-800 mb-4">Código Embed</h2>
+              <p className="text-gray-500 mb-4">
+                Adicione um código embed (como chatbot, widget, etc) que será exibido flutuante no site.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="embedActive" className="text-sm font-medium">
+                    Ativar Embed
+                  </Label>
+                  <Switch
+                    id="embedActive"
+                    checked={embedActive}
+                    onCheckedChange={setEmbedActive}
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="embedCode" className="block text-sm font-medium text-gray-700 mb-1">
+                    Código Embed (HTML)
+                  </Label>
+                  <Textarea
+                    id="embedCode"
+                    value={embedCode}
+                    onChange={(e) => setEmbedCode(e.target.value)}
+                    placeholder="<script>...</script> ou <div>...</div>"
+                    className="w-full h-32 font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Cole aqui o código HTML fornecido pelo serviço (chatbot, widget, etc).
+                  </p>
+                </div>
+                
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">
+                    Posição no Site
+                  </Label>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="position-left"
+                        name="embedPosition"
+                        checked={embedPosition === 'left'}
+                        onChange={() => setEmbedPosition('left')}
+                        className="mr-2"
+                      />
+                      <label htmlFor="position-left">Canto Inferior Esquerdo</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="position-right"
+                        name="embedPosition"
+                        checked={embedPosition === 'right'}
+                        onChange={() => setEmbedPosition('right')}
+                        className="mr-2"
+                      />
+                      <label htmlFor="position-right">Canto Inferior Direito</label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="font-medium mb-2 flex items-center gap-2">
+                    <Code size={18} />
+                    Visualização
+                  </h3>
+                  <div className="border rounded-lg p-4 bg-gray-100 h-40 relative">
+                    {embedActive && embedCode ? (
+                      <div className={`absolute bottom-4 ${embedPosition === 'left' ? 'left-4' : 'right-4'} border border-gray-300 bg-white p-2 rounded-lg`}>
+                        <div className="text-xs text-center bg-gray-200 p-1 rounded mb-1">Embed Preview</div>
+                        <div className="w-16 h-16 bg-gray-300 flex items-center justify-center text-sm">
+                          Embed
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400">
+                        {!embedActive ? "Embed desativado" : "Nenhum código embed definido"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="geral" className="p-6 space-y-6">
+            <div>
+              <h2 className="text-xl font-medium text-gray-800 mb-4">Configurações Gerais</h2>
+              <p className="text-gray-500 mb-6">
+                Personalize as informações gerais do site.
+              </p>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="siteTitle" className="block text-sm font-medium text-gray-700 mb-1">
+                    Título do Site
+                  </Label>
+                  <Input
+                    id="siteTitle"
+                    type="text"
+                    value={siteTitle}
+                    onChange={handleSiteTitleChange}
+                    placeholder="IAdmin"
+                    className="w-full"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este título será exibido na barra de navegação e na aba do navegador.
+                  </p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="copyrightText" className="block text-sm font-medium text-gray-700 mb-1">
+                    Texto de Copyright
+                  </Label>
+                  <Input
+                    id="copyrightText"
+                    type="text"
+                    value={copyrightText}
+                    onChange={handleCopyrightTextChange}
+                    placeholder="© Todos os direitos reservados - IAdmin 2024"
+                    className="w-full"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este texto será exibido no rodapé de todas as páginas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
         
         <div className="p-6 flex justify-end border-t">
@@ -650,6 +690,160 @@ export default function SiteSettings() {
           </CustomButton>
         </div>
       </form>
+      
+      {/* Dialog for creating templates */}
+      <Dialog open={openTemplateDialog} onOpenChange={setOpenTemplateDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Criar Template Personalizado</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="templateName">Nome</Label>
+              <Input
+                id="templateName"
+                value={customTemplate.name}
+                onChange={(e) => setCustomTemplate({...customTemplate, name: e.target.value})}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="primaryColor">Cor Primária</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="primaryColor"
+                  value={customTemplate.primaryColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, primaryColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.primaryColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, primaryColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="secondaryColor">Cor Secundária</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="secondaryColor"
+                  value={customTemplate.secondaryColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, secondaryColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.secondaryColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, secondaryColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="accentColor">Cor de Destaque</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="accentColor"
+                  value={customTemplate.accentColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, accentColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.accentColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, accentColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="backgroundColor">Cor de Fundo</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="backgroundColor"
+                  value={customTemplate.backgroundColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, backgroundColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.backgroundColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, backgroundColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="textColor">Cor de Texto</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="textColor"
+                  value={customTemplate.textColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, textColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.textColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, textColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="buttonTextColor">Cor do Texto de Botão</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="buttonTextColor"
+                  value={customTemplate.buttonTextColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.buttonTextColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="menuTextColor">Cor do Texto do Menu</Label>
+              <div className="flex col-span-3 gap-2 items-center">
+                <Input
+                  type="color"
+                  id="menuTextColor"
+                  value={customTemplate.menuTextColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, menuTextColor: e.target.value})}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  type="text"
+                  value={customTemplate.menuTextColor}
+                  onChange={(e) => setCustomTemplate({...customTemplate, menuTextColor: e.target.value})}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <CustomButton type="button" variant="secondary" onClick={() => setOpenTemplateDialog(false)}>
+              Cancelar
+            </CustomButton>
+            <CustomButton type="button" variant="primary" onClick={handleAddTemplate}>
+              Adicionar Template
+            </CustomButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {/* Dialog for editing templates */}
       {editingTemplate && (
@@ -772,6 +966,24 @@ export default function SiteSettings() {
                     type="text"
                     value={editingTemplate.buttonTextColor || "#FFFFFF"}
                     onChange={(e) => setEditingTemplate({...editingTemplate, buttonTextColor: e.target.value})}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="editMenuTextColor">Cor do Texto do Menu</Label>
+                <div className="flex col-span-3 gap-2 items-center">
+                  <Input
+                    type="color"
+                    id="editMenuTextColor"
+                    value={editingTemplate.menuTextColor || "#FFFFFF"}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, menuTextColor: e.target.value})}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    type="text"
+                    value={editingTemplate.menuTextColor || "#FFFFFF"}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, menuTextColor: e.target.value})}
                     className="flex-1"
                   />
                 </div>

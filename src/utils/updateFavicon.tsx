@@ -50,6 +50,16 @@ export function useFavicon() {
           document.documentElement.style.setProperty('--background-color', template.backgroundColor);
           document.documentElement.style.setProperty('--text-color', template.textColor);
           document.documentElement.style.setProperty('--button-text-color', template.buttonTextColor || '#FFFFFF');
+          document.documentElement.style.setProperty('--menu-text-color', template.menuTextColor || '#FFFFFF');
+          
+          // Também aplica as cores ao elemento body para garantir que sejam aplicadas em todos os componentes
+          document.body.style.setProperty('--primary-color', template.primaryColor);
+          document.body.style.setProperty('--secondary-color', template.secondaryColor);
+          document.body.style.setProperty('--accent-color', template.accentColor);
+          document.body.style.setProperty('--background-color', template.backgroundColor);
+          document.body.style.setProperty('--text-color', template.textColor);
+          document.body.style.setProperty('--button-text-color', template.buttonTextColor || '#FFFFFF');
+          document.body.style.setProperty('--menu-text-color', template.menuTextColor || '#FFFFFF');
         }
       }
     } catch (error) {

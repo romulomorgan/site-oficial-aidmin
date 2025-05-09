@@ -8,6 +8,7 @@ export interface ThemeTemplate {
   backgroundColor: string;
   textColor: string;
   buttonTextColor: string;
+  menuTextColor: string;
 }
 
 export const defaultTemplates: ThemeTemplate[] = [
@@ -19,7 +20,8 @@ export const defaultTemplates: ThemeTemplate[] = [
     accentColor: "#FF4F8E",
     backgroundColor: "#FFFFFF",
     textColor: "#222222",
-    buttonTextColor: "#FFFFFF"
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   },
   {
     id: "dark",
@@ -29,7 +31,8 @@ export const defaultTemplates: ThemeTemplate[] = [
     accentColor: "#7C43BD",
     backgroundColor: "#121212",
     textColor: "#FFFFFF",
-    buttonTextColor: "#FFFFFF"
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   },
   {
     id: "blue",
@@ -39,7 +42,8 @@ export const defaultTemplates: ThemeTemplate[] = [
     accentColor: "#63A4FF",
     backgroundColor: "#FFFFFF",
     textColor: "#222222",
-    buttonTextColor: "#FFFFFF"
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   },
   {
     id: "green",
@@ -49,7 +53,8 @@ export const defaultTemplates: ThemeTemplate[] = [
     accentColor: "#60AD5E",
     backgroundColor: "#FFFFFF",
     textColor: "#222222",
-    buttonTextColor: "#FFFFFF"
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   },
   {
     id: "orange",
@@ -59,6 +64,7 @@ export const defaultTemplates: ThemeTemplate[] = [
     accentColor: "#FF833A",
     backgroundColor: "#FFFFFF",
     textColor: "#222222", 
-    buttonTextColor: "#FFFFFF"
+    buttonTextColor: "#FFFFFF",
+    menuTextColor: "#FFFFFF"
   }
 ];

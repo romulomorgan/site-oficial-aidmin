@@ -15,6 +15,7 @@ import FAQ from '@/pages/Admin/FAQ';
 import Messages from '@/pages/Admin/Messages';
 import Login from '@/pages/Admin/Login';
 import SiteSettings from '@/pages/Admin/SiteSettings';
+import EmbedComponent from '@/components/EmbedComponent';
 
 function App() {
   // Use the custom favicon hook
@@ -42,6 +43,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="bottom-right" />
+      <EmbedComponent />
     </Router>
   );
 }
