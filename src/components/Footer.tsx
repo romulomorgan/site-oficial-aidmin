@@ -19,11 +19,11 @@ export const Footer = () => {
   useEffect(() => {
     const siteTexts = getSiteTexts();
     setTexts({
-      footerAbout: siteTexts.footerAbout || 'A sua assistente de AI',
-      footerButtonText: siteTexts.footerButtonText || 'Contrate uma AI Poderosa!',
-      footerPhoneNumber: siteTexts.footerPhoneNumber || '(11) 93956-965',
-      footerEmail: siteTexts.footerEmail || 'iadminassistant@gmail.com',
-      copyrightText: siteTexts.copyrightText || '© Todos os direitos reservados - IAdmin 2024'
+      footerAbout: typeof siteTexts.footerAbout === 'string' ? siteTexts.footerAbout : 'A sua assistente de AI',
+      footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!',
+      footerPhoneNumber: typeof siteTexts.footerPhoneNumber === 'string' ? siteTexts.footerPhoneNumber : '(11) 93956-965',
+      footerEmail: typeof siteTexts.footerEmail === 'string' ? siteTexts.footerEmail : 'iadminassistant@gmail.com',
+      copyrightText: typeof siteTexts.copyrightText === 'string' ? siteTexts.copyrightText : '© Todos os direitos reservados - IAdmin 2024'
     });
   }, []);
 
