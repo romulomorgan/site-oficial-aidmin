@@ -42,3 +42,11 @@ export interface EmbedConfig {
   position: 'left' | 'right';
   isActive: boolean;
 }
+
+// Email subscription type
+export interface EmailSubscription {
+  id: string;
+  email: string;
+  source?: string;
+  createdAt: string;
+}

@@ -2,55 +2,57 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Testimonial } from "./types";
 
-// Função para obter depoimentos
+// Função para buscar depoimentos
 export async function fetchTestimonials(): Promise<Testimonial[]> {
   try {
     const { data, error } = await supabase
       .from('site_testimonials')
-      .select('*')
-      .order('order_index');
-    
+      .select('id, name, role, testimonial, avatar_url')
+      .order('order_index', { ascending: true });
+
     if (error) {
-      console.error('Erro ao carregar depoimentos:', error);
+      console.error('Erro ao buscar depoimentos:', error);
       return getTestimonialsFromLocalStorage();
     }
-    
-    return data.map(item => ({
+
+    if (!data || data.length === 0) {
+      console.warn('Nenhum depoimento encontrado, usando localStorage');
+      return getTestimonialsFromLocalStorage();
+    }
+
+    // Mapear os dados do banco para o formato esperado pela aplicação
+    const testimonials = data.map(item => ({
       id: item.id,
       name: item.name,
       role: item.role,
       testimonial: item.testimonial,
-      avatarUrl: item.avatar_url
+      avatarUrl: item.avatar_url || 'https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true'
     }));
+
+    // Atualizar o localStorage para uso offline
+    localStorage.setItem('testimonials', JSON.stringify(testimonials));
+
+    return testimonials;
   } catch (error) {
     console.error('Erro ao buscar depoimentos:', error);
     return getTestimonialsFromLocalStorage();
   }
 }
 
-// Função para adicionar depoimento
+// Função para adicionar um novo depoimento
 export async function addTestimonial(testimonial: Omit<Testimonial, 'id'>): Promise<boolean> {
   try {
-    console.log('Adicionando depoimento:', testimonial);
-    
-    // Preparar o objeto para inserção no formato do banco
     const { error } = await supabase
       .from('site_testimonials')
-      .insert([{
+      .insert({
         name: testimonial.name,
         role: testimonial.role,
         testimonial: testimonial.testimonial,
         avatar_url: testimonial.avatarUrl,
-        order_index: 0, // Pode ser ajustado conforme a lógica de ordenação
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }]);
-    
-    if (error) {
-      console.error('Erro específico ao adicionar depoimento:', error);
-      throw error;
-    }
-    
+        order_index: await getNextOrderIndex()
+      });
+
+    if (error) throw error;
     return true;
   } catch (error) {
     console.error('Erro ao adicionar depoimento:', error);
@@ -58,14 +60,14 @@ export async function addTestimonial(testimonial: Omit<Testimonial, 'id'>): Prom
   }
 }
 
-// Função para excluir depoimento
+// Função para excluir um depoimento
 export async function deleteTestimonial(id: string): Promise<boolean> {
   try {
     const { error } = await supabase
       .from('site_testimonials')
       .delete()
       .eq('id', id);
-    
+
     if (error) throw error;
     return true;
   } catch (error) {
@@ -74,35 +76,67 @@ export async function deleteTestimonial(id: string): Promise<boolean> {
   }
 }
 
-// Função para obter depoimentos do localStorage
-export function getTestimonialsFromLocalStorage(): Testimonial[] {
-  const savedTestimonials = localStorage.getItem('testimonials');
-  
-  if (savedTestimonials) {
-    return JSON.parse(savedTestimonials);
+// Função auxiliar para obter o próximo índice de ordenação
+async function getNextOrderIndex(): Promise<number> {
+  try {
+    const { data, error } = await supabase
+      .from('site_testimonials')
+      .select('order_index')
+      .order('order_index', { ascending: false })
+      .limit(1);
+
+    if (error || !data || data.length === 0) return 0;
+    return (data[0].order_index || 0) + 1;
+  } catch (error) {
+    console.error('Erro ao obter próximo índice:', error);
+    return 0;
+  }
+}
+
+// Função para obter depoimentos do localStorage (fallback)
+function getTestimonialsFromLocalStorage(): Testimonial[] {
+  const savedData = localStorage.getItem('testimonials');
+  if (savedData) {
+    try {
+      return JSON.parse(savedData);
+    } catch (e) {
+      console.error('Erro ao parsear dados de depoimentos do localStorage:', e);
+    }
   }
   
+  // Retornar dados padrão caso não haja dados no localStorage
   return [
     {
       id: '1',
-      name: "Carlos M.",
-      role: "Gerente de Projetos",
-      testimonial: "Com a AI da Virtia, conseguimos reduzir o tempo de planejamento em 30%. Ela nos fornece insights precisos, ajustando automaticamente o cronograma de acordo com o andamento das obras. Nunca tivemos tanto controle!",
-      avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true"
+      name: 'João Silva',
+      role: 'CEO da TechSolutions',
+      testimonial: 'O serviço de AI revolucionou nossa produtividade. Não sei como vivíamos sem isso antes!',
+      avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
     },
     {
       id: '2',
-      name: "Mariana P.",
-      role: "Diretora de operações",
-      testimonial: "A Virtia trouxe uma transformação real à nossa empresa. A rapidez com que automatiza processos e interpreta documentos é impressionante, e seu sistema de apoio à decisão nos permite ser mais estratégicos.",
-      avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/09b122a661f457926e57ea75f3ccd16a13770c01?placeholderIfAbsent=true"
+      name: 'Maria Santos',
+      role: 'Diretora de Marketing',
+      testimonial: 'Implementamos o assistente AI e observamos um aumento de 40% na satisfação dos clientes.',
+      avatarUrl: 'https://randomuser.me/api/portraits/women/44.jpg'
     },
     {
       id: '3',
-      name: "Lucas K.",
-      role: "Coordenador de obras",
-      testimonial: "O que a Virtia realiza diária do nosso time com SmartCity é preciso e intuitivo. A visualização de relatórios e o gerenciamento ágil são diferenciais que nos ajudam a manter as obras no cronograma.",
-      avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/8491a3ecf4b307f91edcd2d89f2c8c01096ca3cb?placeholderIfAbsent=true"
+      name: 'Carlos Mendes',
+      role: 'Gerente de Projetos',
+      testimonial: 'A ferramenta de AI nos ajudou a identificar gargalos em nossos processos que nunca teríamos encontrado sozinhos.',
+      avatarUrl: 'https://randomuser.me/api/portraits/men/67.jpg'
     }
   ];
 }
+
+// Função para uso síncrono que busca do localStorage e inicia carregamento do Supabase
+export const getTestimonials = (): Testimonial[] => {
+  // Inicia o carregamento assíncrono para atualizar o localStorage posteriormente
+  fetchTestimonials().catch(err => {
+    console.error("Erro ao sincronizar depoimentos com Supabase:", err);
+  });
+  
+  // Retorna os dados do localStorage imediatamente
+  return getTestimonialsFromLocalStorage();
+};

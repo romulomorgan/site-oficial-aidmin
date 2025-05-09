@@ -83,7 +83,9 @@ export const Footer = () => {
         
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">{texts.copyrightText}</p>
+            <p className="text-gray-400 text-sm">
+              {texts.copyrightText} | <Link to="/admin/login" className="text-primary-color hover:underline">Área Administrativa</Link>
+            </p>
             <div className="mt-4 md:mt-0">
               <Link to="/contato" className="bg-primary-color px-6 py-2 rounded-full text-button-text-color hover:bg-accent-color transition-colors">
                 {texts.footerButtonText}

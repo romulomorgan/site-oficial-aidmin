@@ -14,10 +14,20 @@ export async function fetchSiteTexts(): Promise<SiteTexts> {
       return getSiteTextsFromLocalStorage();
     }
     
+    if (!data || data.length === 0) {
+      console.warn('Nenhum texto encontrado no Supabase, usando localStorage.');
+      return getSiteTextsFromLocalStorage();
+    }
+    
     const textsObject: SiteTexts = {};
     data.forEach(item => {
-      textsObject[item.key] = item.content;
+      if (item.key && item.content) {
+        textsObject[item.key] = item.content;
+      }
     });
+    
+    // Atualiza o localStorage com os dados do Supabase para uso offline
+    updateSiteTextsInLocalStorage(textsObject);
     
     return textsObject;
   } catch (error) {
@@ -36,22 +46,29 @@ export async function updateSiteText(key: string, content: string): Promise<bool
       .eq('key', key)
       .single();
     
+    let result;
+    
     if (data) {
       // Atualizar texto existente
-      const { error } = await supabase
+      result = await supabase
         .from('site_texts')
-        .update({ content })
+        .update({ 
+          content,
+          updated_at: new Date()
+        })
         .eq('key', key);
-      
-      if (error) throw error;
     } else {
       // Inserir novo texto
-      const { error } = await supabase
+      result = await supabase
         .from('site_texts')
-        .insert({ key, content });
-      
-      if (error) throw error;
+        .insert({ 
+          key, 
+          content,
+          type: 'text'
+        });
     }
+    
+    if (result.error) throw result.error;
     
     // Atualizar também no localStorage para fallback
     const localTexts = getSiteTextsFromLocalStorage();
@@ -68,12 +85,12 @@ export async function updateSiteText(key: string, content: string): Promise<bool
 export function getSiteTextsFromLocalStorage(): SiteTexts {
   const savedTexts = localStorage.getItem('siteTexts');
   return savedTexts ? JSON.parse(savedTexts) : {
-    siteTitle: 'Virtia',
-    footerPhoneNumber: '+1 (415) 343-6587',
-    footerEmail: 'contato@virtia.ai',
+    siteTitle: 'IAdmin',
+    footerPhoneNumber: '(11) 93956-965',
+    footerEmail: 'iadminassistant@gmail.com',
     footerAbout: 'A sua assistente de AI',
-    footerButtonText: 'Contrate a Virtia',
-    copyrightText: '© Todos os direitos reservados - Virtia 2023',
+    footerButtonText: 'Contrate uma AI Poderosa!',
+    copyrightText: '© Todos os direitos reservados - IAdmin 2024',
     embedActive: false,
     embedPosition: 'right',
     heroTitle: 'Destrave a fronteira da produtividade.',
@@ -88,6 +105,18 @@ export function updateSiteTextsInLocalStorage(newTexts: Record<string, any>): vo
   localStorage.setItem('siteTexts', JSON.stringify(updatedTexts));
 }
 
+// Função sincronizada para uso por componentes que não podem usar async/await
+export const getSiteTexts = (): SiteTexts => {
+  // Inicia o carregamento assíncrono para atualizar o localStorage posteriormente
+  fetchSiteTexts().then(texts => {
+    updateSiteTextsInLocalStorage(texts);
+  }).catch(err => {
+    console.error("Erro ao sincronizar dados do Supabase:", err);
+  });
+  
+  // Retorna os dados do localStorage imediatamente
+  return getSiteTextsFromLocalStorage();
+};
+
 // Exportar as funções para compatibilidade com código existente
-export const getSiteTexts = getSiteTextsFromLocalStorage;
 export const updateSiteTexts = updateSiteTextsInLocalStorage;

@@ -2,45 +2,47 @@
 import { supabase } from "@/integrations/supabase/client";
 import { FAQItem } from "./types";
 
-// Função para obter perguntas frequentes
+// Função para buscar FAQs do Supabase
 export async function fetchFAQs(): Promise<FAQItem[]> {
   try {
     const { data, error } = await supabase
       .from('site_faqs')
-      .select('*')
+      .select('id, question, answer')
       .eq('active', true)
-      .order('order_index');
-    
+      .order('order_index', { ascending: true });
+
     if (error) {
-      console.error('Erro ao carregar FAQs:', error);
+      console.error('Erro ao buscar FAQs:', error);
       return getFAQsFromLocalStorage();
     }
-    
-    return data.map(item => ({
-      id: item.id,
-      question: item.question,
-      answer: item.answer
-    }));
+
+    if (!data || data.length === 0) {
+      console.warn('Nenhuma FAQ encontrada, usando localStorage');
+      return getFAQsFromLocalStorage();
+    }
+
+    // Atualizar o localStorage para uso offline
+    localStorage.setItem('faqs', JSON.stringify(data));
+
+    return data;
   } catch (error) {
     console.error('Erro ao buscar FAQs:', error);
     return getFAQsFromLocalStorage();
   }
 }
 
-// Função para adicionar FAQ
+// Função para adicionar uma nova FAQ
 export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
   try {
     const { error } = await supabase
       .from('site_faqs')
-      .insert([{
+      .insert({
         question: faq.question,
         answer: faq.answer,
         active: true,
-        order_index: 0, // Pode ser ajustado conforme a lógica de ordenação
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }]);
-    
+        order_index: await getNextOrderIndex()
+      });
+
     if (error) throw error;
     return true;
   } catch (error) {
@@ -49,14 +51,14 @@ export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
   }
 }
 
-// Função para excluir FAQ
+// Função para excluir uma FAQ
 export async function deleteFAQ(id: string): Promise<boolean> {
   try {
     const { error } = await supabase
       .from('site_faqs')
       .delete()
       .eq('id', id);
-    
+
     if (error) throw error;
     return true;
   } catch (error) {
@@ -65,39 +67,61 @@ export async function deleteFAQ(id: string): Promise<boolean> {
   }
 }
 
-// Função para obter FAQs do localStorage
-export function getFAQsFromLocalStorage(): FAQItem[] {
-  const savedFAQs = localStorage.getItem('faqItems');
-  
-  if (savedFAQs) {
-    return JSON.parse(savedFAQs);
+// Função auxiliar para obter o próximo índice de ordenação
+async function getNextOrderIndex(): Promise<number> {
+  try {
+    const { data, error } = await supabase
+      .from('site_faqs')
+      .select('order_index')
+      .order('order_index', { ascending: false })
+      .limit(1);
+
+    if (error || !data || data.length === 0) return 0;
+    return (data[0].order_index || 0) + 1;
+  } catch (error) {
+    console.error('Erro ao obter próximo índice para FAQ:', error);
+    return 0;
+  }
+}
+
+// Função para obter FAQs do localStorage (fallback)
+function getFAQsFromLocalStorage(): FAQItem[] {
+  const savedData = localStorage.getItem('faqs');
+  if (savedData) {
+    try {
+      return JSON.parse(savedData);
+    } catch (e) {
+      console.error('Erro ao parsear dados de FAQs do localStorage:', e);
+    }
   }
   
+  // Retornar dados padrão caso não haja dados no localStorage
   return [
     {
       id: '1',
-      question: "Como funciona a Inteligência Artificial da Virtia?",
-      answer: "A Virtia utiliza tecnologia de ponta em IA para automatizar e otimizar processos na construção civil e outros setores. Nosso sistema analisa dados, identifica padrões e fornece insights valiosos para tomada de decisão."
+      question: 'O que é um assistente de AI?',
+      answer: 'Um assistente de AI é uma solução de software que utiliza inteligência artificial para automatizar tarefas, responder perguntas e auxiliar em diversas atividades do dia a dia.'
     },
     {
       id: '2',
-      question: "Posso ter uma integração completa com nosso departamento operacional?",
-      answer: "Sim, nossos sistemas de IA são desenvolvidos para integrar perfeitamente com seus sistemas existentes, garantindo uma transição suave e eficiente para processos mais automatizados."
+      question: 'Como a AI pode ajudar minha empresa?',
+      answer: 'A AI pode aumentar a eficiência operacional, melhorar o atendimento ao cliente, automatizar tarefas repetitivas, analisar grandes volumes de dados e gerar insights valiosos para a tomada de decisão.'
     },
     {
       id: '3',
-      question: "A Inteligência Artificial funciona com o WhatsApp?",
-      answer: "Sim! Nossa IA se integra perfeitamente com o WhatsApp Business, permitindo automação de atendimento, respostas inteligentes e gerenciamento eficiente de conversas com seus clientes."
-    },
-    {
-      id: '4',
-      question: "Como funciona a Inteligência Artificial da Virtia?",
-      answer: "Nossa IA passa por um treinamento específico para entender seu negócio, processos e desafios únicos. Ela é alimentada com dados relevantes do seu setor e aprende continuamente à medida que interage com seus sistemas e equipe."
-    },
-    {
-      id: '5',
-      question: "Posso ter uma conversação natural com a Inteligência Artificial?",
-      answer: "Sim! A IA da Virtia foi treinada para entender e responder de forma natural, permitindo uma comunicação fluida e eficiente como se estivesse falando com um assistente humano."
+      question: 'Quanto tempo leva para implementar uma solução de AI?',
+      answer: 'O tempo de implementação varia conforme a complexidade da solução. Projetos simples podem ser implementados em semanas, enquanto soluções mais complexas podem levar alguns meses.'
     }
   ];
 }
+
+// Função para uso síncrono que busca do localStorage e inicia carregamento do Supabase
+export const getFAQs = (): FAQItem[] => {
+  // Inicia o carregamento assíncrono para atualizar o localStorage posteriormente
+  fetchFAQs().catch(err => {
+    console.error("Erro ao sincronizar FAQs com Supabase:", err);
+  });
+  
+  // Retorna os dados do localStorage imediatamente
+  return getFAQsFromLocalStorage();
+};
