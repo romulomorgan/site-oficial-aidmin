@@ -60,3 +60,9 @@ export interface Webhook {
   isActive: boolean;
   createdAt: string;
 }
+
+// Tipo para configuração de redes sociais
+export interface SocialMediaConfig {
+  url: string;
+  isActive: boolean;
+}

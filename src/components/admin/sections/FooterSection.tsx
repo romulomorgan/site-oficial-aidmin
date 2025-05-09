@@ -1,17 +1,20 @@
 
 import React from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { Switch } from '@/components/ui/switch';
 
 interface FooterSectionProps {
-  sections: Record<string, string>;
+  sections: Record<string, string | boolean>;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSwitchChange?: (name: string, checked: boolean) => void;
   isLoading: boolean;
   handleSaveSection: (section: string) => void;
 }
 
 const FooterSection: React.FC<FooterSectionProps> = ({ 
   sections, 
-  handleInputChange, 
+  handleInputChange,
+  handleSwitchChange,
   isLoading, 
   handleSaveSection 
 }) => {
@@ -25,7 +28,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
           <input
             type="text"
             name="companyName"
-            value={sections.companyName}
+            value={sections.companyName as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -35,7 +38,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
           <textarea
             name="footerAbout"
-            value={sections.footerAbout}
+            value={sections.footerAbout as string}
             onChange={handleInputChange}
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -47,7 +50,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
           <input
             type="text"
             name="footerPhoneNumber"
-            value={sections.footerPhoneNumber}
+            value={sections.footerPhoneNumber as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -58,7 +61,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
           <input
             type="text"
             name="footerEmail"
-            value={sections.footerEmail}
+            value={sections.footerEmail as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -69,7 +72,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
           <input
             type="text"
             name="footerButtonText"
-            value={sections.footerButtonText}
+            value={sections.footerButtonText as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -80,7 +83,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
           <input
             type="text"
             name="copyrightText"
-            value={sections.copyrightText}
+            value={sections.copyrightText as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -90,40 +93,63 @@ const FooterSection: React.FC<FooterSectionProps> = ({
         
         <h3 className="text-md font-medium text-gray-800 mb-2">Redes Sociais</h3>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Facebook</label>
-          <input
-            type="url"
-            name="facebookUrl"
-            value={sections.facebookUrl || ''}
-            onChange={handleInputChange}
-            placeholder="https://facebook.com/suapagina"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Instagram</label>
-          <input
-            type="url"
-            name="instagramUrl"
-            value={sections.instagramUrl || ''}
-            onChange={handleInputChange}
-            placeholder="https://instagram.com/suapagina"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Twitter</label>
-          <input
-            type="url"
-            name="twitterUrl"
-            value={sections.twitterUrl || ''}
-            onChange={handleInputChange}
-            placeholder="https://twitter.com/suapagina"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
+        <div className="space-y-4">
+          <div className="border rounded-md p-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Facebook</label>
+              <Switch 
+                checked={sections.facebookActive === true}
+                onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('facebookActive', checked)}
+                id="facebook-active"
+              />
+            </div>
+            <input
+              type="url"
+              name="facebookUrl"
+              value={sections.facebookUrl as string || ''}
+              onChange={handleInputChange}
+              placeholder="https://facebook.com/suapagina"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div className="border rounded-md p-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Instagram</label>
+              <Switch 
+                checked={sections.instagramActive === true}
+                onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('instagramActive', checked)}
+                id="instagram-active"
+              />
+            </div>
+            <input
+              type="url"
+              name="instagramUrl"
+              value={sections.instagramUrl as string || ''}
+              onChange={handleInputChange}
+              placeholder="https://instagram.com/suapagina"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div className="border rounded-md p-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Twitter</label>
+              <Switch 
+                checked={sections.twitterActive === true}
+                onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('twitterActive', checked)}
+                id="twitter-active"
+              />
+            </div>
+            <input
+              type="url"
+              name="twitterUrl"
+              value={sections.twitterUrl as string || ''}
+              onChange={handleInputChange}
+              placeholder="https://twitter.com/suapagina"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
         </div>
         
         <div className="flex justify-end">

@@ -17,7 +17,7 @@ import FooterSection from '@/components/admin/sections/FooterSection';
 
 export default function HomePageSections() {
   const [isLoading, setIsLoading] = useState(false);
-  const [sections, setSections] = useState<Record<string, string>>({
+  const [sections, setSections] = useState<Record<string, string | boolean>>({
     // Header Section
     logoUrl: '',
     siteTitle: '',
@@ -86,7 +86,15 @@ export default function HomePageSections() {
     footerPhoneNumber: '',
     footerEmail: '',
     footerButtonText: '',
-    copyrightText: ''
+    copyrightText: '',
+    
+    // Redes sociais
+    facebookUrl: '',
+    instagramUrl: '',
+    twitterUrl: '',
+    facebookActive: true,
+    instagramActive: true,
+    twitterActive: true
   });
 
   const [activeTab, setActiveTab] = useState("header");
@@ -99,12 +107,17 @@ export default function HomePageSections() {
     setIsLoading(true);
     try {
       const siteTexts = await fetchSiteTexts();
-      const updatedSections: Record<string, string> = {};
+      const updatedSections: Record<string, string | boolean> = {};
       
       // Processar cada campo do objeto sections com os valores retornados
       Object.keys(sections).forEach(key => {
         const value = siteTexts[key];
-        updatedSections[key] = value?.toString() || '';
+        
+        if (key === 'facebookActive' || key === 'instagramActive' || key === 'twitterActive') {
+          updatedSections[key] = value === false ? false : true;
+        } else {
+          updatedSections[key] = value?.toString() || '';
+        }
       });
       
       // Definições padrão para campos que podem não ter valores
@@ -131,11 +144,18 @@ export default function HomePageSections() {
     }));
   };
 
+  const handleSwitchChange = (name: string, checked: boolean) => {
+    setSections(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+  };
+
   const handleSaveSection = async (section: string) => {
     setIsLoading(true);
     
     try {
-      let updates: Record<string, string> = {};
+      let updates: Record<string, string | boolean> = {};
       
       // Determinar quais campos salvar com base na seção
       switch (section) {
@@ -217,6 +237,12 @@ export default function HomePageSections() {
             footerEmail: sections.footerEmail,
             footerButtonText: sections.footerButtonText,
             copyrightText: sections.copyrightText,
+            facebookUrl: sections.facebookUrl,
+            instagramUrl: sections.instagramUrl,
+            twitterUrl: sections.twitterUrl,
+            facebookActive: sections.facebookActive,
+            instagramActive: sections.instagramActive,
+            twitterActive: sections.twitterActive,
           };
           break;
       }
@@ -332,7 +358,8 @@ export default function HomePageSections() {
         <TabsContent value="footer">
           <FooterSection 
             sections={sections} 
-            handleInputChange={handleInputChange} 
+            handleInputChange={handleInputChange}
+            handleSwitchChange={handleSwitchChange}
             isLoading={isLoading} 
             handleSaveSection={handleSaveSection} 
           />

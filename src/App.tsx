@@ -41,6 +41,7 @@ function App() {
             }>
               <Route index element={<Dashboard />} />
               <Route path="secoes" element={<HomePageSections />} />
+              <Route path="textos" element={<EditTexts />} />
               <Route path="depoimentos" element={<Testimonials />} />
               <Route path="faq" element={<FAQ />} />
               <Route path="mensagens" element={<Messages />} />
@@ -50,7 +51,7 @@ function App() {
           </Routes>
         </div>
         
-        {/* Rodapé padrão para todas as páginas, exceto para páginas administrativas */}
+        {/* Rodapé apenas para páginas públicas */}
         <Routes>
           <Route path="/admin/*" element={null} />
           <Route path="/admin/login" element={null} />

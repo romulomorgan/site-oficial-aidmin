@@ -15,7 +15,10 @@ export const Footer = () => {
     footerButtonText: 'Contrate uma AI Poderosa!',
     facebookUrl: 'https://facebook.com',
     instagramUrl: 'https://instagram.com',
-    twitterUrl: 'https://twitter.com'
+    twitterUrl: 'https://twitter.com',
+    facebookActive: true,
+    instagramActive: true,
+    twitterActive: true
   });
 
   const isMobile = useIsMobile();
@@ -33,7 +36,10 @@ export const Footer = () => {
           footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!',
           facebookUrl: typeof siteTexts.facebookUrl === 'string' ? siteTexts.facebookUrl : 'https://facebook.com',
           instagramUrl: typeof siteTexts.instagramUrl === 'string' ? siteTexts.instagramUrl : 'https://instagram.com', 
-          twitterUrl: typeof siteTexts.twitterUrl === 'string' ? siteTexts.twitterUrl : 'https://twitter.com'
+          twitterUrl: typeof siteTexts.twitterUrl === 'string' ? siteTexts.twitterUrl : 'https://twitter.com',
+          facebookActive: siteTexts.facebookActive === false ? false : true,
+          instagramActive: siteTexts.instagramActive === false ? false : true,
+          twitterActive: siteTexts.twitterActive === false ? false : true
         });
       } catch (error) {
         console.error('Erro ao carregar textos:', error);
@@ -105,27 +111,33 @@ export const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">{texts.copyrightText}</p>
             <div className="flex gap-4 mt-4 md:mt-0">
-              <button 
-                onClick={() => handleSocialClick(texts.facebookUrl)}
-                className="text-gray-400 hover:text-primary-color transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
-              </button>
-              <button 
-                onClick={() => handleSocialClick(texts.instagramUrl)}
-                className="text-gray-400 hover:text-primary-color transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram size={20} />
-              </button>
-              <button 
-                onClick={() => handleSocialClick(texts.twitterUrl)}
-                className="text-gray-400 hover:text-primary-color transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </button>
+              {texts.facebookActive && (
+                <button 
+                  onClick={() => handleSocialClick(texts.facebookUrl)}
+                  className="text-gray-400 hover:text-primary-color transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook size={20} />
+                </button>
+              )}
+              {texts.instagramActive && (
+                <button 
+                  onClick={() => handleSocialClick(texts.instagramUrl)}
+                  className="text-gray-400 hover:text-primary-color transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram size={20} />
+                </button>
+              )}
+              {texts.twitterActive && (
+                <button 
+                  onClick={() => handleSocialClick(texts.twitterUrl)}
+                  className="text-gray-400 hover:text-primary-color transition-colors"
+                  aria-label="Twitter"
+                >
+                  <Twitter size={20} />
+                </button>
+              )}
             </div>
           </div>
         </div>
