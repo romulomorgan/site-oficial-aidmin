@@ -9,7 +9,7 @@ export function useFavicon() {
         // Tentar carregar do Supabase primeiro
         const siteTexts = await fetchSiteTexts();
         
-        if (siteTexts && siteTexts.faviconUrl) {
+        if (siteTexts && siteTexts.faviconUrl && typeof siteTexts.faviconUrl === 'string') {
           const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
           link.type = 'image/png';
           link.rel = 'shortcut icon';
@@ -25,7 +25,7 @@ export function useFavicon() {
           const savedTexts = localStorage.getItem('siteTexts');
           if (savedTexts) {
             const parsedTexts = JSON.parse(savedTexts);
-            if (parsedTexts.faviconUrl) {
+            if (parsedTexts.faviconUrl && typeof parsedTexts.faviconUrl === 'string') {
               const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
               link.type = 'image/png';
               link.rel = 'shortcut icon';
