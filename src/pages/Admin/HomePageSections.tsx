@@ -2,13 +2,23 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CustomButton } from '@/components/ui/CustomButton';
 import { fetchSiteTexts, updateSiteText } from '@/utils/supabaseClient';
+
+// Importar os componentes de seção
+import HeaderSection from '@/components/admin/sections/HeaderSection';
+import HeroSection from '@/components/admin/sections/HeroSection';
+import WhatWeDoSection from '@/components/admin/sections/WhatWeDoSection';
+import ExpansionSection from '@/components/admin/sections/ExpansionSection';
+import TestimonialsSection from '@/components/admin/sections/TestimonialsSection';
+import WhatsappSection from '@/components/admin/sections/WhatsappSection';
+import FAQSection from '@/components/admin/sections/FAQSection';
+import ContactSection from '@/components/admin/sections/ContactSection';
+import FooterSection from '@/components/admin/sections/FooterSection';
 
 export default function HomePageSections() {
   const [isLoading, setIsLoading] = useState(false);
-  const [sections, setSections] = useState({
-    // Header Section (Novo)
+  const [sections, setSections] = useState<Record<string, string>>({
+    // Header Section
     logoUrl: '',
     siteTitle: '',
     faviconUrl: '',
@@ -82,91 +92,36 @@ export default function HomePageSections() {
   const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const siteTexts = await fetchSiteTexts();
-        setSections({
-          // Header Section
-          logoUrl: siteTexts.logoUrl?.toString() || '',
-          siteTitle: siteTexts.siteTitle?.toString() || 'IAdmin',
-          faviconUrl: siteTexts.faviconUrl?.toString() || '',
-          
-          // Hero Section
-          heroTitle: siteTexts.heroTitle?.toString() || 'Destrave a fronteira da produtividade.',
-          heroSubtitle: siteTexts.heroSubtitle?.toString() || 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.',
-          heroButtonText: siteTexts.heroButtonText?.toString() || 'Fale Conosco',
-          heroButtonLink: siteTexts.heroButtonLink?.toString() || '/solucoes',
-          heroVideoUrl: siteTexts.heroVideoUrl?.toString() || '',
-          
-          // O que fazemos Section
-          whatWeDoTitle: siteTexts.whatWeDoTitle?.toString() || 'Criamos e treinamos a sua AI',
-          whatWeDoSubtitle: siteTexts.whatWeDoSubtitle?.toString() || 'O QUE FAZEMOS DE MELHOR',
-          
-          // Assistente Section
-          assistantCardTitle: siteTexts.assistantCardTitle?.toString() || 'ASSISTENTE DE IA',
-          assistantCardDescription: siteTexts.assistantCardDescription?.toString() || '',
-          assistantCardImage: siteTexts.assistantCardImage?.toString() || '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png',
-          
-          // BPO Processos Section
-          bpoProcessosCardTitle: siteTexts.bpoProcessosCardTitle?.toString() || 'BPO COM PROCESSOS DE NEGÓCIOS',
-          bpoProcessosCardDescription: siteTexts.bpoProcessosCardDescription?.toString() || '',
-          bpoProcessosCardImage: siteTexts.bpoProcessosCardImage?.toString() || '/lovable-uploads/232e98e1-6691-4748-89c8-dd6300343696.png',
-          
-          // BPO Projetos Section
-          bpoProjetosCardTitle: siteTexts.bpoProjetosCardTitle?.toString() || 'BPO COM PROJETOS E DESENVOLVIMENTO',
-          bpoProjetosCardDescription: siteTexts.bpoProjetosCardDescription?.toString() || '',
-          bpoProjetosCardImage: siteTexts.bpoProjetosCardImage?.toString() || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png',
-          
-          // Em expansão Section
-          expansionTitle: siteTexts.expansionTitle?.toString() || 'Em expansão para o segmento da construção civil e condomínios.',
-          expansionSubtitle: siteTexts.expansionSubtitle?.toString() || 'A QUEM ATENDEMOS',
-          expansionDescription: siteTexts.expansionDescription?.toString() || 'Integração de IA com sistemas existentes de construtoras. A AI Generativa transforma seus processos corporativos e operacionais. Na Virtia, trabalhamos com processos de compras e gerenciamento de contratos, análise de dados para melhor tomada de decisões, automação de relatórios e integração com sistemas de gestão de condomínio.',
-          expansionImage: siteTexts.expansionImage?.toString() || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
-          
-          // Estatísticas
-          statsYears: siteTexts.statsYears?.toString() || '3+',
-          statsProjects: siteTexts.statsProjects?.toString() || '600+',
-          statsCompanies: siteTexts.statsCompanies?.toString() || '40+',
-          statsAutomations: siteTexts.statsAutomations?.toString() || '47k+',
-          
-          // Depoimentos Section
-          testimonialsTitle: siteTexts.testimonialsTitle?.toString() || 'Veja o impacto eletrizante da nossa AI',
-          
-          // WhatsApp Section
-          whatsappTitle: siteTexts.whatsappTitle?.toString() || 'WhatsApp Business',
-          whatsappSubtitle: siteTexts.whatsappSubtitle?.toString() || 'INTEGRAÇÃO',
-          whatsappDescription: siteTexts.whatsappDescription?.toString() || 'A Virtia faz a ponte perfeita entre sua IA e o WhatsApp. A integração permite que sua assistente de IA converse diretamente com seus clientes, proporcionando atendimento personalizado e respostas instantâneas. Ganhe eficiência e escala sem perder o toque humano na comunicação.',
-          whatsappButtonText: siteTexts.whatsappButtonText?.toString() || 'Contrate a Virtia',
-          whatsappButtonLink: siteTexts.whatsappButtonLink?.toString() || '#',
-          whatsappImage: siteTexts.whatsappImage?.toString() || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png',
-          
-          // FAQ Section
-          faqTitle: siteTexts.faqTitle?.toString() || 'Perguntas Frequentes',
-          
-          // Contato Section
-          contactTitle: siteTexts.contactTitle?.toString() || 'Deixe seu contato',
-          contactSubtitle: siteTexts.contactSubtitle?.toString() || 'Fale com um especialista da nossa equipe',
-          contactButtonText: siteTexts.contactButtonText?.toString() || 'Enviar',
-          
-          // Footer Section
-          companyName: siteTexts.companyName?.toString() || 'Virtia',
-          footerAbout: siteTexts.footerAbout?.toString() || 'A sua assistente de AI',
-          footerPhoneNumber: siteTexts.footerPhoneNumber?.toString() || '(31) 98767-8307',
-          footerEmail: siteTexts.footerEmail?.toString() || 'lucas@gmail.com',
-          footerButtonText: siteTexts.footerButtonText?.toString() || 'Contrate uma AI Poderosa!',
-          copyrightText: siteTexts.copyrightText?.toString() || '© Todos os direitos reservados - IAdmin 2025'
-        });
-      } catch (error) {
-        console.error('Erro ao carregar textos:', error);
-        toast.error('Erro ao carregar conteúdo das seções');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
     loadData();
   }, []);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const siteTexts = await fetchSiteTexts();
+      const updatedSections: Record<string, string> = {};
+      
+      // Processar cada campo do objeto sections com os valores retornados
+      Object.keys(sections).forEach(key => {
+        const value = siteTexts[key];
+        updatedSections[key] = value?.toString() || '';
+      });
+      
+      // Definições padrão para campos que podem não ter valores
+      if (!updatedSections.siteTitle) updatedSections.siteTitle = 'IAdmin';
+      if (!updatedSections.heroTitle) updatedSections.heroTitle = 'Destrave a fronteira da produtividade.';
+      if (!updatedSections.heroSubtitle) updatedSections.heroSubtitle = 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.';
+      if (!updatedSections.heroButtonText) updatedSections.heroButtonText = 'Fale Conosco';
+      if (!updatedSections.heroButtonLink) updatedSections.heroButtonLink = '/solucoes';
+      
+      setSections(updatedSections);
+    } catch (error) {
+      console.error('Erro ao carregar textos:', error);
+      toast.error('Erro ao carregar conteúdo das seções');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -180,7 +135,7 @@ export default function HomePageSections() {
     setIsLoading(true);
     
     try {
-      let updates: Record<string, string | boolean> = {};
+      let updates: Record<string, string> = {};
       
       // Determinar quais campos salvar com base na seção
       switch (section) {
@@ -301,693 +256,86 @@ export default function HomePageSections() {
           <TabsTrigger value="footer">Rodapé</TabsTrigger>
         </TabsList>
         
-        {/* Header Section */}
-        <TabsContent value="header" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Cabeçalho do Site</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título do Site</label>
-              <input
-                type="text"
-                name="siteTitle"
-                value={sections.siteTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="Nome do site/empresa"
-              />
-              <p className="text-xs text-gray-500 mt-1">Este título será exibido na barra de navegação e na aba do navegador.</p>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Logo</label>
-              <input
-                type="text"
-                name="logoUrl"
-                value={sections.logoUrl}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="URL da imagem do logo"
-              />
-              {sections.logoUrl && (
-                <div className="mt-2 flex justify-center">
-                  <img src={sections.logoUrl} alt="Preview do Logo" className="h-16 w-16 object-contain border rounded" />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Favicon</label>
-              <input
-                type="text"
-                name="faviconUrl"
-                value={sections.faviconUrl}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="URL do ícone do site (formato PNG recomendado)"
-              />
-              <p className="text-xs text-gray-500 mt-1">O favicon é o ícone que aparece na aba do navegador. Recomendamos imagens PNG quadradas.</p>
-              {sections.faviconUrl && (
-                <div className="mt-2 flex justify-center">
-                  <img src={sections.faviconUrl} alt="Preview do Favicon" className="h-8 w-8 object-contain border rounded" />
-                </div>
-              )}
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('header')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        {/* Renderizar os componentes de seção com base na aba ativa */}
+        <TabsContent value="header">
+          <HeaderSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* Hero Section */}
-        <TabsContent value="hero" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção Principal (Hero)</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input
-                type="text"
-                name="heroTitle"
-                value={sections.heroTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subtítulo</label>
-              <textarea
-                name="heroSubtitle"
-                value={sections.heroSubtitle}
-                onChange={handleInputChange}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
-              <input
-                type="text"
-                name="heroButtonText"
-                value={sections.heroButtonText}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão</label>
-              <input
-                type="text"
-                name="heroButtonLink"
-                value={sections.heroButtonLink}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Vídeo do YouTube</label>
-              <input
-                type="text"
-                name="heroVideoUrl"
-                value={sections.heroVideoUrl}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="https://www.youtube.com/watch?v=XXXXXX ou https://youtu.be/XXXXXX"
-              />
-              <p className="text-xs text-gray-500 mt-1">Digite a URL completa do vídeo do YouTube</p>
-              
-              {sections.heroVideoUrl && (
-                <div className="mt-3 p-2 border rounded-md">
-                  <p className="text-sm font-medium mb-1">Preview:</p>
-                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                    <p className="text-gray-500">URL de vídeo configurada: {sections.heroVideoUrl}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('hero')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="hero">
+          <HeroSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* O que fazemos Section */}
-        <TabsContent value="whatWeDo" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "O que Fazemos de Melhor"</h2>
-          
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Subtítulo</label>
-                <input
-                  type="text"
-                  name="whatWeDoSubtitle"
-                  value={sections.whatWeDoSubtitle}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                <input
-                  type="text"
-                  name="whatWeDoTitle"
-                  value={sections.whatWeDoTitle}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            
-            <div className="border-t pt-6">
-              <h3 className="font-medium text-gray-800 mb-4">Cartão: Assistente de IA</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                  <input
-                    type="text"
-                    name="assistantCardTitle"
-                    value={sections.assistantCardTitle}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
-                  <input
-                    type="text"
-                    name="assistantCardImage"
-                    value={sections.assistantCardImage}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                <textarea
-                  name="assistantCardDescription"
-                  value={sections.assistantCardDescription}
-                  onChange={handleInputChange}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            
-            <div className="border-t pt-6">
-              <h3 className="font-medium text-gray-800 mb-4">Cartão: BPO com Processos de Negócios</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                  <input
-                    type="text"
-                    name="bpoProcessosCardTitle"
-                    value={sections.bpoProcessosCardTitle}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
-                  <input
-                    type="text"
-                    name="bpoProcessosCardImage"
-                    value={sections.bpoProcessosCardImage}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                <textarea
-                  name="bpoProcessosCardDescription"
-                  value={sections.bpoProcessosCardDescription}
-                  onChange={handleInputChange}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            
-            <div className="border-t pt-6">
-              <h3 className="font-medium text-gray-800 mb-4">Cartão: BPO com Projetos e Desenvolvimento</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                  <input
-                    type="text"
-                    name="bpoProjetosCardTitle"
-                    value={sections.bpoProjetosCardTitle}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
-                  <input
-                    type="text"
-                    name="bpoProjetosCardImage"
-                    value={sections.bpoProjetosCardImage}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                <textarea
-                  name="bpoProjetosCardDescription"
-                  value={sections.bpoProjetosCardDescription}
-                  onChange={handleInputChange}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('whatWeDo')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="whatWeDo">
+          <WhatWeDoSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* Em expansão Section */}
-        <TabsContent value="expansion" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Em Expansão"</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subtítulo</label>
-              <input
-                type="text"
-                name="expansionSubtitle"
-                value={sections.expansionSubtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input
-                type="text"
-                name="expansionTitle"
-                value={sections.expansionTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-              <textarea
-                name="expansionDescription"
-                value={sections.expansionDescription}
-                onChange={handleInputChange}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
-              <input
-                type="text"
-                name="expansionImage"
-                value={sections.expansionImage}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div className="border-t pt-6">
-              <h3 className="font-medium text-gray-800 mb-4">Estatísticas</h3>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Anos de Experiência</label>
-                  <input
-                    type="text"
-                    name="statsYears"
-                    value={sections.statsYears}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Projetos Executados</label>
-                  <input
-                    type="text"
-                    name="statsProjects"
-                    value={sections.statsProjects}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Empresas Atendidas</label>
-                  <input
-                    type="text"
-                    name="statsCompanies"
-                    value={sections.statsCompanies}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Automatizações por Mês</label>
-                  <input
-                    type="text"
-                    name="statsAutomations"
-                    value={sections.statsAutomations}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('expansion')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="expansion">
+          <ExpansionSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* Depoimentos Section */}
-        <TabsContent value="testimonials" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Depoimentos"</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input
-                type="text"
-                name="testimonialsTitle"
-                value={sections.testimonialsTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('testimonials')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="testimonials">
+          <TestimonialsSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* WhatsApp Section */}
-        <TabsContent value="whatsapp" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "WhatsApp Integration"</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subtítulo</label>
-              <input
-                type="text"
-                name="whatsappSubtitle"
-                value={sections.whatsappSubtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input
-                type="text"
-                name="whatsappTitle"
-                value={sections.whatsappTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-              <textarea
-                name="whatsappDescription"
-                value={sections.whatsappDescription}
-                onChange={handleInputChange}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
-              <input
-                type="text"
-                name="whatsappButtonText"
-                value={sections.whatsappButtonText}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão</label>
-              <input
-                type="text"
-                name="whatsappButtonLink"
-                value={sections.whatsappButtonLink}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
-              <input
-                type="text"
-                name="whatsappImage"
-                value={sections.whatsappImage}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('whatsapp')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="whatsapp">
+          <WhatsappSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* FAQ Section */}
-        <TabsContent value="faq" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "FAQ"</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input
-                type="text"
-                name="faqTitle"
-                value={sections.faqTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('faq')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="faq">
+          <FAQSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* Contato Section */}
-        <TabsContent value="contact" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Contato"</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input
-                type="text"
-                name="contactTitle"
-                value={sections.contactTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subtítulo</label>
-              <input
-                type="text"
-                name="contactSubtitle"
-                value={sections.contactSubtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
-              <input
-                type="text"
-                name="contactButtonText"
-                value={sections.contactButtonText}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('contact')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="contact">
+          <ContactSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
         
-        {/* Footer Section */}
-        <TabsContent value="footer" className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Rodapé"</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Empresa</label>
-              <input
-                type="text"
-                name="companyName"
-                value={sections.companyName}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-              <textarea
-                name="footerAbout"
-                value={sections.footerAbout}
-                onChange={handleInputChange}
-                rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-              <input
-                type="text"
-                name="footerPhoneNumber"
-                value={sections.footerPhoneNumber}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="text"
-                name="footerEmail"
-                value={sections.footerEmail}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
-              <input
-                type="text"
-                name="footerButtonText"
-                value={sections.footerButtonText}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Texto de Copyright</label>
-              <input
-                type="text"
-                name="copyrightText"
-                value={sections.copyrightText}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div className="flex justify-end">
-              <CustomButton 
-                onClick={() => handleSaveSection('footer')}
-                variant="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </CustomButton>
-            </div>
-          </div>
+        <TabsContent value="footer">
+          <FooterSection 
+            sections={sections} 
+            handleInputChange={handleInputChange} 
+            isLoading={isLoading} 
+            handleSaveSection={handleSaveSection} 
+          />
         </TabsContent>
       </Tabs>
     </div>
