@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Site data types
@@ -383,8 +382,9 @@ export async function saveEmbedConfig(config: EmbedConfig): Promise<boolean> {
 // Função para salvar inscrição de email
 export async function saveEmailSubscription(email: string, source: string): Promise<boolean> {
   try {
-    // Depois que a tabela site_email_subscriptions foi criada no banco de dados,
-    // podemos usar esta função para salvar as inscrições de email
+    console.log(`Salvando inscrição de email: ${email} da fonte: ${source}`);
+    
+    // Inserir a inscrição na tabela site_email_subscriptions
     const { error } = await supabase
       .from('site_email_subscriptions')
       .insert([
@@ -396,9 +396,11 @@ export async function saveEmailSubscription(email: string, source: string): Prom
       ]);
 
     if (error) {
-      console.error('Erro ao salvar inscrição de email:', error);
+      console.error('Erro específico ao salvar inscrição de email:', error);
       throw error;
     }
+    
+    console.log('Inscrição de email salva com sucesso!');
     return true;
   } catch (error) {
     console.error('Erro ao cadastrar email:', error);

@@ -82,7 +82,7 @@ export default function Solucoes() {
     setIsSubmitting(true);
     
     try {
-      // Usar a função do arquivo supabaseClient para salvar a inscrição
+      // Usar a função do supabaseClient para salvar a inscrição de email
       const success = await saveEmailSubscription(email, 'Página de Soluções');
       
       if (success) {
