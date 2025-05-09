@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { fetchFAQs, createFAQ, updateFAQ, deleteFAQ } from '@/utils/supabaseClient';
+import { fetchFAQs, addFAQ, updateFAQ, deleteFAQ } from '@/utils/supabaseClient';
 import { PlusCircle, Edit, Trash, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -67,7 +67,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
     }
     
     try {
-      await createFAQ({
+      await addFAQ({
         question: newFaq.question,
         answer: newFaq.answer,
         active: true
