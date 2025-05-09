@@ -40,7 +40,6 @@ function App() {
               </SidebarProvider>
             }>
               <Route index element={<Dashboard />} />
-              <Route path="editar-textos" element={<EditTexts />} />
               <Route path="secoes" element={<HomePageSections />} />
               <Route path="depoimentos" element={<Testimonials />} />
               <Route path="faq" element={<FAQ />} />

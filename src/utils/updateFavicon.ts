@@ -20,6 +20,12 @@ export function useFavicon() {
           }
           
           console.log("Favicon atualizado do Supabase:", siteTexts.faviconUrl);
+          
+          // Também atualizar o título da página se estiver disponível
+          if (siteTexts.siteTitle && typeof siteTexts.siteTitle === 'string') {
+            document.title = siteTexts.siteTitle;
+            console.log("Título da página atualizado:", siteTexts.siteTitle);
+          }
         } else {
           // Fallback para localStorage
           const savedTexts = localStorage.getItem('siteTexts');
@@ -36,6 +42,12 @@ export function useFavicon() {
               }
               
               console.log("Favicon atualizado do localStorage:", parsedTexts.faviconUrl);
+            }
+            
+            // Atualizar também o título da página do localStorage
+            if (parsedTexts.siteTitle && typeof parsedTexts.siteTitle === 'string') {
+              document.title = parsedTexts.siteTitle;
+              console.log("Título da página atualizado do localStorage:", parsedTexts.siteTitle);
             }
           }
         }
@@ -73,7 +85,7 @@ export function useFavicon() {
           }
         }
       } catch (error) {
-        console.error("Erro ao atualizar favicon:", error);
+        console.error("Erro ao atualizar favicon e título da página:", error);
       }
     };
     

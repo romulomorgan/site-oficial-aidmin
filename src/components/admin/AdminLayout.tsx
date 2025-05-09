@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  FileEdit, 
   MessageSquare, 
   Settings,
   Users, 
   LogOut, 
   ChevronRight, 
   Menu,
-  LayoutTemplate,
   MessageCircleQuestion,
   Layers
 } from 'lucide-react';
@@ -33,11 +31,6 @@ const AdminLayout: React.FC = () => {
       name: 'Dashboard',
       path: '/admin',
       icon: <LayoutDashboard size={20} />,
-    },
-    {
-      name: 'Editar Textos',
-      path: '/admin/editar-textos',
-      icon: <FileEdit size={20} />,
     },
     {
       name: 'Seções da Página',
@@ -67,8 +60,8 @@ const AdminLayout: React.FC = () => {
   ];
 
   const handleLogout = () => {
-    // Implementar lógica de logout se necessário
-    navigate('/admin/login');
+    // Redirecionar para a página inicial após o logout
+    navigate('/');
   };
 
   return (

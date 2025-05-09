@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +11,7 @@ export default function HomePageSections() {
     // Header Section (Novo)
     logoUrl: '',
     siteTitle: '',
+    faviconUrl: '',
     
     // Hero Section
     heroTitle: '',
@@ -88,6 +90,7 @@ export default function HomePageSections() {
           // Header Section
           logoUrl: siteTexts.logoUrl?.toString() || '',
           siteTitle: siteTexts.siteTitle?.toString() || 'IAdmin',
+          faviconUrl: siteTexts.faviconUrl?.toString() || '',
           
           // Hero Section
           heroTitle: siteTexts.heroTitle?.toString() || 'Destrave a fronteira da produtividade.',
@@ -185,6 +188,7 @@ export default function HomePageSections() {
           updates = {
             logoUrl: sections.logoUrl,
             siteTitle: sections.siteTitle,
+            faviconUrl: sections.faviconUrl,
           };
           break;
         case 'hero':
@@ -312,6 +316,7 @@ export default function HomePageSections() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 placeholder="Nome do site/empresa"
               />
+              <p className="text-xs text-gray-500 mt-1">Este título será exibido na barra de navegação e na aba do navegador.</p>
             </div>
             
             <div>
@@ -327,6 +332,24 @@ export default function HomePageSections() {
               {sections.logoUrl && (
                 <div className="mt-2 flex justify-center">
                   <img src={sections.logoUrl} alt="Preview do Logo" className="h-16 w-16 object-contain border rounded" />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">URL do Favicon</label>
+              <input
+                type="text"
+                name="faviconUrl"
+                value={sections.faviconUrl}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="URL do ícone do site (formato PNG recomendado)"
+              />
+              <p className="text-xs text-gray-500 mt-1">O favicon é o ícone que aparece na aba do navegador. Recomendamos imagens PNG quadradas.</p>
+              {sections.faviconUrl && (
+                <div className="mt-2 flex justify-center">
+                  <img src={sections.faviconUrl} alt="Preview do Favicon" className="h-8 w-8 object-contain border rounded" />
                 </div>
               )}
             </div>
@@ -400,7 +423,7 @@ export default function HomePageSections() {
                 value={sections.heroVideoUrl}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="https://www.youtube.com/watch?v=XXXXXX"
+                placeholder="https://www.youtube.com/watch?v=XXXXXX ou https://youtu.be/XXXXXX"
               />
               <p className="text-xs text-gray-500 mt-1">Digite a URL completa do vídeo do YouTube</p>
               
@@ -408,8 +431,7 @@ export default function HomePageSections() {
                 <div className="mt-3 p-2 border rounded-md">
                   <p className="text-sm font-medium mb-1">Preview:</p>
                   <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                    {/* Aqui poderia ser renderizado um preview do vídeo */}
-                    <p className="text-gray-500">URL de vídeo configurada</p>
+                    <p className="text-gray-500">URL de vídeo configurada: {sections.heroVideoUrl}</p>
                   </div>
                 </div>
               )}

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Settings, MessageSquare, Image, FileText, PenTool, Palette } from 'lucide-react';
+import { Settings, MessageSquare, Image, FileText, Palette, Layers } from 'lucide-react';
 
 export default function AdminDashboard() {
   return (
@@ -10,14 +10,14 @@ export default function AdminDashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm transition-all hover:shadow-md">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">Textos do Site</h2>
-          <p className="text-gray-500 mb-4">Edite os textos principais do site</p>
+          <h2 className="text-lg font-medium text-gray-700 mb-2">Seções da Página</h2>
+          <p className="text-gray-500 mb-4">Gerencie todas as seções e textos do site</p>
           <div className="mt-2 flex justify-end">
             <Link 
-              to="/admin/editar-textos" 
+              to="/admin/secoes" 
               className="text-[#FF196E] hover:text-[#ff3582] font-medium flex items-center"
             >
-              <PenTool size={16} className="mr-1" />
+              <Layers size={16} className="mr-1" />
               Gerenciar
             </Link>
           </div>
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <div className="bg-white p-6 rounded-lg shadow-sm transition-all hover:shadow-md">
           <h2 className="text-lg font-medium text-gray-700 mb-2">Mensagens</h2>
           <p className="text-gray-500 mb-4">Visualize e responda mensagens do formulário de contato</p>
@@ -63,20 +63,6 @@ export default function AdminDashboard() {
             >
               <MessageSquare size={16} className="mr-1" />
               Ver Mensagens
-            </Link>
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-sm transition-all hover:shadow-md">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">Imagens do Site</h2>
-          <p className="text-gray-500 mb-4">Gerencie todas as imagens do site na seção Editar Textos</p>
-          <div className="mt-2 flex justify-end">
-            <Link 
-              to="/admin/editar-textos?tab=imagens" 
-              className="text-[#FF196E] hover:text-[#ff3582] font-medium flex items-center"
-            >
-              <Image size={16} className="mr-1" />
-              Gerenciar Imagens
             </Link>
           </div>
         </div>
@@ -105,7 +91,7 @@ export default function AdminDashboard() {
           <div className="space-y-2">
             <div>
               <h3 className="font-medium">Como editar textos e imagens:</h3>
-              <p className="text-gray-600">Na seção "Editar Textos", você pode modificar todos os principais textos e imagens do site. Utilize as diferentes abas para acessar grupos específicos de conteúdo.</p>
+              <p className="text-gray-600">Na seção "Seções da Página", você pode modificar todos os principais textos e imagens do site. Utilize as diferentes abas para acessar grupos específicos de conteúdo.</p>
             </div>
             <div>
               <h3 className="font-medium">Como personalizar a aparência:</h3>

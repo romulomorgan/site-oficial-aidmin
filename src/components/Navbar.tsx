@@ -15,6 +15,8 @@ export const Navbar = () => {
     const siteTexts = getSiteTexts();
     if (siteTexts.siteTitle) {
       setSiteTitle(siteTexts.siteTitle);
+      // Também atualizar o título da página
+      document.title = siteTexts.siteTitle;
     }
     if (siteTexts.logoUrl) {
       setLogoUrl(siteTexts.logoUrl);
@@ -27,7 +29,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <header className="bg-secondary-color text-white absolute top-0 left-0 w-full z-50">
+      <header className="bg-secondary-color text-white absolute top-0 left-0 w-full z-20">
         <div className="container mx-auto py-4 px-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2">
             {logoUrl ? (
@@ -59,7 +61,7 @@ export const Navbar = () => {
       </header>
 
       {/* Menu mobile */}
-      <MobileNavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      {isMenuOpen && <MobileNavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
     </>
   );
 };
