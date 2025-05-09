@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Site data types
@@ -167,10 +166,13 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
       if (error) throw error;
     } else {
       // Inserir novo template
-      templateData.created_at = new Date().toISOString();
+      // Add the created_at field only when creating a new record
       const { error } = await supabase
         .from('site_color_templates')
-        .insert([templateData]);
+        .insert([{
+          ...templateData,
+          created_at: new Date().toISOString()
+        }]);
       
       if (error) throw error;
     }
@@ -587,4 +589,3 @@ function getFAQsFromLocalStorage(): FAQItem[] {
 // Exportar as funções para compatibilidade com código existente
 export const getSiteTexts = getSiteTextsFromLocalStorage;
 export const updateSiteTexts = updateSiteTextsInLocalStorage;
-
