@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import { getSiteTexts } from '@/utils/localStorage';
+import { getSiteTexts } from '@/utils/supabaseClient';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const Footer = () => {
