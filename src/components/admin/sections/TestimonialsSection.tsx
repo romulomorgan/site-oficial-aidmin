@@ -1,7 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
+import { Button } from '@/components/ui/button';
 import { SectionProps } from '@/utils/supabase/types';
+import { PlusIcon, TrashIcon } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 const TestimonialsSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({ 
   sections, 
