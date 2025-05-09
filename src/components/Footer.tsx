@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import { getSiteTexts } from '@/utils/supabaseClient';
+import { fetchSiteTexts } from '@/utils/supabaseClient';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const Footer = () => {
@@ -17,14 +17,22 @@ export const Footer = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const siteTexts = getSiteTexts();
-    setTexts({
-      footerAbout: typeof siteTexts.footerAbout === 'string' ? siteTexts.footerAbout : 'A sua assistente de AI',
-      footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!',
-      footerPhoneNumber: typeof siteTexts.footerPhoneNumber === 'string' ? siteTexts.footerPhoneNumber : '(11) 93956-965',
-      footerEmail: typeof siteTexts.footerEmail === 'string' ? siteTexts.footerEmail : 'iadminassistant@gmail.com',
-      copyrightText: typeof siteTexts.copyrightText === 'string' ? siteTexts.copyrightText : '© Todos os direitos reservados - IAdmin 2024'
-    });
+    const loadTexts = async () => {
+      try {
+        const siteTexts = await fetchSiteTexts();
+        setTexts({
+          footerAbout: typeof siteTexts.footerAbout === 'string' ? siteTexts.footerAbout : 'A sua assistente de AI',
+          footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!',
+          footerPhoneNumber: typeof siteTexts.footerPhoneNumber === 'string' ? siteTexts.footerPhoneNumber : '(11) 93956-965',
+          footerEmail: typeof siteTexts.footerEmail === 'string' ? siteTexts.footerEmail : 'iadminassistant@gmail.com',
+          copyrightText: typeof siteTexts.copyrightText === 'string' ? siteTexts.copyrightText : '© Todos os direitos reservados - IAdmin 2024'
+        });
+      } catch (error) {
+        console.error('Erro ao carregar textos:', error);
+      }
+    };
+    
+    loadTexts();
   }, []);
 
   return (
