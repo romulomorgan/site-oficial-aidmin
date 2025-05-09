@@ -131,7 +131,7 @@ export default function Solucoes() {
             <div className="w-full md:w-[400px] relative hover-scale">
               <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
                 <img 
-                  src={siteTexts.robotImage || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'}
+                  src={siteTexts.robotImage as string}
                   alt="AI Robot" 
                   className="w-2/3 object-contain"
                 />
@@ -205,11 +205,11 @@ export default function Solucoes() {
               IAdmin
             </h2>
             <p style={{color: themeColors.secondaryColor}} className="mt-2">
-              {siteTexts.footerAbout}
+              {siteTexts.footerAbout as string}
             </p>
             <Link to="/contato">
               <CustomButton variant="primary" className="mt-8">
-                {siteTexts.footerButtonText}
+                {siteTexts.footerButtonText as string}
               </CustomButton>
             </Link>
           </div>
@@ -219,8 +219,8 @@ export default function Solucoes() {
                 Contato
               </h3>
               <div className="mt-4" style={{color: themeColors.textColor}}>
-                <p>{siteTexts.footerPhoneNumber}</p>
-                <p>{siteTexts.footerEmail}</p>
+                <p>{siteTexts.footerPhoneNumber as string}</p>
+                <p>{siteTexts.footerEmail as string}</p>
               </div>
             </div>
             {!isMobile && (
@@ -233,7 +233,7 @@ export default function Solucoes() {
           </div>
         </div>
         <div className="border-t border-[#D8D0D2] mt-12 pt-8 pb-8 text-center max-w-[1140px] mx-auto" style={{color: themeColors.secondaryColor}}>
-          © Todos os direitos reservados - IAdmin 2024
+          {(siteTexts.copyrightText as string) || "© Todos os direitos reservados - IAdmin 2024"}
         </div>
       </footer>
     </main>
