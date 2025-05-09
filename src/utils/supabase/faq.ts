@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { FAQItem } from "./types";
 
@@ -32,7 +31,7 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
 }
 
 // Função para adicionar uma nova FAQ
-export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
+export async function addFAQ(faq: Omit<FAQItem, 'id'> & { active?: boolean }): Promise<boolean> {
   try {
     console.log('Adicionando FAQ:', faq);
     const { error } = await supabase
@@ -40,7 +39,7 @@ export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
       .insert({
         question: faq.question,
         answer: faq.answer,
-        active: true,
+        active: faq.active !== undefined ? faq.active : true,
         order_index: await getNextOrderIndex()
       });
 

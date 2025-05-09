@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { fetchFAQs, addFAQ, updateFAQ, deleteFAQ } from '@/utils/supabaseClient';
@@ -69,8 +68,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
     try {
       await addFAQ({
         question: newFaq.question,
-        answer: newFaq.answer,
-        active: true
+        answer: newFaq.answer
       });
       
       setNewFaq({ question: '', answer: '' });
