@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Site data types
@@ -131,59 +132,6 @@ export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
   }
 }
 
-// Função para adicionar ou atualizar template de cor
-export async function saveColorTemplate(template: ColorTemplate): Promise<boolean> {
-  try {
-    // Verificar se é um template existente ou novo
-    if (template.id && template.id.startsWith('custom-')) {
-      // Formato para inserção no banco
-      const dbTemplate = {
-        name: template.name,
-        primary_color: template.primaryColor,
-        secondary_color: template.secondaryColor,
-        accent_color: template.accentColor,
-        background_color: template.backgroundColor,
-        text_color: template.textColor,
-        button_text_color: template.buttonTextColor || '#FFFFFF',
-        menu_text_color: template.menuTextColor || '#FFFFFF',
-        is_default: template.isDefault || false
-      };
-      
-      const { error } = await supabase
-        .from('site_color_templates')
-        .insert(dbTemplate);
-      
-      if (error) throw error;
-    } else if (template.id) {
-      // Atualizar template existente
-      const { error } = await supabase
-        .from('site_color_templates')
-        .update({
-          name: template.name,
-          primary_color: template.primaryColor,
-          secondary_color: template.secondaryColor,
-          accent_color: template.accentColor,
-          background_color: template.backgroundColor,
-          text_color: template.textColor,
-          button_text_color: template.buttonTextColor || '#FFFFFF',
-          menu_text_color: template.menuTextColor || '#FFFFFF',
-          is_default: template.isDefault || false
-        })
-        .eq('id', template.id);
-      
-      if (error) throw error;
-    }
-    
-    // Salvar também no localStorage para fallback
-    saveColorTemplatesToLocalStorage([template]);
-    
-    return true;
-  } catch (error) {
-    console.error('Erro ao salvar template de cor:', error);
-    return false;
-  }
-}
-
 // Função para obter depoimentos
 export async function fetchTestimonials(): Promise<Testimonial[]> {
   try {
@@ -210,42 +158,6 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
   }
 }
 
-// Função para adicionar um novo depoimento
-export async function addTestimonial(testimonial: Omit<Testimonial, 'id'>): Promise<boolean> {
-  try {
-    const { error } = await supabase
-      .from('site_testimonials')
-      .insert({
-        name: testimonial.name,
-        role: testimonial.role,
-        testimonial: testimonial.testimonial,
-        avatar_url: testimonial.avatarUrl
-      });
-    
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Erro ao adicionar depoimento:', error);
-    return false;
-  }
-}
-
-// Função para excluir um depoimento
-export async function deleteTestimonial(id: string): Promise<boolean> {
-  try {
-    const { error } = await supabase
-      .from('site_testimonials')
-      .delete()
-      .eq('id', id);
-    
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Erro ao excluir depoimento:', error);
-    return false;
-  }
-}
-
 // Função para obter perguntas frequentes
 export async function fetchFAQs(): Promise<FAQItem[]> {
   try {
@@ -268,114 +180,6 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
   } catch (error) {
     console.error('Erro ao buscar FAQs:', error);
     return getFAQsFromLocalStorage();
-  }
-}
-
-// Função para adicionar uma nova pergunta
-export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
-  try {
-    const { error } = await supabase
-      .from('site_faqs')
-      .insert({
-        question: faq.question,
-        answer: faq.answer
-      });
-    
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Erro ao adicionar FAQ:', error);
-    return false;
-  }
-}
-
-// Função para excluir uma pergunta
-export async function deleteFAQ(id: string): Promise<boolean> {
-  try {
-    const { error } = await supabase
-      .from('site_faqs')
-      .delete()
-      .eq('id', id);
-    
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Erro ao excluir FAQ:', error);
-    return false;
-  }
-}
-
-// Função para obter configuração de embed
-export async function fetchEmbedConfig(): Promise<EmbedConfig | null> {
-  try {
-    const { data, error } = await supabase
-      .from('site_embed_config')
-      .select('*')
-      .single();
-    
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // Nenhum registro encontrado
-        return getEmbedConfigFromLocalStorage();
-      }
-      console.error('Erro ao carregar config de embed:', error);
-      return getEmbedConfigFromLocalStorage();
-    }
-    
-    return {
-      code: data.code,
-      position: data.position as 'left' | 'right',
-      isActive: data.is_active
-    };
-  } catch (error) {
-    console.error('Erro ao buscar config de embed:', error);
-    return getEmbedConfigFromLocalStorage();
-  }
-}
-
-// Função para salvar configuração de embed
-export async function saveEmbedConfig(config: EmbedConfig): Promise<boolean> {
-  try {
-    // Verificar se já existe alguma configuração
-    const { data, error: fetchError } = await supabase
-      .from('site_embed_config')
-      .select('id')
-      .limit(1);
-    
-    if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
-    
-    if (data && data.length > 0) {
-      // Atualizar configuração existente
-      const { error } = await supabase
-        .from('site_embed_config')
-        .update({
-          code: config.code,
-          position: config.position,
-          is_active: config.isActive
-        })
-        .eq('id', data[0].id);
-        
-      if (error) throw error;
-    } else {
-      // Criar nova configuração
-      const { error } = await supabase
-        .from('site_embed_config')
-        .insert({
-          code: config.code,
-          position: config.position,
-          is_active: config.isActive
-        });
-        
-      if (error) throw error;
-    }
-    
-    // Atualizar também no localStorage para fallback
-    saveEmbedConfigToLocalStorage(config);
-    
-    return true;
-  } catch (error) {
-    console.error('Erro ao salvar configuração de embed:', error);
-    return false;
   }
 }
 
@@ -408,39 +212,22 @@ export async function saveEmailSubscription(email: string, source: string): Prom
   }
 }
 
-// Função para testar webhook URL
-export async function testWebhookUrl(url: string): Promise<boolean> {
-  try {
-    // Simular teste de webhook
-    const testData = { test: true, timestamp: new Date().toISOString() };
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(testData)
-    });
-
-    return response.ok;
-  } catch (error) {
-    console.error('Erro ao testar webhook:', error);
-    return false;
-  }
-}
-
 // ===== FUNÇÕES DE FALLBACK PARA LOCALSTORAGE =====
 
 // Função para obter textos do localStorage (fallback)
 function getSiteTextsFromLocalStorage(): SiteTexts {
   const savedTexts = localStorage.getItem('siteTexts');
   return savedTexts ? JSON.parse(savedTexts) : {
-    siteTitle: 'IAdmin',
-    footerPhoneNumber: '(11) 93956-965',
-    footerEmail: 'iadminassistant@gmail.com',
+    siteTitle: 'Virtia',
+    footerPhoneNumber: '+1 (415) 343-6587',
+    footerEmail: 'contato@virtia.ai',
     footerAbout: 'A sua assistente de AI',
-    footerButtonText: 'Contrate uma AI Poderosa!',
-    copyrightText: '© Todos os direitos reservados - IAdmin 2024',
+    footerButtonText: 'Contrate a Virtia',
+    copyrightText: '© Todos os direitos reservados - Virtia 2023',
     embedActive: false,
-    embedPosition: 'right'
+    embedPosition: 'right',
+    heroTitle: 'Destrave a fronteira da produtividade.',
+    heroSubtitle: 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.'
   };
 }
 
@@ -465,26 +252,18 @@ function getColorTemplatesFromLocalStorage(): ColorTemplate[] {
     allTemplates = [...allTemplates, ...JSON.parse(customTemplates)];
   }
   
-  return allTemplates;
-}
-
-// Função para salvar templates de cores no localStorage
-function saveColorTemplatesToLocalStorage(templates: ColorTemplate[]): void {
-  // Atualizar apenas templates personalizados
-  const customTemplates = templates.filter(t => !t.id.startsWith('default'));
-  const existingCustom = localStorage.getItem('siteTemplates');
-  let updatedCustomTemplates = customTemplates;
-  
-  if (existingCustom) {
-    const parsed = JSON.parse(existingCustom);
-    // Substituir templates existentes e adicionar novos
-    updatedCustomTemplates = [
-      ...parsed.filter((t: ColorTemplate) => !customTemplates.some(ct => ct.id === t.id)),
-      ...customTemplates
-    ];
-  }
-  
-  localStorage.setItem('siteTemplates', JSON.stringify(updatedCustomTemplates));
+  return allTemplates.length > 0 ? allTemplates : [
+    {
+      id: 'default-1',
+      name: 'Tema Padrão Virtia',
+      primaryColor: '#FF196E',
+      secondaryColor: '#2D0A16',
+      accentColor: '#FF4F8E',
+      backgroundColor: '#FFFFFF',
+      textColor: '#222222',
+      isDefault: true
+    }
+  ];
 }
 
 // Função para obter depoimentos do localStorage
@@ -500,21 +279,21 @@ function getTestimonialsFromLocalStorage(): Testimonial[] {
       id: '1',
       name: "Carlos M.",
       role: "Gerente de Projetos",
-      testimonial: "Com a AI da IAdmin, conseguimos reduzir o tempo de planejamento em 30%. Ela nos fornece insights precisos, ajustando automaticamente o cronograma de acordo com o andamento das obras. Nunca tivemos tanto controle!",
+      testimonial: "Com a AI da Virtia, conseguimos reduzir o tempo de planejamento em 30%. Ela nos fornece insights precisos, ajustando automaticamente o cronograma de acordo com o andamento das obras. Nunca tivemos tanto controle!",
       avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true"
     },
     {
       id: '2',
       name: "Mariana P.",
       role: "Diretora de operações",
-      testimonial: "A IAdmin trouxe uma transformação real à nossa empresa. A rapidez com que automatiza processos e interpreta documentos é impressionante, e seu sistema de apoio à decisão nos permite ser mais estratégicos.",
+      testimonial: "A Virtia trouxe uma transformação real à nossa empresa. A rapidez com que automatiza processos e interpreta documentos é impressionante, e seu sistema de apoio à decisão nos permite ser mais estratégicos.",
       avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/09b122a661f457926e57ea75f3ccd16a13770c01?placeholderIfAbsent=true"
     },
     {
       id: '3',
       name: "Lucas K.",
       role: "Coordenador de obras",
-      testimonial: "O que a IAdmin realiza diária do nosso time com SmartCity é preciso e intuitivo. A visualização de relatórios e o gerenciamento ágil são diferenciais que nos ajudam a manter as obras no cronograma.",
+      testimonial: "O que a Virtia realiza diária do nosso time com SmartCity é preciso e intuitivo. A visualização de relatórios e o gerenciamento ágil são diferenciais que nos ajudam a manter as obras no cronograma.",
       avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/8491a3ecf4b307f91edcd2d89f2c8c01096ca3cb?placeholderIfAbsent=true"
     }
   ];
@@ -531,8 +310,8 @@ function getFAQsFromLocalStorage(): FAQItem[] {
   return [
     {
       id: '1',
-      question: "Como funciona a Inteligência Artificial da IAdmin?",
-      answer: "A IAdmin utiliza tecnologia de ponta em IA para automatizar e otimizar processos na construção civil e outros setores. Nosso sistema analisa dados, identifica padrões e fornece insights valiosos para tomada de decisão."
+      question: "Como funciona a Inteligência Artificial da Virtia?",
+      answer: "A Virtia utiliza tecnologia de ponta em IA para automatizar e otimizar processos na construção civil e outros setores. Nosso sistema analisa dados, identifica padrões e fornece insights valiosos para tomada de decisão."
     },
     {
       id: '2',
@@ -543,34 +322,20 @@ function getFAQsFromLocalStorage(): FAQItem[] {
       id: '3',
       question: "A Inteligência Artificial funciona com o WhatsApp?",
       answer: "Sim! Nossa IA se integra perfeitamente com o WhatsApp Business, permitindo automação de atendimento, respostas inteligentes e gerenciamento eficiente de conversas com seus clientes."
+    },
+    {
+      id: '4',
+      question: "Como funciona a Inteligência Artificial da Virtia?",
+      answer: "Nossa IA passa por um treinamento específico para entender seu negócio, processos e desafios únicos. Ela é alimentada com dados relevantes do seu setor e aprende continuamente à medida que interage com seus sistemas e equipe."
+    },
+    {
+      id: '5',
+      question: "Posso ter uma conversação natural com a Inteligência Artificial?",
+      answer: "Sim! A IA da Virtia foi treinada para entender e responder de forma natural, permitindo uma comunicação fluida e eficiente como se estivesse falando com um assistente humano."
     }
   ];
 }
 
-// Função para obter configuração de embed do localStorage
-function getEmbedConfigFromLocalStorage(): EmbedConfig | null {
-  const savedTexts = getSiteTextsFromLocalStorage();
-  
-  if (savedTexts.embedCode) {
-    return {
-      code: savedTexts.embedCode as string,
-      position: (savedTexts.embedPosition as 'left' | 'right') || 'right',
-      isActive: !!savedTexts.embedActive
-    };
-  }
-  
-  return null;
-}
-
-// Função para salvar configuração de embed no localStorage
-function saveEmbedConfigToLocalStorage(config: EmbedConfig): void {
-  updateSiteTextsInLocalStorage({
-    embedCode: config.code,
-    embedPosition: config.position,
-    embedActive: config.isActive
-  });
-}
-
-// Para compatibilidade com o código existente, exportamos as funções do localStorage.ts
+// Exportar as funções para compatibilidade com código existente
 export const getSiteTexts = getSiteTextsFromLocalStorage;
 export const updateSiteTexts = updateSiteTextsInLocalStorage;
