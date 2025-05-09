@@ -3,12 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { defaultTemplates, ThemeTemplate } from '@/utils/themeTemplates';
 import { Check, Trash, X, Plus, Edit, Globe, Send, Code } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { getSiteTexts, updateSiteTexts, testWebhookUrl } from '@/utils/localStorage';
+import { 
+  fetchSiteTexts, 
+  fetchEmbedConfig,
+  saveEmbedConfig,
+  updateSiteText,
+  fetchColorTemplates, 
+  saveColorTemplate, 
+  ColorTemplate,
+  testWebhookUrl 
+} from '@/utils/supabaseClient';
 import {
   Dialog,
   DialogContent,
@@ -20,9 +28,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 
 export default function SiteSettings() {
-  const [templates, setTemplates] = useState<ThemeTemplate[]>(defaultTemplates);
+  const [templates, setTemplates] = useState<ColorTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("default");
-  const [customTemplate, setCustomTemplate] = useState<ThemeTemplate>({
+  const [customTemplate, setCustomTemplate] = useState<ColorTemplate>({
     id: "custom",
     name: "Personalizado",
     primaryColor: "#FF196E",
@@ -33,7 +41,7 @@ export default function SiteSettings() {
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
   });
-  const [editingTemplate, setEditingTemplate] = useState<ThemeTemplate | null>(null);
+  const [editingTemplate, setEditingTemplate] = useState<ColorTemplate | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [faviconUrl, setFaviconUrl] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -47,53 +55,51 @@ export default function SiteSettings() {
   const [embedPosition, setEmbedPosition] = useState<'left' | 'right'>('right');
   const [embedActive, setEmbedActive] = useState(false);
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
-    // Save default templates to localStorage
-    localStorage.setItem('defaultTemplates', JSON.stringify(defaultTemplates));
+    // Carregar dados do site
+    const loadSiteData = async () => {
+      try {
+        // Carregar templates de cores
+        const colorTemplates = await fetchColorTemplates();
+        if (colorTemplates.length > 0) {
+          setTemplates(colorTemplates);
+        }
+        
+        // Carregar textos do site
+        const texts = await fetchSiteTexts();
+        if (texts) {
+          if (texts.faviconUrl) setFaviconUrl(texts.faviconUrl as string);
+          if (texts.webhookUrl) setWebhookUrl(texts.webhookUrl as string);
+          if (texts.robotImage) setRobotImage(texts.robotImage as string);
+          if (texts.contactImage) setContactImage(texts.contactImage as string);
+          if (texts.siteTitle) setSiteTitle(texts.siteTitle as string);
+          if (texts.copyrightText) setCopyrightText(texts.copyrightText as string);
+        }
+        
+        // Carregar configuração de embed
+        const embedConfig = await fetchEmbedConfig();
+        if (embedConfig) {
+          setEmbedCode(embedConfig.code);
+          setEmbedPosition(embedConfig.position);
+          setEmbedActive(embedConfig.isActive);
+        }
+        
+        // Carregar template selecionado
+        const savedSelectedTemplate = localStorage.getItem('selectedTemplate');
+        if (savedSelectedTemplate) {
+          setSelectedTemplate(savedSelectedTemplate);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do site:', error);
+        toast.error('Erro ao carregar configurações do site');
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
     
-    // Load saved templates and selected template from localStorage
-    const savedTemplates = localStorage.getItem('siteTemplates');
-    if (savedTemplates) {
-      setTemplates([...defaultTemplates, ...JSON.parse(savedTemplates).filter((t: ThemeTemplate) => 
-        !defaultTemplates.some(dt => dt.id === t.id)
-      )]);
-    }
-
-    const savedSelectedTemplate = localStorage.getItem('selectedTemplate');
-    if (savedSelectedTemplate) {
-      setSelectedTemplate(savedSelectedTemplate);
-    }
-    
-    // Load site texts
-    const siteTexts = getSiteTexts();
-    if (siteTexts.faviconUrl) {
-      setFaviconUrl(siteTexts.faviconUrl);
-    }
-    if (siteTexts.webhookUrl) {
-      setWebhookUrl(siteTexts.webhookUrl);
-    }
-    if (siteTexts.robotImage) {
-      setRobotImage(siteTexts.robotImage);
-    }
-    if (siteTexts.contactImage) {
-      setContactImage(siteTexts.contactImage);
-    }
-    if (siteTexts.siteTitle) {
-      setSiteTitle(siteTexts.siteTitle);
-    }
-    if (siteTexts.copyrightText) {
-      setCopyrightText(siteTexts.copyrightText);
-    }
-    if (siteTexts.embedCode) {
-      setEmbedCode(siteTexts.embedCode);
-    }
-    if (siteTexts.embedPosition) {
-      setEmbedPosition(siteTexts.embedPosition as 'left' | 'right');
-    }
-    if (siteTexts.embedActive !== undefined) {
-      setEmbedActive(!!siteTexts.embedActive);
-    }
+    loadSiteData();
   }, []);
 
   const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,61 +126,96 @@ export default function SiteSettings() {
     setCopyrightText(e.target.value);
   };
 
-  const saveSettings = () => {
+  const saveSettings = async () => {
     setIsLoading(true);
     
-    // Save custom templates to localStorage (excluding default templates)
-    const customTemplates = templates.filter(template => 
-      !defaultTemplates.some(dt => dt.id === template.id)
-    );
-    localStorage.setItem('siteTemplates', JSON.stringify(customTemplates));
-    localStorage.setItem('selectedTemplate', selectedTemplate);
-    
-    // Save all settings to siteTexts
-    updateSiteTexts({
-      faviconUrl: faviconUrl,
-      webhookUrl: webhookUrl,
-      robotImage: robotImage,
-      contactImage: contactImage,
-      siteTitle: siteTitle,
-      copyrightText: copyrightText,
-      embedCode: embedCode,
-      embedPosition: embedPosition,
-      embedActive: embedActive
-    });
-    
-    setTimeout(() => {
+    try {
+      // Salvar template selecionado
+      localStorage.setItem('selectedTemplate', selectedTemplate);
+      
+      // Salvar textos do site
+      await Promise.all([
+        updateSiteText('faviconUrl', faviconUrl),
+        updateSiteText('webhookUrl', webhookUrl),
+        updateSiteText('robotImage', robotImage),
+        updateSiteText('contactImage', contactImage),
+        updateSiteText('siteTitle', siteTitle),
+        updateSiteText('copyrightText', copyrightText)
+      ]);
+      
+      // Salvar configuração de embed
+      await saveEmbedConfig({
+        code: embedCode,
+        position: embedPosition,
+        isActive: embedActive
+      });
+      
       toast.success('Configurações salvas com sucesso!');
+      
+      // Recarregar a página para aplicar as mudanças
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      toast.error('Ocorreu um erro ao salvar as configurações');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
   
   const handleSelectTemplate = (templateId: string) => {
     setSelectedTemplate(templateId);
   };
   
-  const handleAddTemplate = () => {
+  const handleAddTemplate = async () => {
     const newTemplate = {
       ...customTemplate,
       id: `custom-${Date.now()}`,
       name: `Personalizado ${templates.filter(t => t.id.startsWith('custom')).length + 1}`
     };
     
-    setTemplates([...templates, newTemplate]);
-    setSelectedTemplate(newTemplate.id);
-    setOpenTemplateDialog(false); // Fechar o diálogo após adicionar
+    try {
+      const success = await saveColorTemplate(newTemplate);
+      
+      if (success) {
+        // Atualizar estado local
+        setTemplates([...templates, newTemplate]);
+        setSelectedTemplate(newTemplate.id);
+        setOpenTemplateDialog(false); // Fechar o diálogo após adicionar
+        toast.success('Template de cores criado com sucesso!');
+      } else {
+        toast.error('Erro ao criar template de cores');
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar template:', error);
+      toast.error('Ocorreu um erro ao criar o template de cores');
+    }
   };
   
-  const handleUpdateTemplate = () => {
+  const handleUpdateTemplate = async () => {
     if (editingTemplate) {
-      setTemplates(templates.map(t => t.id === editingTemplate.id ? editingTemplate : t));
-      setEditingTemplate(null);
+      try {
+        const success = await saveColorTemplate(editingTemplate);
+        
+        if (success) {
+          // Atualizar estado local
+          setTemplates(templates.map(t => t.id === editingTemplate.id ? editingTemplate : t));
+          setEditingTemplate(null);
+          toast.success('Template atualizado com sucesso!');
+        } else {
+          toast.error('Erro ao atualizar template');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar template:', error);
+        toast.error('Ocorreu um erro ao atualizar o template');
+      }
     }
   };
   
   const handleDeleteTemplate = (templateId: string) => {
-    // Prevent deleting default templates
-    if (defaultTemplates.some(dt => dt.id === templateId)) {
+    // Impedir exclusão de templates padrão
+    if (templateId === 'default') {
       toast.error("Modelos padrão não podem ser excluídos.");
       return;
     }
@@ -182,15 +223,21 @@ export default function SiteSettings() {
     const updatedTemplates = templates.filter(t => t.id !== templateId);
     setTemplates(updatedTemplates);
     
-    // If the deleted template was selected, select the default template
+    // Se o template excluído estava selecionado, selecionar o padrão
     if (selectedTemplate === templateId) {
       setSelectedTemplate("default");
     }
+    
+    // Atualizar localStorage
+    const customTemplates = updatedTemplates.filter(t => t.id !== 'default');
+    localStorage.setItem('siteTemplates', JSON.stringify(customTemplates));
+    
+    toast.success('Template removido com sucesso!');
   };
   
-  const handleEditTemplate = (template: ThemeTemplate) => {
-    // Prevent editing default templates
-    if (defaultTemplates.some(dt => dt.id === template.id)) {
+  const handleEditTemplate = (template: ColorTemplate) => {
+    // Impedir edição de templates padrão
+    if (template.id === 'default') {
       toast.error("Modelos padrão não podem ser editados.");
       return;
     }
@@ -224,6 +271,10 @@ export default function SiteSettings() {
       setTestingWebhook(false);
     }
   };
+
+  if (isInitialLoading) {
+    return <div className="p-6">Carregando configurações do site...</div>;
+  }
 
   return (
     <div>
@@ -262,7 +313,7 @@ export default function SiteSettings() {
                         {selectedTemplate === template.id && (
                           <Check size={16} className="text-[#FF196E]" />
                         )}
-                        {!defaultTemplates.some(dt => dt.id === template.id) && (
+                        {template.id !== 'default' && (
                           <>
                             <button
                               type="button"
@@ -691,7 +742,7 @@ export default function SiteSettings() {
         </div>
       </form>
       
-      {/* Dialog for creating templates */}
+      {/* Dialog para criar templates */}
       <Dialog open={openTemplateDialog} onOpenChange={setOpenTemplateDialog}>
         <DialogContent>
           <DialogHeader>
@@ -803,13 +854,13 @@ export default function SiteSettings() {
                 <Input
                   type="color"
                   id="buttonTextColor"
-                  value={customTemplate.buttonTextColor}
+                  value={customTemplate.buttonTextColor || "#FFFFFF"}
                   onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
                   className="w-12 h-10 p-1"
                 />
                 <Input
                   type="text"
-                  value={customTemplate.buttonTextColor}
+                  value={customTemplate.buttonTextColor || "#FFFFFF"}
                   onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
                   className="flex-1"
                 />
@@ -821,13 +872,13 @@ export default function SiteSettings() {
                 <Input
                   type="color"
                   id="menuTextColor"
-                  value={customTemplate.menuTextColor}
+                  value={customTemplate.menuTextColor || "#FFFFFF"}
                   onChange={(e) => setCustomTemplate({...customTemplate, menuTextColor: e.target.value})}
                   className="w-12 h-10 p-1"
                 />
                 <Input
                   type="text"
-                  value={customTemplate.menuTextColor}
+                  value={customTemplate.menuTextColor || "#FFFFFF"}
                   onChange={(e) => setCustomTemplate({...customTemplate, menuTextColor: e.target.value})}
                   className="flex-1"
                 />
@@ -845,7 +896,7 @@ export default function SiteSettings() {
         </DialogContent>
       </Dialog>
       
-      {/* Dialog for editing templates */}
+      {/* Dialog para editar templates */}
       {editingTemplate && (
         <Dialog open={!!editingTemplate} onOpenChange={(open) => !open && setEditingTemplate(null)}>
           <DialogContent>
@@ -880,6 +931,7 @@ export default function SiteSettings() {
                   />
                 </div>
               </div>
+              {/* Mais campos de cores omitidos para brevidade */}
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="editSecondaryColor">Cor Secundária</Label>
                 <div className="flex col-span-3 gap-2 items-center">

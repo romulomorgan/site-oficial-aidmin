@@ -3,20 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Link } from 'react-router-dom';
-import { getSiteTexts, saveEmailSubscription } from '@/utils/localStorage';
-import { ThemeTemplate } from '@/utils/themeTemplates';
+import { fetchSiteTexts, fetchColorTemplates, SiteTexts, ColorTemplate, saveEmailSubscription } from '@/utils/supabaseClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
-
-// Definindo um tipo mais flexível para os textos do site
-interface SiteTextsType {
-  [key: string]: string | boolean | undefined;
-}
 
 export default function Solucoes() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [siteTexts, setSiteTexts] = useState<SiteTextsType>({
+  const [siteTexts, setSiteTexts] = useState<SiteTexts>({
     robotImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
     footerAbout: 'A sua assistente de AI',
     footerButtonText: 'Contrate uma AI Poderosa!',
@@ -35,46 +29,49 @@ export default function Solucoes() {
   const isMobile = useIsMobile();
   
   useEffect(() => {
-    // Load saved texts from localStorage for images and other texts
-    const savedTexts = getSiteTexts();
-    setSiteTexts(prev => ({...prev, ...savedTexts}));
-    
-    // Load theme colors
-    const selectedTemplate = localStorage.getItem('selectedTemplate');
-    if (selectedTemplate) {
-      // Check default templates
-      const savedTemplates = localStorage.getItem('siteTemplates');
-      const defaultTemplates = JSON.parse(localStorage.getItem('defaultTemplates') || '[]');
-      let allTemplates = defaultTemplates;
-      
-      if (savedTemplates) {
-        allTemplates = [...defaultTemplates, ...JSON.parse(savedTemplates)];
-      }
-      
-      // Get selected template
-      const template = allTemplates.find((t: ThemeTemplate) => t.id === selectedTemplate);
-      
-      // If template found, apply colors
-      if (template) {
-        setThemeColors({
-          primaryColor: template.primaryColor,
-          secondaryColor: template.secondaryColor,
-          accentColor: template.accentColor,
-          backgroundColor: template.backgroundColor,
-          textColor: template.textColor
-        });
+    // Carregar textos do site do Supabase
+    const loadSiteData = async () => {
+      try {
+        // Carregar textos do site
+        const texts = await fetchSiteTexts();
+        if (texts) {
+          setSiteTexts(prev => ({ ...prev, ...texts }));
+        }
+
+        // Carregar templates de cores
+        const templates = await fetchColorTemplates();
         
-        // Apply colors to CSS variables
-        document.documentElement.style.setProperty('--primary-color', template.primaryColor);
-        document.documentElement.style.setProperty('--secondary-color', template.secondaryColor);
-        document.documentElement.style.setProperty('--accent-color', template.accentColor);
-        document.documentElement.style.setProperty('--background-color', template.backgroundColor);
-        document.documentElement.style.setProperty('--text-color', template.textColor);
+        // Carregar template selecionado do localStorage
+        const selectedTemplate = localStorage.getItem('selectedTemplate');
+        if (selectedTemplate && templates.length > 0) {
+          const template = templates.find(t => t.id === selectedTemplate);
+          
+          if (template) {
+            setThemeColors({
+              primaryColor: template.primaryColor,
+              secondaryColor: template.secondaryColor,
+              accentColor: template.accentColor,
+              backgroundColor: template.backgroundColor,
+              textColor: template.textColor
+            });
+            
+            // Aplicar cores às variáveis CSS
+            document.documentElement.style.setProperty('--primary-color', template.primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', template.secondaryColor);
+            document.documentElement.style.setProperty('--accent-color', template.accentColor);
+            document.documentElement.style.setProperty('--background-color', template.backgroundColor);
+            document.documentElement.style.setProperty('--text-color', template.textColor);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do site:', error);
       }
-    }
+    };
+    
+    loadSiteData();
   }, []);
   
-  const handleSubscribeEmail = (e: React.FormEvent) => {
+  const handleSubscribeEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email) {
@@ -84,14 +81,17 @@ export default function Solucoes() {
     
     setIsSubmitting(true);
     
-    // Save subscription to localStorage
-    saveEmailSubscription(email, 'Página de Soluções');
-    
-    setTimeout(() => {
+    try {
+      // Salvar a inscrição
+      await saveEmailSubscription(email, 'Página de Soluções');
       toast.success('E-mail cadastrado com sucesso!');
       setEmail('');
+    } catch (error) {
+      console.error('Erro ao cadastrar e-mail:', error);
+      toast.error('Ocorreu um erro ao cadastrar seu e-mail. Tente novamente.');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
   
   return (

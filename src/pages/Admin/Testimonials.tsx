@@ -1,42 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Trash } from 'lucide-react';
-
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  testimonial: string;
-  avatarUrl: string;
-}
+import { fetchTestimonials, addTestimonial, deleteTestimonial, Testimonial } from '@/utils/supabaseClient';
 
 export default function Testimonials() {
-  const defaultTestimonials = [
-    {
-      id: 1,
-      name: "Carlos M.",
-      role: "Gerente de Projetos",
-      testimonial: "Com a AI da IAdmin, conseguimos reduzir o tempo de planejamento em 30%. Ela nos fornece insights precisos, ajustando automaticamente o cronograma de acordo com o andamento das obras. Nunca tivemos tanto controle!",
-      avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true"
-    },
-    {
-      id: 2,
-      name: "Mariana P.",
-      role: "Diretora de operações",
-      testimonial: "A IAdmin trouxe uma transformação real à nossa empresa. A rapidez com que automatiza processos e interpreta documentos é impressionante, e seu sistema de apoio à decisão nos permite ser mais estratégicos.",
-      avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/09b122a661f457926e57ea75f3ccd16a13770c01?placeholderIfAbsent=true"
-    },
-    {
-      id: 3,
-      name: "Lucas K.",
-      role: "Coordenador de obras",
-      testimonial: "O que a IAdmin realiza diária do nosso time com SmartCity é preciso e intuitivo. A visualização de relatórios e o gerenciamento ágil são diferenciais que nos ajudam a manter as obras no cronograma.",
-      avatarUrl: "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/8491a3ecf4b307f91edcd2d89f2c8c01096ca3cb?placeholderIfAbsent=true"
-    }
-  ];
-
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [newTestimonial, setNewTestimonial] = useState<Omit<Testimonial, 'id'>>({
     name: '',
@@ -44,13 +14,24 @@ export default function Testimonials() {
     testimonial: '',
     avatarUrl: ''
   });
+  
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
-    // Load saved testimonials from localStorage if available
-    const savedTestimonials = localStorage.getItem('testimonials');
-    if (savedTestimonials) {
-      setTestimonials(JSON.parse(savedTestimonials));
-    }
+    // Carregar depoimentos do Supabase
+    const loadTestimonials = async () => {
+      try {
+        const data = await fetchTestimonials();
+        setTestimonials(data);
+      } catch (error) {
+        console.error('Erro ao carregar depoimentos:', error);
+        toast.error('Erro ao carregar depoimentos');
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
+    
+    loadTestimonials();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -61,7 +42,7 @@ export default function Testimonials() {
     }));
   };
 
-  const handleAddTestimonial = () => {
+  const handleAddTestimonial = async () => {
     if (!newTestimonial.name || !newTestimonial.role || !newTestimonial.testimonial) {
       toast.error('Por favor, preencha todos os campos obrigatórios');
       return;
@@ -69,42 +50,61 @@ export default function Testimonials() {
     
     setIsLoading(true);
     
-    // Create new testimonial with a unique ID
-    const newId = testimonials.length > 0 
-      ? Math.max(...testimonials.map(t => t.id)) + 1 
-      : 1;
-    
-    const updatedTestimonials = [
-      ...testimonials,
-      {
+    try {
+      // Garantir que temos uma URL de avatar
+      const testimonialToAdd = {
         ...newTestimonial,
-        id: newId,
         avatarUrl: newTestimonial.avatarUrl || 'https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true'
+      };
+      
+      // Adicionar ao Supabase
+      const success = await addTestimonial(testimonialToAdd);
+      
+      if (success) {
+        // Recarregar depoimentos
+        const updatedTestimonials = await fetchTestimonials();
+        setTestimonials(updatedTestimonials);
+        
+        // Resetar formulário
+        setNewTestimonial({
+          name: '',
+          role: '',
+          testimonial: '',
+          avatarUrl: ''
+        });
+        
+        toast.success('Depoimento adicionado com sucesso!');
+      } else {
+        toast.error('Erro ao adicionar depoimento');
       }
-    ];
-    
-    // Save to localStorage
-    localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
-    setTestimonials(updatedTestimonials);
-    
-    // Reset form
-    setNewTestimonial({
-      name: '',
-      role: '',
-      testimonial: '',
-      avatarUrl: ''
-    });
-    
-    toast.success('Depoimento adicionado com sucesso!');
-    setIsLoading(false);
+    } catch (error) {
+      console.error('Erro ao adicionar depoimento:', error);
+      toast.error('Ocorreu um erro ao adicionar o depoimento');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteTestimonial = (id: number) => {
-    const updatedTestimonials = testimonials.filter(t => t.id !== id);
-    localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
-    setTestimonials(updatedTestimonials);
-    toast.success('Depoimento removido com sucesso!');
+  const handleDeleteTestimonial = async (id: string) => {
+    try {
+      const success = await deleteTestimonial(id);
+      
+      if (success) {
+        // Atualizar estado local
+        setTestimonials(prev => prev.filter(t => t.id !== id));
+        toast.success('Depoimento removido com sucesso!');
+      } else {
+        toast.error('Erro ao remover depoimento');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir depoimento:', error);
+      toast.error('Ocorreu um erro ao excluir o depoimento');
+    }
   };
+
+  if (isInitialLoading) {
+    return <div className="p-6">Carregando depoimentos...</div>;
+  }
 
   return (
     <div>
@@ -197,6 +197,10 @@ export default function Testimonials() {
                       src={testimonial.avatarUrl} 
                       alt={testimonial.name}
                       className="w-10 h-10 rounded-full object-cover mr-3"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true';
+                      }}
                     />
                     <div>
                       <h3 className="font-medium">{testimonial.name}</h3>

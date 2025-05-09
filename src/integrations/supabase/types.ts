@@ -648,6 +648,186 @@ export type Database = {
         }
         Relationships: []
       }
+      site_color_templates: {
+        Row: {
+          accent_color: string
+          background_color: string
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          primary_color: string
+          secondary_color: string
+          text_color: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color: string
+          background_color: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          primary_color: string
+          secondary_color: string
+          text_color: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string
+          background_color?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          primary_color?: string
+          secondary_color?: string
+          text_color?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_configurations: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          value: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          value?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json | null
+        }
+        Relationships: []
+      }
+      site_embed_config: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          position?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          position?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_faqs: {
+        Row: {
+          active: boolean
+          answer: string
+          created_at: string
+          id: string
+          order_index: number | null
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          answer: string
+          created_at?: string
+          id?: string
+          order_index?: number | null
+          question: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          answer?: string
+          created_at?: string
+          id?: string
+          order_index?: number | null
+          question?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_testimonials: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          name: string
+          order_index: number | null
+          role: string
+          testimonial: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          order_index?: number | null
+          role: string
+          testimonial: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          order_index?: number | null
+          role?: string
+          testimonial?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_texts: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          key: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          key: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          key?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       usuarios: {
         Row: {
           cliente_id: string | null

@@ -3,55 +3,33 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Trash } from 'lucide-react';
-
-interface FAQItem {
-  id: number;
-  question: string;
-  answer: string;
-}
+import { fetchFAQs, addFAQ, deleteFAQ, FAQItem } from '@/utils/supabaseClient';
 
 export default function FAQ() {
-  const defaultFAQItems = [
-    {
-      id: 1,
-      question: "Como funciona a Inteligência Artificial da IAdmin?",
-      answer: "A IAdmin utiliza tecnologia de ponta em IA para automatizar e otimizar processos na construção civil e outros setores. Nosso sistema analisa dados, identifica padrões e fornece insights valiosos para tomada de decisão."
-    },
-    {
-      id: 2,
-      question: "Posso ter uma integração completa com nosso departamento operacional?",
-      answer: "Sim, nossos sistemas de IA são desenvolvidos para integrar perfeitamente com seus sistemas existentes, garantindo uma transição suave e eficiente para processos mais automatizados."
-    },
-    {
-      id: 3,
-      question: "A Inteligência Artificial funciona com o WhatsApp?",
-      answer: "Sim! Nossa IA se integra perfeitamente com o WhatsApp Business, permitindo automação de atendimento, respostas inteligentes e gerenciamento eficiente de conversas com seus clientes."
-    },
-    {
-      id: 4,
-      question: "Podemos integrar a IAdmin com outros sistemas que já utilizamos?",
-      answer: "Absolutamente. Nossa solução foi projetada para ser flexível e se integrar a sistemas existentes através de APIs e conectores personalizados, minimizando a curva de aprendizado."
-    },
-    {
-      id: 5,
-      question: "Teremos algum painel para gerenciar?",
-      answer: "Sim, oferecemos um painel administrativo intuitivo e completo que permite configurar, monitorar e analisar o desempenho da sua IA, incluindo métricas de atendimento e automação."
-    }
-  ];
-
-  const [faqItems, setFAQItems] = useState<FAQItem[]>(defaultFAQItems);
+  const [faqItems, setFAQItems] = useState<FAQItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [newFAQ, setNewFAQ] = useState<Omit<FAQItem, 'id'>>({
     question: '',
     answer: ''
   });
+  
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
-    // Load saved FAQ items from localStorage if available
-    const savedFAQItems = localStorage.getItem('faqItems');
-    if (savedFAQItems) {
-      setFAQItems(JSON.parse(savedFAQItems));
-    }
+    // Carregar FAQs do Supabase
+    const loadFAQs = async () => {
+      try {
+        const data = await fetchFAQs();
+        setFAQItems(data);
+      } catch (error) {
+        console.error('Erro ao carregar FAQs:', error);
+        toast.error('Erro ao carregar perguntas frequentes');
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
+    
+    loadFAQs();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,7 +40,7 @@ export default function FAQ() {
     }));
   };
 
-  const handleAddFAQ = () => {
+  const handleAddFAQ = async () => {
     if (!newFAQ.question || !newFAQ.answer) {
       toast.error('Por favor, preencha todos os campos');
       return;
@@ -70,39 +48,53 @@ export default function FAQ() {
     
     setIsLoading(true);
     
-    // Create new FAQ item with a unique ID
-    const newId = faqItems.length > 0 
-      ? Math.max(...faqItems.map(item => item.id)) + 1 
-      : 1;
-    
-    const updatedFAQItems = [
-      ...faqItems,
-      {
-        ...newFAQ,
-        id: newId
+    try {
+      // Adicionar ao Supabase
+      const success = await addFAQ(newFAQ);
+      
+      if (success) {
+        // Recarregar FAQs
+        const updatedFAQs = await fetchFAQs();
+        setFAQItems(updatedFAQs);
+        
+        // Resetar formulário
+        setNewFAQ({
+          question: '',
+          answer: ''
+        });
+        
+        toast.success('Pergunta adicionada com sucesso!');
+      } else {
+        toast.error('Erro ao adicionar pergunta');
       }
-    ];
-    
-    // Save to localStorage
-    localStorage.setItem('faqItems', JSON.stringify(updatedFAQItems));
-    setFAQItems(updatedFAQItems);
-    
-    // Reset form
-    setNewFAQ({
-      question: '',
-      answer: ''
-    });
-    
-    toast.success('Pergunta adicionada com sucesso!');
-    setIsLoading(false);
+    } catch (error) {
+      console.error('Erro ao adicionar FAQ:', error);
+      toast.error('Ocorreu um erro ao adicionar a pergunta');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteFAQ = (id: number) => {
-    const updatedFAQItems = faqItems.filter(item => item.id !== id);
-    localStorage.setItem('faqItems', JSON.stringify(updatedFAQItems));
-    setFAQItems(updatedFAQItems);
-    toast.success('Pergunta removida com sucesso!');
+  const handleDeleteFAQ = async (id: string) => {
+    try {
+      const success = await deleteFAQ(id);
+      
+      if (success) {
+        // Atualizar estado local
+        setFAQItems(prev => prev.filter(item => item.id !== id));
+        toast.success('Pergunta removida com sucesso!');
+      } else {
+        toast.error('Erro ao remover pergunta');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir FAQ:', error);
+      toast.error('Ocorreu um erro ao excluir a pergunta');
+    }
   };
+
+  if (isInitialLoading) {
+    return <div className="p-6">Carregando perguntas frequentes...</div>;
+  }
 
   return (
     <div>

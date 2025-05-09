@@ -1,37 +1,80 @@
 
-import React, { useEffect, useState } from 'react';
-import { getSiteTexts } from '@/utils/localStorage';
+import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
+import { fetchEmbedConfig } from '@/utils/supabaseClient';
 
 const EmbedComponent: React.FC = () => {
-  const [embedCode, setEmbedCode] = useState<string>('');
-  const [embedPosition, setEmbedPosition] = useState<'left' | 'right'>('right');
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const [embedConfig, setEmbedConfig] = useState<{
+    code: string;
+    position: 'left' | 'right';
+    isActive: boolean;
+  } | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Carregar as configurações do embed do localStorage
-    const siteTexts = getSiteTexts();
-    if (siteTexts.embedCode) {
-      setEmbedCode(siteTexts.embedCode as string);
-    }
-    
-    if (siteTexts.embedPosition) {
-      setEmbedPosition(siteTexts.embedPosition as 'left' | 'right');
-    }
-    
-    setIsActive(!!siteTexts.embedActive);
+    const loadEmbedConfig = async () => {
+      const config = await fetchEmbedConfig();
+      setEmbedConfig(config);
+    };
+
+    loadEmbedConfig();
   }, []);
 
-  // Se não estiver ativo ou não houver código, não renderiza nada
-  if (!isActive || !embedCode) {
+  // Se não houver configuração ou não estiver ativo, não renderiza nada
+  if (!embedConfig || !embedConfig.isActive || !embedConfig.code) {
     return null;
   }
 
-  // Cria um contêiner para o embed com o posicionamento correto
+  const toggleEmbed = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div 
-      className={`fixed bottom-4 ${embedPosition === 'left' ? 'left-4' : 'right-4'} z-50`}
-      dangerouslySetInnerHTML={{ __html: embedCode }}
-    />
+    <>
+      {/* Botão flutuante */}
+      <button
+        onClick={toggleEmbed}
+        className={`fixed z-50 bottom-6 ${
+          embedConfig.position === 'left' ? 'left-6' : 'right-6'
+        } bg-primary-color text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-primary-color/90 transition-transform ${
+          isOpen ? 'scale-0' : 'scale-100'
+        }`}
+        aria-label="Abrir chat"
+      >
+        <span className="text-2xl">
+          💬
+        </span>
+      </button>
+
+      {/* Container do embed quando aberto */}
+      {isOpen && (
+        <div
+          className={`fixed z-50 bottom-6 ${
+            embedConfig.position === 'left' ? 'left-6' : 'right-6'
+          } bg-white rounded-lg shadow-xl w-[350px] h-[500px] max-h-[80vh] flex flex-col overflow-hidden`}
+        >
+          {/* Cabeçalho do embed com botão fechar */}
+          <div className="bg-primary-color text-white p-2 flex justify-between items-center">
+            <h3 className="text-sm font-medium">Atendimento</h3>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white/90 hover:text-white"
+              aria-label="Fechar"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Conteúdo do embed */}
+          <div className="flex-1 overflow-hidden">
+            <div
+              dangerouslySetInnerHTML={{ __html: embedConfig.code }}
+              className="w-full h-full"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
