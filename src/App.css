@@ -51,6 +51,7 @@ a, button {
 /* Estilos para o menu principal */
 .nav-link {
   position: relative;
+  color: inherit; /* Garante que a cor do texto seja herdada */
 }
 
 .nav-link::after {
@@ -60,7 +61,7 @@ a, button {
   height: 2px;
   bottom: 0;
   left: 0;
-  background-color: #ff196e;
+  background-color: currentColor; /* Usa a cor atual do texto */
   transition: width 0.3s ease;
 }
 
@@ -76,4 +77,33 @@ a, button {
 .feature-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Melhorando contraste e legibilidade */
+.text-white {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Melhorando visibilidade de textos sobre fundos escuros */
+.bg-dark-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Estilos para melhorar contrastes em links */
+.footer-link {
+  color: inherit;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.footer-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Melhorando visibilidade do rodapé */
+.footer-content {
+  color: rgba(255, 255, 255, 0.9);
 }

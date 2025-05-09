@@ -56,8 +56,8 @@ async function insertDefaultTemplates(): Promise<boolean> {
       accent_color: template.accentColor,
       background_color: template.backgroundColor,
       text_color: template.textColor,
-      button_text_color: template.buttonTextColor,
-      menu_text_color: template.menuTextColor,
+      button_text_color: template.buttonTextColor || '#FFFFFF',
+      menu_text_color: template.menuTextColor || '#FFFFFF',
       is_default: template.id === 'default',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -97,9 +97,9 @@ async function insertDefaultTemplates(): Promise<boolean> {
 
 // Função para salvar template de cores
 export async function saveColorTemplate(template: ColorTemplate): Promise<boolean> {
-  console.log('Salvando template de cores no Supabase:', template.name);
+  console.log('Salvando template de cores no Supabase:', template);
   try {
-    // Gerar um ID único se não existir
+    // Gerar um ID único se não existir ou se for 'custom'
     if (!template.id || template.id === 'custom') {
       template.id = `custom-${Date.now()}`;
     }
@@ -126,40 +126,43 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
       updated_at: new Date().toISOString()
     };
     
+    let result;
+    
     if (data) {
       console.log('Atualizando template existente:', template.id);
       // Atualizar template existente
-      const { error } = await supabase
+      result = await supabase
         .from('site_color_templates')
         .update(templateData)
         .eq('id', template.id);
-      
-      if (error) {
-        console.error('Erro ao atualizar template:', error);
-        throw error;
-      }
     } else {
       console.log('Criando novo template:', template.id);
-      // Inserir novo template
-      // Add the created_at field only when creating a new record
-      const { error } = await supabase
+      // Inserir novo template com created_at
+      result = await supabase
         .from('site_color_templates')
         .insert([{
           ...templateData,
           created_at: new Date().toISOString()
         }]);
-      
-      if (error) {
-        console.error('Erro ao inserir template:', error);
-        throw error;
-      }
     }
     
-    // Atualizar também no localStorage para fallback
-    let localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== template.id);
-    localStorage.setItem('siteTemplates', JSON.stringify([...localTemplates, template]));
+    if (result.error) {
+      console.error('Erro ao salvar template:', result.error);
+      throw result.error;
+    }
     
-    console.log('Template salvo com sucesso');
+    console.log('Template salvo com sucesso no Supabase');
+    
+    // Atualizar também no localStorage para fallback
+    try {
+      let localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== template.id);
+      localStorage.setItem('siteTemplates', JSON.stringify([...localTemplates, template]));
+      console.log('Template salvo com sucesso no localStorage');
+    } catch (e) {
+      console.error('Erro ao salvar template no localStorage:', e);
+      // Continuar mesmo com erro no localStorage
+    }
+    
     return true;
   } catch (error) {
     console.error('Erro ao salvar template de cores:', error);
@@ -175,11 +178,20 @@ export function getColorTemplatesFromLocalStorage(): ColorTemplate[] {
     let allTemplates: ColorTemplate[] = [];
     
     if (savedTemplates) {
-      allTemplates = JSON.parse(savedTemplates);
+      try {
+        allTemplates = JSON.parse(savedTemplates);
+      } catch (e) {
+        console.error('Erro ao fazer parse dos templates padrão do localStorage:', e);
+      }
     }
     
     if (customTemplates) {
-      allTemplates = [...allTemplates, ...JSON.parse(customTemplates)];
+      try {
+        const parsedCustomTemplates = JSON.parse(customTemplates);
+        allTemplates = [...allTemplates, ...parsedCustomTemplates];
+      } catch (e) {
+        console.error('Erro ao fazer parse dos templates personalizados do localStorage:', e);
+      }
     }
     
     if (allTemplates.length === 0) {
@@ -210,17 +222,17 @@ export async function deleteColorTemplate(templateId: string): Promise<boolean> 
       .eq('id', templateId);
     
     if (error) {
-      console.error('Erro ao excluir template:', error);
+      console.error('Erro ao excluir template do Supabase:', error);
       return false;
     }
     
     // Excluir também do localStorage
     try {
       const localTemplates = getColorTemplatesFromLocalStorage().filter(t => t.id !== templateId);
-      localStorage.setItem('siteTemplates', JSON.stringify(localTemplates.filter(t => t.id !== 'default')));
+      localStorage.setItem('siteTemplates', JSON.stringify(localTemplates.filter(t => !defaultTemplates.some(dt => dt.id === t.id))));
     } catch (e) {
       console.error('Erro ao atualizar localStorage após exclusão:', e);
-      // Continue mesmo com erro no localStorage
+      // Continuar mesmo com erro no localStorage
     }
     
     console.log('Template excluído com sucesso');
