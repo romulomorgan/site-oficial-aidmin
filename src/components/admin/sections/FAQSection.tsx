@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { FAQItem } from '@/utils/supabase/types';
 
 interface FAQSectionProps {
-  sections: Record<string, string>;
+  sections: Record<string, string | boolean>;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   isLoading: boolean;
   handleSaveSection: (section: string) => void;
@@ -132,7 +132,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
           <input
             type="text"
             name="faqTitle"
-            value={sections.faqTitle}
+            value={sections.faqTitle as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />

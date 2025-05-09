@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Button } from '@/components/ui/button';
 import { SectionProps, Testimonial } from '@/utils/supabase/types';
