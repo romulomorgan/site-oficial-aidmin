@@ -8,10 +8,15 @@ import { ThemeTemplate } from '@/utils/themeTemplates';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 
+// Definindo um tipo mais flexível para os textos do site
+interface SiteTextsType {
+  [key: string]: string | boolean | undefined;
+}
+
 export default function Solucoes() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [siteTexts, setSiteTexts] = useState<Record<string, string>>({
+  const [siteTexts, setSiteTexts] = useState<SiteTextsType>({
     robotImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
     footerAbout: 'A sua assistente de AI',
     footerButtonText: 'Contrate uma AI Poderosa!',
