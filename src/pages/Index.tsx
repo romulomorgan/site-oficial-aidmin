@@ -362,9 +362,20 @@ export default function Index() {
                 <p>contato@virtia.ai</p>
               </div>
             </div>
+            <div className="mt-8 md:mt-0">
+              <h3 className="text-lg font-semibold text-[#2D0A16]">
+                Links Úteis
+              </h3>
+              <div className="mt-4 flex flex-col space-y-2">
+                <Link to="/" className="text-[#222] hover:text-[#FF196E] transition-colors">Home</Link>
+                <Link to="/solucoes" className="text-[#222] hover:text-[#FF196E] transition-colors">Soluções</Link>
+                <Link to="/contato" className="text-[#222] hover:text-[#FF196E] transition-colors">Contato</Link>
+                <Link to="/admin/login" className="text-[#222] hover:text-[#FF196E] transition-colors">Login</Link>
+              </div>
+            </div>
           </div>
           <div className="border-t border-[#D8D0D2] pt-6 text-center text-[#2D0A16]">
-            © Todos os direitos reservados - Virtia 2023
+            © Todos os direitos reservados - Virtia 2023 | <Link to="/admin/login" className="text-[#FF196E] hover:underline">Login</Link>
           </div>
         </div>
       </footer>
