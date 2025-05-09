@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { Trash } from 'lucide-react';
-import { fetchTestimonials, addTestimonial, deleteTestimonial, Testimonial } from '@/utils/supabaseClient';
+import { Trash, Edit } from 'lucide-react';
+import { fetchTestimonials, addTestimonial, deleteTestimonial, updateTestimonial, Testimonial } from '@/utils/supabaseClient';
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [newTestimonial, setNewTestimonial] = useState<Omit<Testimonial, 'id'>>({
     name: '',
     role: '',
@@ -57,32 +58,64 @@ export default function Testimonials() {
         avatarUrl: newTestimonial.avatarUrl || 'https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true'
       };
       
-      // Adicionar ao Supabase
-      const success = await addTestimonial(testimonialToAdd);
-      
-      if (success) {
-        // Recarregar depoimentos
-        const updatedTestimonials = await fetchTestimonials();
-        setTestimonials(updatedTestimonials);
+      if (editingId) {
+        // Atualizar depoimento existente
+        const success = await updateTestimonial(editingId, testimonialToAdd);
         
-        // Resetar formulário
-        setNewTestimonial({
-          name: '',
-          role: '',
-          testimonial: '',
-          avatarUrl: ''
-        });
-        
-        toast.success('Depoimento adicionado com sucesso!');
+        if (success) {
+          toast.success('Depoimento atualizado com sucesso!');
+          setEditingId(null);
+        } else {
+          toast.error('Erro ao atualizar depoimento');
+        }
       } else {
-        toast.error('Erro ao adicionar depoimento');
+        // Adicionar novo depoimento
+        const success = await addTestimonial(testimonialToAdd);
+        
+        if (success) {
+          toast.success('Depoimento adicionado com sucesso!');
+        } else {
+          toast.error('Erro ao adicionar depoimento');
+        }
       }
+      
+      // Recarregar depoimentos
+      const updatedTestimonials = await fetchTestimonials();
+      setTestimonials(updatedTestimonials);
+      
+      // Resetar formulário
+      setNewTestimonial({
+        name: '',
+        role: '',
+        testimonial: '',
+        avatarUrl: ''
+      });
     } catch (error) {
-      console.error('Erro ao adicionar depoimento:', error);
-      toast.error('Ocorreu um erro ao adicionar o depoimento');
+      console.error('Erro ao salvar depoimento:', error);
+      toast.error('Ocorreu um erro ao salvar o depoimento');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setNewTestimonial({
+      name: testimonial.name,
+      role: testimonial.role,
+      testimonial: testimonial.testimonial,
+      avatarUrl: testimonial.avatarUrl || ''
+    });
+    setEditingId(testimonial.id);
+  };
+
+  const handleCancelEdit = () => {
+    setNewTestimonial({
+      name: '',
+      role: '',
+      testimonial: '',
+      avatarUrl: ''
+    });
+    setEditingId(null);
   };
 
   const handleDeleteTestimonial = async (id: string) => {
@@ -92,6 +125,12 @@ export default function Testimonials() {
       if (success) {
         // Atualizar estado local
         setTestimonials(prev => prev.filter(t => t.id !== id));
+        
+        // Se estiver editando este depoimento, cancele a edição
+        if (editingId === id) {
+          handleCancelEdit();
+        }
+        
         toast.success('Depoimento removido com sucesso!');
       } else {
         toast.error('Erro ao remover depoimento');
@@ -103,15 +142,17 @@ export default function Testimonials() {
   };
 
   if (isInitialLoading) {
-    return <div className="p-6">Carregando depoimentos...</div>;
+    return <div className="p-6 animate-fade-in">Carregando depoimentos...</div>;
   }
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Depoimentos</h1>
       
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h2 className="text-lg font-medium text-gray-800 mb-4">Adicionar Novo Depoimento</h2>
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6 hover-shadow">
+        <h2 className="text-lg font-medium text-gray-800 mb-4">
+          {editingId ? 'Editar Depoimento' : 'Adicionar Novo Depoimento'}
+        </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -170,14 +211,29 @@ export default function Testimonials() {
           />
         </div>
         
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {editingId && (
+            <CustomButton 
+              onClick={handleCancelEdit}
+              variant="secondary"
+              type="button"
+              className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+            >
+              Cancelar
+            </CustomButton>
+          )}
           <CustomButton 
             onClick={handleAddTestimonial}
             variant="primary"
             disabled={isLoading}
             type="button"
           >
-            {isLoading ? 'Adicionando...' : 'Adicionar Depoimento'}
+            {isLoading 
+              ? 'Salvando...' 
+              : editingId 
+                ? 'Salvar Alterações' 
+                : 'Adicionar Depoimento'
+            }
           </CustomButton>
         </div>
       </div>
@@ -190,7 +246,7 @@ export default function Testimonials() {
         ) : (
           <div className="space-y-6">
             {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="border rounded-lg p-4">
+              <div key={testimonial.id} className="border rounded-lg p-4 transition-all hover:shadow-md">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
                     <img 
@@ -207,13 +263,22 @@ export default function Testimonials() {
                       <p className="text-sm text-gray-500">{testimonial.role}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleDeleteTestimonial(testimonial.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
-                    aria-label="Excluir depoimento"
-                  >
-                    <Trash className="h-5 w-5" />
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditTestimonial(testimonial)}
+                      className="text-blue-500 hover:text-blue-700 transition-colors"
+                      aria-label="Editar depoimento"
+                    >
+                      <Edit className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTestimonial(testimonial.id)}
+                      className="text-red-500 hover:text-red-700 transition-colors"
+                      aria-label="Excluir depoimento"
+                    >
+                      <Trash className="h-5 w-5" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-gray-700">{testimonial.testimonial}</p>
               </div>

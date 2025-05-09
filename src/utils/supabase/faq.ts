@@ -34,6 +34,7 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
 // Função para adicionar uma nova FAQ
 export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
   try {
+    console.log('Adicionando FAQ:', faq);
     const { error } = await supabase
       .from('site_faqs')
       .insert({
@@ -43,10 +44,37 @@ export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
         order_index: await getNextOrderIndex()
       });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erro ao adicionar FAQ:', error);
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error('Erro ao adicionar FAQ:', error);
+    return false;
+  }
+}
+
+// Função para atualizar uma FAQ existente
+export async function updateFAQ(id: string, faq: Omit<FAQItem, 'id'>): Promise<boolean> {
+  try {
+    console.log('Atualizando FAQ:', id, faq);
+    const { error } = await supabase
+      .from('site_faqs')
+      .update({
+        question: faq.question,
+        answer: faq.answer,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao atualizar FAQ:', error);
+      throw error;
+    }
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar FAQ:', error);
     return false;
   }
 }
@@ -59,7 +87,10 @@ export async function deleteFAQ(id: string): Promise<boolean> {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erro ao excluir FAQ:', error);
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error('Erro ao excluir FAQ:', error);

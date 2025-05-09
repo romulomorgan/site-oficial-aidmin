@@ -42,6 +42,7 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
 // Função para adicionar um novo depoimento
 export async function addTestimonial(testimonial: Omit<Testimonial, 'id'>): Promise<boolean> {
   try {
+    console.log('Adicionando depoimento:', testimonial);
     const { error } = await supabase
       .from('site_testimonials')
       .insert({
@@ -52,10 +53,39 @@ export async function addTestimonial(testimonial: Omit<Testimonial, 'id'>): Prom
         order_index: await getNextOrderIndex()
       });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erro ao adicionar depoimento:', error);
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error('Erro ao adicionar depoimento:', error);
+    return false;
+  }
+}
+
+// Função para atualizar um depoimento existente
+export async function updateTestimonial(id: string, testimonial: Omit<Testimonial, 'id'>): Promise<boolean> {
+  try {
+    console.log('Atualizando depoimento:', id, testimonial);
+    const { error } = await supabase
+      .from('site_testimonials')
+      .update({
+        name: testimonial.name,
+        role: testimonial.role,
+        testimonial: testimonial.testimonial,
+        avatar_url: testimonial.avatarUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao atualizar depoimento:', error);
+      throw error;
+    }
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar depoimento:', error);
     return false;
   }
 }
@@ -68,7 +98,10 @@ export async function deleteTestimonial(id: string): Promise<boolean> {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erro ao excluir depoimento:', error);
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error('Erro ao excluir depoimento:', error);

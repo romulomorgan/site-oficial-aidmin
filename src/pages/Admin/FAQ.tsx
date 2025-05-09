@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { Trash } from 'lucide-react';
-import { fetchFAQs, addFAQ, deleteFAQ, FAQItem } from '@/utils/supabaseClient';
+import { Trash, Edit } from 'lucide-react';
+import { fetchFAQs, addFAQ, deleteFAQ, updateFAQ, FAQItem } from '@/utils/supabaseClient';
 
 export default function FAQ() {
   const [faqItems, setFAQItems] = useState<FAQItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [newFAQ, setNewFAQ] = useState<Omit<FAQItem, 'id'>>({
     question: '',
     answer: ''
@@ -49,30 +50,58 @@ export default function FAQ() {
     setIsLoading(true);
     
     try {
-      // Adicionar ao Supabase
-      const success = await addFAQ(newFAQ);
-      
-      if (success) {
-        // Recarregar FAQs
-        const updatedFAQs = await fetchFAQs();
-        setFAQItems(updatedFAQs);
+      if (editingId) {
+        // Atualizar FAQ existente
+        const success = await updateFAQ(editingId, newFAQ);
         
-        // Resetar formulário
-        setNewFAQ({
-          question: '',
-          answer: ''
-        });
-        
-        toast.success('Pergunta adicionada com sucesso!');
+        if (success) {
+          toast.success('Pergunta atualizada com sucesso!');
+          setEditingId(null);
+        } else {
+          toast.error('Erro ao atualizar pergunta');
+        }
       } else {
-        toast.error('Erro ao adicionar pergunta');
+        // Adicionar ao Supabase
+        const success = await addFAQ(newFAQ);
+        
+        if (success) {
+          toast.success('Pergunta adicionada com sucesso!');
+        } else {
+          toast.error('Erro ao adicionar pergunta');
+        }
       }
+      
+      // Recarregar FAQs
+      const updatedFAQs = await fetchFAQs();
+      setFAQItems(updatedFAQs);
+      
+      // Resetar formulário
+      setNewFAQ({
+        question: '',
+        answer: ''
+      });
     } catch (error) {
-      console.error('Erro ao adicionar FAQ:', error);
-      toast.error('Ocorreu um erro ao adicionar a pergunta');
+      console.error('Erro ao salvar FAQ:', error);
+      toast.error('Ocorreu um erro ao salvar a pergunta');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleEditFAQ = (faq: FAQItem) => {
+    setNewFAQ({
+      question: faq.question,
+      answer: faq.answer
+    });
+    setEditingId(faq.id);
+  };
+
+  const handleCancelEdit = () => {
+    setNewFAQ({
+      question: '',
+      answer: ''
+    });
+    setEditingId(null);
   };
 
   const handleDeleteFAQ = async (id: string) => {
@@ -82,6 +111,12 @@ export default function FAQ() {
       if (success) {
         // Atualizar estado local
         setFAQItems(prev => prev.filter(item => item.id !== id));
+        
+        // Se estiver editando este item, cancele a edição
+        if (editingId === id) {
+          handleCancelEdit();
+        }
+        
         toast.success('Pergunta removida com sucesso!');
       } else {
         toast.error('Erro ao remover pergunta');
@@ -93,15 +128,17 @@ export default function FAQ() {
   };
 
   if (isInitialLoading) {
-    return <div className="p-6">Carregando perguntas frequentes...</div>;
+    return <div className="p-6 animate-fade-in">Carregando perguntas frequentes...</div>;
   }
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Perguntas Frequentes</h1>
       
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h2 className="text-lg font-medium text-gray-800 mb-4">Adicionar Nova Pergunta</h2>
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6 hover-shadow">
+        <h2 className="text-lg font-medium text-gray-800 mb-4">
+          {editingId ? 'Editar Pergunta' : 'Adicionar Nova Pergunta'}
+        </h2>
         
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -131,14 +168,29 @@ export default function FAQ() {
           />
         </div>
         
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {editingId && (
+            <CustomButton 
+              onClick={handleCancelEdit}
+              variant="secondary"
+              className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+              type="button"
+            >
+              Cancelar
+            </CustomButton>
+          )}
           <CustomButton 
             onClick={handleAddFAQ}
             variant="primary"
             disabled={isLoading}
             type="button"
           >
-            {isLoading ? 'Adicionando...' : 'Adicionar Pergunta'}
+            {isLoading 
+              ? 'Salvando...' 
+              : editingId 
+                ? 'Salvar Alterações' 
+                : 'Adicionar Pergunta'
+            }
           </CustomButton>
         </div>
       </div>
@@ -151,16 +203,25 @@ export default function FAQ() {
         ) : (
           <div className="space-y-6">
             {faqItems.map((item) => (
-              <div key={item.id} className="border rounded-lg p-4">
+              <div key={item.id} className="border rounded-lg p-4 transition-all hover:shadow-md">
                 <div className="flex justify-between mb-2">
                   <h3 className="font-medium">{item.question}</h3>
-                  <button
-                    onClick={() => handleDeleteFAQ(item.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
-                    aria-label="Excluir pergunta"
-                  >
-                    <Trash className="h-5 w-5" />
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditFAQ(item)}
+                      className="text-blue-500 hover:text-blue-700 transition-colors"
+                      aria-label="Editar pergunta"
+                    >
+                      <Edit className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteFAQ(item.id)}
+                      className="text-red-500 hover:text-red-700 transition-colors"
+                      aria-label="Excluir pergunta"
+                    >
+                      <Trash className="h-5 w-5" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-gray-700">{item.answer}</p>
               </div>
