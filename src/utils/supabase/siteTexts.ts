@@ -2,121 +2,136 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SiteTexts } from "./types";
 
-// Função para obter textos do site
+// Função para buscar todos os textos do site
 export async function fetchSiteTexts(): Promise<SiteTexts> {
+  console.log('Buscando textos do site do Supabase...');
   try {
     const { data, error } = await supabase
       .from('site_texts')
-      .select('key, content');
+      .select('*');
     
     if (error) {
       console.error('Erro ao carregar textos do site:', error);
-      return getSiteTextsFromLocalStorage();
+      return {};
     }
     
-    if (!data || data.length === 0) {
-      console.warn('Nenhum texto encontrado no Supabase, usando localStorage.');
-      return getSiteTextsFromLocalStorage();
+    // Converter array para objeto chave-valor
+    const texts: SiteTexts = {};
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        texts[item.key] = item.content;
+      });
+      console.log(`${data.length} textos carregados do Supabase`);
+    } else {
+      console.log('Nenhum texto encontrado no Supabase');
     }
     
-    const textsObject: SiteTexts = {};
-    data.forEach(item => {
-      if (item.key && item.content) {
-        textsObject[item.key] = item.content;
-      }
-    });
-    
-    // Atualiza o localStorage com os dados do Supabase para uso offline
-    updateSiteTextsInLocalStorage(textsObject);
-    
-    return textsObject;
+    return texts;
   } catch (error) {
     console.error('Erro ao buscar textos do site:', error);
-    return getSiteTextsFromLocalStorage();
+    return {};
   }
 }
 
-// Função para atualizar textos do site
-export async function updateSiteText(key: string, content: string): Promise<boolean> {
+// Função para salvar um texto específico
+export async function saveSiteText(key: string, content: string): Promise<boolean> {
+  console.log(`Salvando texto no Supabase: ${key}`);
   try {
     // Verificar se o texto já existe
-    const { data } = await supabase
+    const { data: existingText } = await supabase
       .from('site_texts')
       .select('id')
       .eq('key', key)
-      .single();
+      .maybeSingle();
     
-    let result;
-    
-    if (data) {
+    if (existingText) {
       // Atualizar texto existente
-      result = await supabase
+      const { error } = await supabase
         .from('site_texts')
         .update({ 
           content,
-          updated_at: new Date().toISOString() // Changed from Date object to ISO string
+          updated_at: new Date().toISOString()
         })
         .eq('key', key);
+      
+      if (error) {
+        console.error(`Erro ao atualizar texto ${key}:`, error);
+        return false;
+      }
     } else {
-      // Inserir novo texto
-      result = await supabase
+      // Criar novo texto
+      const { error } = await supabase
         .from('site_texts')
-        .insert({ 
+        .insert([{ 
           key, 
           content,
-          type: 'text'
-        });
+          type: 'text',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
+      
+      if (error) {
+        console.error(`Erro ao criar texto ${key}:`, error);
+        return false;
+      }
     }
     
-    if (result.error) throw result.error;
-    
-    // Atualizar também no localStorage para fallback
-    const localTexts = getSiteTextsFromLocalStorage();
-    updateSiteTextsInLocalStorage({ ...localTexts, [key]: content });
-    
+    console.log(`Texto ${key} salvo com sucesso`);
     return true;
   } catch (error) {
-    console.error('Erro ao atualizar texto do site:', error);
+    console.error(`Erro ao salvar texto ${key}:`, error);
     return false;
   }
 }
 
-// Função para obter textos do localStorage (fallback)
-export function getSiteTextsFromLocalStorage(): SiteTexts {
-  const savedTexts = localStorage.getItem('siteTexts');
-  return savedTexts ? JSON.parse(savedTexts) : {
-    siteTitle: 'IAdmin',
-    footerPhoneNumber: '(11) 93956-965',
-    footerEmail: 'iadminassistant@gmail.com',
-    footerAbout: 'A sua assistente de AI',
-    footerButtonText: 'Contrate uma AI Poderosa!',
-    copyrightText: '© Todos os direitos reservados - IAdmin 2024',
-    embedActive: false,
-    embedPosition: 'right',
-    heroTitle: 'Destrave a fronteira da produtividade.',
-    heroSubtitle: 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.'
-  };
+// Função para atualizar um texto específico
+export async function updateSiteText(key: string, content: string | boolean): Promise<boolean> {
+  console.log(`Atualizando texto no Supabase: ${key}`);
+  try {
+    // Verificar se o texto já existe
+    const { data: existingText } = await supabase
+      .from('site_texts')
+      .select('id')
+      .eq('key', key)
+      .maybeSingle();
+    
+    const textData = {
+      content: typeof content === 'string' ? content : JSON.stringify(content),
+      type: typeof content === 'string' ? 'text' : 'boolean',
+      updated_at: new Date().toISOString()
+    };
+    
+    if (existingText) {
+      // Atualizar texto existente
+      const { error } = await supabase
+        .from('site_texts')
+        .update(textData)
+        .eq('key', key);
+      
+      if (error) {
+        console.error(`Erro ao atualizar texto ${key}:`, error);
+        return false;
+      }
+    } else {
+      // Criar novo texto
+      const { error } = await supabase
+        .from('site_texts')
+        .insert([{ 
+          key, 
+          ...textData,
+          created_at: new Date().toISOString()
+        }]);
+      
+      if (error) {
+        console.error(`Erro ao criar texto ${key}:`, error);
+        return false;
+      }
+    }
+    
+    console.log(`Texto ${key} atualizado com sucesso`);
+    return true;
+  } catch (error) {
+    console.error(`Erro ao atualizar texto ${key}:`, error);
+    return false;
+  }
 }
-
-// Função para atualizar textos no localStorage
-export function updateSiteTextsInLocalStorage(newTexts: Record<string, any>): void {
-  const currentTexts = getSiteTextsFromLocalStorage();
-  const updatedTexts = { ...currentTexts, ...newTexts };
-  localStorage.setItem('siteTexts', JSON.stringify(updatedTexts));
-}
-
-// Função sincronizada para uso por componentes que não podem usar async/await
-export const getSiteTexts = (): SiteTexts => {
-  // Inicia o carregamento assíncrono para atualizar o localStorage posteriormente
-  fetchSiteTexts().then(texts => {
-    updateSiteTextsInLocalStorage(texts);
-  }).catch(err => {
-    console.error("Erro ao sincronizar dados do Supabase:", err);
-  });
-  
-  // Retorna os dados do localStorage imediatamente
-  return getSiteTextsFromLocalStorage();
-};
-
-// Exportar as funções para compatibilidade com código existente
-export const updateSiteTexts = updateSiteTextsInLocalStorage;
