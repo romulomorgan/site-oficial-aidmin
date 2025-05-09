@@ -64,6 +64,14 @@ export default function HomePageSections() {
     contactTitle: '',
     contactSubtitle: '',
     contactButtonText: '',
+    
+    // Footer Section
+    companyName: '',
+    footerAbout: '',
+    footerPhoneNumber: '',
+    footerEmail: '',
+    footerButtonText: '',
+    copyrightText: ''
   });
 
   const [activeTab, setActiveTab] = useState("hero");
@@ -130,6 +138,14 @@ export default function HomePageSections() {
           contactTitle: siteTexts.contactTitle?.toString() || 'Deixe seu contato',
           contactSubtitle: siteTexts.contactSubtitle?.toString() || 'Fale com um especialista da nossa equipe',
           contactButtonText: siteTexts.contactButtonText?.toString() || 'Enviar',
+          
+          // Footer Section
+          companyName: siteTexts.companyName?.toString() || 'Virtia',
+          footerAbout: siteTexts.footerAbout?.toString() || 'A sua assistente de AI',
+          footerPhoneNumber: siteTexts.footerPhoneNumber?.toString() || '(11) 93956-965',
+          footerEmail: siteTexts.footerEmail?.toString() || 'iadminassistant@gmail.com',
+          footerButtonText: siteTexts.footerButtonText?.toString() || 'Contrate uma AI Poderosa!',
+          copyrightText: siteTexts.copyrightText?.toString() || '© Todos os direitos reservados - IAdmin 2024'
         });
       } catch (error) {
         console.error('Erro ao carregar textos:', error);
@@ -221,6 +237,16 @@ export default function HomePageSections() {
             contactButtonText: sections.contactButtonText,
           };
           break;
+        case 'footer':
+          updates = {
+            companyName: sections.companyName,
+            footerAbout: sections.footerAbout,
+            footerPhoneNumber: sections.footerPhoneNumber,
+            footerEmail: sections.footerEmail,
+            footerButtonText: sections.footerButtonText,
+            copyrightText: sections.copyrightText,
+          };
+          break;
       }
       
       // Salvar cada campo
@@ -246,7 +272,7 @@ export default function HomePageSections() {
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Seções da Página Inicial</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-6">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-6 overflow-x-auto">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="whatWeDo">O que Fazemos</TabsTrigger>
           <TabsTrigger value="expansion">Em Expansão</TabsTrigger>
@@ -254,6 +280,7 @@ export default function HomePageSections() {
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
           <TabsTrigger value="contact">Contato</TabsTrigger>
+          <TabsTrigger value="footer">Rodapé</TabsTrigger>
         </TabsList>
         
         {/* Hero Section */}
@@ -778,6 +805,89 @@ export default function HomePageSections() {
             <div className="flex justify-end">
               <CustomButton 
                 onClick={() => handleSaveSection('contact')}
+                variant="primary"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+              </CustomButton>
+            </div>
+          </div>
+        </TabsContent>
+        
+        {/* Footer Section */}
+        <TabsContent value="footer" className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Rodapé"</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Empresa</label>
+              <input
+                type="text"
+                name="companyName"
+                value={sections.companyName}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+              <textarea
+                name="footerAbout"
+                value={sections.footerAbout}
+                onChange={handleInputChange}
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+              <input
+                type="text"
+                name="footerPhoneNumber"
+                value={sections.footerPhoneNumber}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="text"
+                name="footerEmail"
+                value={sections.footerEmail}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
+              <input
+                type="text"
+                name="footerButtonText"
+                value={sections.footerButtonText}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Texto de Copyright</label>
+              <input
+                type="text"
+                name="copyrightText"
+                value={sections.copyrightText}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            
+            <div className="flex justify-end">
+              <CustomButton 
+                onClick={() => handleSaveSection('footer')}
                 variant="primary"
                 disabled={isLoading}
               >
