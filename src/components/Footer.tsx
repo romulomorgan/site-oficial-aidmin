@@ -53,9 +53,7 @@ export const Footer = () => {
               <li><Link to="/" className="text-gray-300 hover:text-accent-color">Home</Link></li>
               <li><Link to="/solucoes" className="text-gray-300 hover:text-accent-color">Nossas Soluções</Link></li>
               <li><Link to="/contato" className="text-gray-300 hover:text-accent-color">Contato</Link></li>
-              {!isMobile && (
-                <li><Link to="/admin/login" className="text-gray-300 hover:text-accent-color">Login</Link></li>
-              )}
+              <li><Link to="/admin/login" className="text-gray-300 hover:text-accent-color">Login</Link></li>
             </ul>
           </div>
           
