@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Trash, Edit } from 'lucide-react';
 import { fetchTestimonials, addTestimonial, deleteTestimonial, updateTestimonial, Testimonial } from '@/utils/supabaseClient';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -271,13 +272,19 @@ export default function Testimonials() {
                     >
                       <Edit className="h-5 w-5" />
                     </button>
-                    <button
-                      onClick={() => handleDeleteTestimonial(testimonial.id)}
-                      className="text-red-500 hover:text-red-700 transition-colors"
-                      aria-label="Excluir depoimento"
+                    <ConfirmDialog
+                      title="Excluir Depoimento"
+                      description="Tem certeza que deseja excluir este depoimento? Esta ação não pode ser desfeita."
+                      onConfirm={() => handleDeleteTestimonial(testimonial.id)}
+                      confirmText="Excluir"
                     >
-                      <Trash className="h-5 w-5" />
-                    </button>
+                      <button
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                        aria-label="Excluir depoimento"
+                      >
+                        <Trash className="h-5 w-5" />
+                      </button>
+                    </ConfirmDialog>
                   </div>
                 </div>
                 <p className="text-gray-700">{testimonial.testimonial}</p>

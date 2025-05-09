@@ -15,6 +15,7 @@ import FAQ from '@/pages/Admin/FAQ';
 import Messages from '@/pages/Admin/Messages';
 import Login from '@/pages/Admin/Login';
 import SiteSettings from '@/pages/Admin/SiteSettings';
+import HomePageSections from '@/pages/Admin/HomePageSections';
 import EmbedComponent from '@/components/EmbedComponent';
 import Footer from '@/components/Footer';
 import AnimationsLoader from '@/utils/animationsLoader';
@@ -40,6 +41,7 @@ function App() {
             }>
               <Route index element={<Dashboard />} />
               <Route path="editar-textos" element={<EditTexts />} />
+              <Route path="secoes" element={<HomePageSections />} />
               <Route path="depoimentos" element={<Testimonials />} />
               <Route path="faq" element={<FAQ />} />
               <Route path="mensagens" element={<Messages />} />

@@ -10,15 +10,19 @@ const EmbedComponent: React.FC = () => {
 
   useEffect(() => {
     const loadEmbedConfig = async () => {
-      const config = await fetchEmbedConfig();
-      setEmbedConfig(config);
+      try {
+        const config = await fetchEmbedConfig();
+        setEmbedConfig(config);
+      } catch (error) {
+        console.error('Erro ao carregar configuração de embed:', error);
+      }
     };
-
+    
     loadEmbedConfig();
   }, []);
 
-  // Se não houver configuração ou não estiver ativo, não renderiza nada
-  if (!embedConfig || !embedConfig.isActive || !embedConfig.code) {
+  // Se não tiver configuração ou não estiver ativo, não renderiza
+  if (!embedConfig || !embedConfig.isActive) {
     return null;
   }
 
@@ -27,51 +31,33 @@ const EmbedComponent: React.FC = () => {
   };
 
   return (
-    <>
-      {/* Botão flutuante */}
-      <button
-        onClick={toggleEmbed}
-        className={`fixed z-50 bottom-6 ${
-          embedConfig.position === 'left' ? 'left-6' : 'right-6'
-        } bg-primary-color text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-primary-color/90 transition-transform ${
-          isOpen ? 'scale-0' : 'scale-100'
-        }`}
-        aria-label="Abrir chat"
-      >
-        <span className="text-2xl">
-          💬
-        </span>
-      </button>
-
-      {/* Container do embed quando aberto */}
-      {isOpen && (
-        <div
-          className={`fixed z-50 bottom-6 ${
-            embedConfig.position === 'left' ? 'left-6' : 'right-6'
-          } bg-white rounded-lg shadow-xl w-[350px] h-[500px] max-h-[80vh] flex flex-col overflow-hidden`}
-        >
-          {/* Cabeçalho do embed com botão fechar */}
-          <div className="bg-primary-color text-white p-2 flex justify-between items-center">
-            <h3 className="text-sm font-medium">Atendimento</h3>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white/90 hover:text-white"
+    <div className={`fixed ${embedConfig.position === 'left' ? 'left-0' : 'right-0'} bottom-20 z-50`}>
+      {isOpen ? (
+        <div className="bg-white shadow-lg rounded-lg p-4 m-4 max-w-md animate-fade-in">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-medium text-lg">Suporte</h3>
+            <button 
+              onClick={toggleEmbed}
+              className="text-gray-500 hover:text-gray-700"
               aria-label="Fechar"
             >
               <X size={20} />
             </button>
           </div>
-
-          {/* Conteúdo do embed */}
-          <div className="flex-1 overflow-hidden">
-            <div
-              dangerouslySetInnerHTML={{ __html: embedConfig.code }}
-              className="w-full h-full"
-            />
-          </div>
+          <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} />
         </div>
+      ) : (
+        <button
+          onClick={toggleEmbed}
+          className={`bg-primary-color text-white p-3 rounded-full shadow-lg m-4 hover:bg-opacity-90 transition-all`}
+          aria-label="Abrir suporte"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
       )}
-    </>
+    </div>
   );
 };
 

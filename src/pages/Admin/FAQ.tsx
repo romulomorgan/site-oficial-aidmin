@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Trash, Edit } from 'lucide-react';
 import { fetchFAQs, addFAQ, deleteFAQ, updateFAQ, FAQItem } from '@/utils/supabaseClient';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 export default function FAQ() {
   const [faqItems, setFAQItems] = useState<FAQItem[]>([]);
@@ -57,23 +58,27 @@ export default function FAQ() {
         if (success) {
           toast.success('Pergunta atualizada com sucesso!');
           setEditingId(null);
+          
+          // Recarregar FAQs para mostrar a alteração
+          const updatedFAQs = await fetchFAQs();
+          setFAQItems(updatedFAQs);
         } else {
           toast.error('Erro ao atualizar pergunta');
         }
       } else {
-        // Adicionar ao Supabase
+        // Adicionar nova FAQ ao Supabase
         const success = await addFAQ(newFAQ);
         
         if (success) {
           toast.success('Pergunta adicionada com sucesso!');
+          
+          // Recarregar FAQs para mostrar a nova FAQ
+          const updatedFAQs = await fetchFAQs();
+          setFAQItems(updatedFAQs);
         } else {
           toast.error('Erro ao adicionar pergunta');
         }
       }
-      
-      // Recarregar FAQs
-      const updatedFAQs = await fetchFAQs();
-      setFAQItems(updatedFAQs);
       
       // Resetar formulário
       setNewFAQ({
@@ -214,13 +219,19 @@ export default function FAQ() {
                     >
                       <Edit className="h-5 w-5" />
                     </button>
-                    <button
-                      onClick={() => handleDeleteFAQ(item.id)}
-                      className="text-red-500 hover:text-red-700 transition-colors"
-                      aria-label="Excluir pergunta"
+                    <ConfirmDialog
+                      title="Excluir Pergunta"
+                      description="Tem certeza que deseja excluir esta pergunta? Esta ação não pode ser desfeita."
+                      onConfirm={() => handleDeleteFAQ(item.id)}
+                      confirmText="Excluir"
                     >
-                      <Trash className="h-5 w-5" />
-                    </button>
+                      <button
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                        aria-label="Excluir pergunta"
+                      >
+                        <Trash className="h-5 w-5" />
+                      </button>
+                    </ConfirmDialog>
                   </div>
                 </div>
                 <p className="text-gray-700">{item.answer}</p>

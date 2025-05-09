@@ -11,7 +11,8 @@ export const Footer = () => {
     footerButtonText: 'Contrate uma AI Poderosa!',
     footerPhoneNumber: '(11) 93956-965',
     footerEmail: 'iadminassistant@gmail.com',
-    copyrightText: '© Todos os direitos reservados - IAdmin 2024'
+    copyrightText: '© Todos os direitos reservados - IAdmin 2024',
+    companyName: 'Virtia'
   });
 
   const isMobile = useIsMobile();
@@ -25,7 +26,8 @@ export const Footer = () => {
           footerButtonText: typeof siteTexts.footerButtonText === 'string' ? siteTexts.footerButtonText : 'Contrate uma AI Poderosa!',
           footerPhoneNumber: typeof siteTexts.footerPhoneNumber === 'string' ? siteTexts.footerPhoneNumber : '(11) 93956-965',
           footerEmail: typeof siteTexts.footerEmail === 'string' ? siteTexts.footerEmail : 'iadminassistant@gmail.com',
-          copyrightText: typeof siteTexts.copyrightText === 'string' ? siteTexts.copyrightText : '© Todos os direitos reservados - IAdmin 2024'
+          copyrightText: typeof siteTexts.copyrightText === 'string' ? siteTexts.copyrightText : '© Todos os direitos reservados - IAdmin 2024',
+          companyName: typeof siteTexts.companyName === 'string' ? siteTexts.companyName : 'Virtia'
         });
       } catch (error) {
         console.error('Erro ao carregar textos:', error);
@@ -40,7 +42,7 @@ export const Footer = () => {
       <div className="container mx-auto py-12 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <h3 className="font-bold text-lg mb-4 hover-text">IAdmin</h3>
+            <h3 className="font-bold text-lg mb-4 hover-text">{texts.companyName}</h3>
             <p className="text-gray-300">{texts.footerAbout}</p>
             <div className="flex gap-4 mt-4">
               <a href="#" className="text-white hover:text-accent-color transition-colors transform hover:scale-110 duration-300">
