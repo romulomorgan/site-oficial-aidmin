@@ -1,17 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { CustomButton } from '@/components/ui/CustomButton';
-import { Trash, ExternalLink, Mail, Check, X } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { ContactMessage, EmailSubscription } from '@/utils/supabase/types';
+import MessageList from '@/components/admin/messages/MessageList';
+import EmailSubscriptionList from '@/components/admin/messages/EmailSubscriptionList';
+import ReplyDialog from '@/components/admin/messages/ReplyDialog';
+import ConfirmDeleteDialog from '@/components/admin/messages/ConfirmDeleteDialog';
+import WebhookConfig from '@/components/admin/messages/WebhookConfig';
 
 export default function Messages() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
@@ -48,7 +45,6 @@ export default function Messages() {
           setMessages(parsedMessages);
         }
       } else if (messagesData) {
-        // Já está no formato correto, não precisa mapear
         setMessages(messagesData);
       }
       
@@ -68,7 +64,6 @@ export default function Messages() {
           setEmailSubscriptions(parsedSubscriptions);
         }
       } else if (subscriptionsData) {
-        // Não precisamos mais mapear, já que os tipos estão corretos
         setEmailSubscriptions(subscriptionsData);
       }
       
@@ -259,53 +254,16 @@ export default function Messages() {
     }
   };
 
-  // Format date to a more readable format
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  };
-
   return (
     <div>
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Central de Mensagens</h1>
       
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h2 className="text-lg font-medium text-gray-800 mb-4">Configurar Webhook</h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Configure um endpoint para receber automaticamente as mensagens de contato em seu sistema.
-          Todas as mensagens enviadas através do formulário de contato serão enviadas para esse URL.
-        </p>
-        
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            value={webhookUrl}
-            onChange={handleWebhookChange}
-            placeholder="https://seu-site.com/api/webhook"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
-          />
-          <CustomButton 
-            variant="primary" 
-            onClick={saveWebhook} 
-            disabled={isLoading}
-          >
-            {isLoading ? 'Salvando...' : 'Salvar'}
-          </CustomButton>
-        </div>
-        
-        {webhookUrl && (
-          <div className="mt-2 text-xs text-gray-500 flex items-center">
-            <ExternalLink size={12} className="mr-1" />
-            As mensagens serão enviadas via POST para: {webhookUrl}
-          </div>
-        )}
-      </div>
+      <WebhookConfig 
+        webhookUrl={webhookUrl}
+        isLoading={isLoading}
+        onWebhookChange={handleWebhookChange}
+        onSaveWebhook={saveWebhook}
+      />
       
       <div className="bg-white rounded-lg shadow-sm p-6">
         <Tabs defaultValue="messages">
@@ -317,231 +275,49 @@ export default function Messages() {
           <TabsContent value="messages">
             <h2 className="text-lg font-medium text-gray-800 mb-4">Mensagens de Contato</h2>
             
-            {messages.length === 0 ? (
-              <p className="text-gray-500">Nenhuma mensagem encontrada.</p>
-            ) : (
-              <div className="space-y-6">
-                {messages.map((message) => (
-                  <div 
-                    key={message.id} 
-                    className={`border rounded-lg p-4 transition-colors ${!message.read ? 'bg-blue-50' : ''}`}
-                  >
-                    <div className="flex justify-between mb-3">
-                      <div>
-                        <h3 className="font-medium flex items-center">
-                          {message.firstname} {message.lastname}
-                          {!message.read && (
-                            <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
-                              Nova
-                            </span>
-                          )}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {message.email} | {message.phone}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          Recebida em: {formatDate(message.date)}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setReplyTo(message)}
-                          className="text-blue-500 hover:text-blue-700 transition-colors flex items-center"
-                          title="Responder"
-                        >
-                          <Mail className="h-5 w-5 mr-1" />
-                          Responder
-                        </button>
-                        
-                        {!message.read && (
-                          <button
-                            onClick={() => handleMarkAsRead(message.id)}
-                            className="text-green-500 hover:text-green-700 transition-colors"
-                            title="Marcar como lida"
-                          >
-                            <Check className="h-5 w-5" />
-                          </button>
-                        )}
-                        
-                        <button
-                          onClick={() => setShowDeleteConfirm(message.id)}
-                          className="text-red-500 hover:text-red-700 transition-colors"
-                          aria-label="Excluir mensagem"
-                        >
-                          <Trash className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 border-t pt-3 mt-2">{message.message}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+            <MessageList 
+              messages={messages}
+              onReply={setReplyTo}
+              onMarkAsRead={handleMarkAsRead}
+              onDelete={setShowDeleteConfirm}
+            />
           </TabsContent>
           
           <TabsContent value="subscriptions">
             <h2 className="text-lg font-medium text-gray-800 mb-4">Inscrições de Email</h2>
             
-            {emailSubscriptions.length === 0 ? (
-              <p className="text-gray-500">Nenhuma inscrição encontrada.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="py-2 px-4 text-left border-b">Email</th>
-                      <th className="py-2 px-4 text-left border-b">Data</th>
-                      <th className="py-2 px-4 text-left border-b">Origem</th>
-                      <th className="py-2 px-4 text-right border-b">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {emailSubscriptions.map((subscription) => (
-                      <tr key={subscription.id} className="hover:bg-gray-50">
-                        <td className="py-2 px-4 border-b">{subscription.email}</td>
-                        <td className="py-2 px-4 border-b">{formatDate(subscription.created_at)}</td>
-                        <td className="py-2 px-4 border-b">{subscription.source}</td>
-                        <td className="py-2 px-4 border-b text-right">
-                          <button
-                            onClick={() => setShowDeleteEmailConfirm(subscription.id)}
-                            className="text-red-500 hover:text-red-700 transition-colors"
-                            aria-label="Excluir inscrição"
-                          >
-                            <Trash className="h-5 w-5" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <EmailSubscriptionList 
+              subscriptions={emailSubscriptions}
+              onDelete={setShowDeleteEmailConfirm}
+            />
           </TabsContent>
         </Tabs>
       </div>
       
-      {/* Reply Dialog */}
-      {replyTo && (
-        <Dialog open={!!replyTo} onOpenChange={(open) => !open && setReplyTo(null)}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Responder à Mensagem</DialogTitle>
-            </DialogHeader>
-            
-            <div className="space-y-4 py-4">
-              <div className="bg-gray-50 p-3 rounded text-sm">
-                <p><strong>Para:</strong> {replyTo.firstname} {replyTo.lastname} ({replyTo.email})</p>
-                <p><strong>Mensagem original:</strong></p>
-                <p className="italic text-gray-600">{replyTo.message}</p>
-              </div>
-              
-              <div>
-                <label htmlFor="replyMessage" className="block text-sm font-medium mb-1 text-gray-700">
-                  Sua resposta:
-                </label>
-                <textarea
-                  id="replyMessage"
-                  value={replyMessage}
-                  onChange={(e) => setReplyMessage(e.target.value)}
-                  rows={6}
-                  placeholder="Digite sua resposta aqui..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              
-              {!webhookUrl && (
-                <div className="bg-yellow-50 p-3 rounded text-sm text-yellow-700">
-                  <p>Configure o Webhook para habilitar o envio de respostas.</p>
-                </div>
-              )}
-            </div>
-            
-            <DialogFooter>
-              <CustomButton 
-                type="button" 
-                variant="secondary" 
-                onClick={() => setReplyTo(null)}
-              >
-                Cancelar
-              </CustomButton>
-              <CustomButton 
-                type="button" 
-                variant="primary"
-                disabled={!replyMessage.trim() || !webhookUrl || isLoading}
-                onClick={handleSendReply}
-              >
-                {isLoading ? "Enviando..." : "Enviar Resposta"}
-              </CustomButton>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Dialogs */}
+      <ReplyDialog 
+        message={replyTo}
+        webhookUrl={webhookUrl}
+        replyContent={replyMessage}
+        isLoading={isLoading}
+        onReplyChange={setReplyMessage}
+        onSendReply={handleSendReply}
+        onClose={() => setReplyTo(null)}
+      />
       
-      {/* Confirm Delete Message Dialog */}
-      {showDeleteConfirm !== null && (
-        <Dialog open={showDeleteConfirm !== null} onOpenChange={(open) => !open && setShowDeleteConfirm(null)}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Confirmar Exclusão</DialogTitle>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <p>Tem certeza de que deseja excluir esta mensagem?</p>
-              <p className="text-sm text-gray-500 mt-2">Esta ação não pode ser desfeita.</p>
-            </div>
-            
-            <DialogFooter>
-              <CustomButton 
-                type="button" 
-                variant="secondary" 
-                onClick={() => setShowDeleteConfirm(null)}
-              >
-                <X className="mr-1 h-4 w-4" /> Cancelar
-              </CustomButton>
-              <CustomButton 
-                type="button" 
-                variant="destructive"
-                onClick={() => handleDeleteMessage(showDeleteConfirm)}
-              >
-                <Trash className="mr-1 h-4 w-4" /> Excluir
-              </CustomButton>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      <ConfirmDeleteDialog 
+        id={showDeleteConfirm}
+        title="Tem certeza de que deseja excluir esta mensagem?"
+        onConfirm={() => showDeleteConfirm !== null && handleDeleteMessage(showDeleteConfirm)}
+        onCancel={() => setShowDeleteConfirm(null)}
+      />
       
-      {/* Confirm Delete Email Subscription Dialog */}
-      {showDeleteEmailConfirm !== null && (
-        <Dialog open={showDeleteEmailConfirm !== null} onOpenChange={(open) => !open && setShowDeleteEmailConfirm(null)}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Confirmar Exclusão</DialogTitle>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <p>Tem certeza de que deseja excluir esta inscrição de e-mail?</p>
-              <p className="text-sm text-gray-500 mt-2">Esta ação não pode ser desfeita.</p>
-            </div>
-            
-            <DialogFooter>
-              <CustomButton 
-                type="button" 
-                variant="secondary" 
-                onClick={() => setShowDeleteEmailConfirm(null)}
-              >
-                <X className="mr-1 h-4 w-4" /> Cancelar
-              </CustomButton>
-              <CustomButton 
-                type="button" 
-                variant="destructive"
-                onClick={() => handleDeleteEmailSubscription(showDeleteEmailConfirm)}
-              >
-                <Trash className="mr-1 h-4 w-4" /> Excluir
-              </CustomButton>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      <ConfirmDeleteDialog 
+        id={showDeleteEmailConfirm}
+        title="Tem certeza de que deseja excluir esta inscrição de e-mail?"
+        onConfirm={() => showDeleteEmailConfirm !== null && handleDeleteEmailSubscription(showDeleteEmailConfirm)}
+        onCancel={() => setShowDeleteEmailConfirm(null)}
+      />
     </div>
   );
 }
