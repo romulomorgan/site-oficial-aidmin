@@ -6,11 +6,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'destructive';
   icon?: string;
   children: React.ReactNode;
+  size?: 'default' | 'sm' | 'lg';
 }
 
 export const CustomButton: React.FC<ButtonProps> = ({
   variant = 'primary',
   icon,
+  size = 'default',
   children,
   className,
   ...props
@@ -18,10 +20,13 @@ export const CustomButton: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        "justify-center items-center flex min-h-[52px] gap-2 px-6 py-3 rounded-lg transition-all duration-300 hover:scale-[1.03]",
+        "justify-center items-center flex gap-2 rounded-lg transition-all duration-300 hover:scale-[1.03]",
         variant === 'primary' && "bg-[#FF196E] text-white hover:bg-[#ff3582] hover:shadow-md",
         variant === 'secondary' && "border border-white text-white hover:bg-white/10 hover:shadow-md",
         variant === 'destructive' && "bg-red-600 text-white hover:bg-red-700 hover:shadow-md",
+        size === 'default' && "min-h-[52px] px-6 py-3",
+        size === 'sm' && "min-h-[36px] px-3 py-2 text-sm",
+        size === 'lg' && "min-h-[60px] px-8 py-4",
         className
       )}
       {...props}
@@ -31,7 +36,12 @@ export const CustomButton: React.FC<ButtonProps> = ({
           <img src={icon} alt="" className="aspect-[1] object-contain w-5 h-5" />
         </span>
       )}
-      <span className="text-base font-medium leading-normal">
+      <span className={cn(
+        "font-medium leading-normal",
+        size === 'default' && "text-base",
+        size === 'sm' && "text-sm",
+        size === 'lg' && "text-lg"
+      )}>
         {children}
       </span>
     </button>
