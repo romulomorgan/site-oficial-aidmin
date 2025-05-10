@@ -16,6 +16,7 @@ import Messages from '@/pages/Admin/Messages';
 import Login from '@/pages/Admin/Login';
 import SiteSettings from '@/pages/Admin/SiteSettings';
 import HomePageSections from '@/pages/Admin/HomePageSections';
+import PageSections from '@/pages/Admin/PageSections';
 import EmbedComponent from '@/components/EmbedComponent';
 import Footer from '@/components/Footer';
 import AnimationsLoader from '@/utils/animationsLoader';
@@ -41,11 +42,12 @@ function App() {
             }>
               <Route index element={<Dashboard />} />
               <Route path="secoes" element={<HomePageSections />} />
+              <Route path="paginas" element={<PageSections />} />
               <Route path="textos" element={<EditTexts />} />
               <Route path="depoimentos" element={<Testimonials />} />
               <Route path="faq" element={<FAQ />} />
               <Route path="mensagens" element={<Messages />} />
-              <Route path="configuracoes" element={<SiteSettings />} />
+              <Route path="configuracoes/*" element={<SiteSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

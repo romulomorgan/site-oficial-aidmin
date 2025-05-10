@@ -10,10 +10,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
-  id: number;
+  id: number | string;
   firstName: string;
   lastName: string;
   email: string;
@@ -24,7 +24,7 @@ interface Message {
 }
 
 interface EmailSubscription {
-  id: number;
+  id: number | string;
   email: string;
   date: string;
   source: string;
@@ -37,125 +37,193 @@ export default function Messages() {
   const [isLoading, setIsLoading] = useState(false);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
-  const [showDeleteEmailConfirm, setShowDeleteEmailConfirm] = useState<number | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | string | null>(null);
+  const [showDeleteEmailConfirm, setShowDeleteEmailConfirm] = useState<number | string | null>(null);
 
   useEffect(() => {
-    // Load saved messages from localStorage
-    const savedMessages = localStorage.getItem('contactMessages');
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    } else {
-      // Some sample messages for demonstration
-      const sampleMessages = [
-        {
-          id: 1,
-          firstName: "João",
-          lastName: "Silva",
-          email: "joao.silva@example.com",
-          phone: "(11) 98765-4321",
-          message: "Olá, gostaria de mais informações sobre os serviços de IA para o setor de construção.",
-          date: "2024-04-28T14:23:00",
-          read: true
-        },
-        {
-          id: 2,
-          firstName: "Maria",
-          lastName: "Santos",
-          email: "maria.santos@empresa.com.br",
-          phone: "(21) 97654-3210",
-          message: "Precisamos de uma solução de IA para gerenciamento de condomínios. Poderiam entrar em contato para discutirmos melhor?",
-          date: "2024-05-01T09:15:00",
-          read: false
-        }
-      ];
-      setMessages(sampleMessages);
-      localStorage.setItem('contactMessages', JSON.stringify(sampleMessages));
-    }
-    
-    // Load webhook URL
-    const savedTexts = localStorage.getItem('siteTexts');
-    if (savedTexts) {
-      const parsedTexts = JSON.parse(savedTexts);
-      if (parsedTexts.webhookUrl) {
-        setWebhookUrl(parsedTexts.webhookUrl);
-      }
-    }
-    
-    // Load email subscriptions
-    const savedEmailSubscriptions = localStorage.getItem('emailSubscriptions');
-    if (savedEmailSubscriptions) {
-      setEmailSubscriptions(JSON.parse(savedEmailSubscriptions));
-    } else {
-      // Sample email subscriptions
-      const sampleEmailSubscriptions = [
-        {
-          id: 1,
-          email: "cliente@example.com",
-          date: "2024-04-15T10:30:00",
-          source: "Formulário de Contato"
-        },
-        {
-          id: 2,
-          email: "empresa@business.com",
-          date: "2024-04-20T14:45:00",
-          source: "Rodapé da Página"
-        }
-      ];
-      setEmailSubscriptions(sampleEmailSubscriptions);
-      localStorage.setItem('emailSubscriptions', JSON.stringify(sampleEmailSubscriptions));
-    }
+    loadData();
   }, []);
 
-  const handleDeleteMessage = (id: number) => {
-    const updatedMessages = messages.filter(message => message.id !== id);
-    setMessages(updatedMessages);
-    localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
-    setShowDeleteConfirm(null);
-    toast.success('Mensagem removida com sucesso!');
+  const loadData = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Load messages from Supabase
+      const { data: messagesData, error: messagesError } = await supabase
+        .from('site_contact_messages')
+        .select('*')
+        .order('date', { ascending: false });
+        
+      if (messagesError) {
+        console.error('Erro ao carregar mensagens:', messagesError);
+        toast.error('Erro ao carregar mensagens');
+        
+        // Fallback to localStorage if database fails
+        const savedMessages = localStorage.getItem('contactMessages');
+        if (savedMessages) {
+          setMessages(JSON.parse(savedMessages));
+        }
+      } else {
+        setMessages(messagesData || []);
+      }
+      
+      // Load email subscriptions
+      const { data: subscriptionsData, error: subscriptionsError } = await supabase
+        .from('site_email_subscriptions')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (subscriptionsError) {
+        console.error('Erro ao carregar inscrições de email:', subscriptionsError);
+        
+        // Fallback to localStorage if database fails
+        const savedEmailSubscriptions = localStorage.getItem('emailSubscriptions');
+        if (savedEmailSubscriptions) {
+          setEmailSubscriptions(JSON.parse(savedEmailSubscriptions));
+        }
+      } else {
+        setEmailSubscriptions(subscriptionsData || []);
+      }
+      
+      // Load webhook URL
+      const { data: configData } = await supabase
+        .from('site_texts')
+        .select('content')
+        .eq('key', 'webhookUrl')
+        .single();
+        
+      if (configData && configData.content) {
+        setWebhookUrl(configData.content);
+      } else {
+        // Fallback to localStorage
+        const savedTexts = localStorage.getItem('siteTexts');
+        if (savedTexts) {
+          const parsedTexts = JSON.parse(savedTexts);
+          if (parsedTexts.webhookUrl) {
+            setWebhookUrl(parsedTexts.webhookUrl);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      toast.error('Erro ao carregar dados');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteEmailSubscription = (id: number) => {
-    const updatedSubscriptions = emailSubscriptions.filter(sub => sub.id !== id);
-    setEmailSubscriptions(updatedSubscriptions);
-    localStorage.setItem('emailSubscriptions', JSON.stringify(updatedSubscriptions));
-    setShowDeleteEmailConfirm(null);
-    toast.success('Inscrição removida com sucesso!');
+  const handleDeleteMessage = async (id: number | string) => {
+    try {
+      if (typeof id === 'string' && id.includes('-')) {
+        // UUID format (Supabase)
+        await supabase.from('site_contact_messages').delete().eq('id', id);
+      } else {
+        // Local storage ID format
+        const updatedMessages = messages.filter(message => message.id !== id);
+        setMessages(updatedMessages);
+        localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
+      }
+      
+      setShowDeleteConfirm(null);
+      toast.success('Mensagem removida com sucesso!');
+      
+      // Reload messages
+      loadData();
+    } catch (error) {
+      console.error('Erro ao excluir mensagem:', error);
+      toast.error('Erro ao excluir mensagem');
+    }
   };
 
-  const handleMarkAsRead = (id: number) => {
-    const updatedMessages = messages.map(message => 
-      message.id === id ? { ...message, read: true } : message
-    );
-    setMessages(updatedMessages);
-    localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
-    toast.success('Mensagem marcada como lida!');
+  const handleDeleteEmailSubscription = async (id: number | string) => {
+    try {
+      if (typeof id === 'string' && id.includes('-')) {
+        // UUID format (Supabase)
+        await supabase.from('site_email_subscriptions').delete().eq('id', id);
+      } else {
+        // Local storage ID format
+        const updatedSubscriptions = emailSubscriptions.filter(sub => sub.id !== id);
+        setEmailSubscriptions(updatedSubscriptions);
+        localStorage.setItem('emailSubscriptions', JSON.stringify(updatedSubscriptions));
+      }
+      
+      setShowDeleteEmailConfirm(null);
+      toast.success('Inscrição removida com sucesso!');
+      
+      // Reload subscriptions
+      loadData();
+    } catch (error) {
+      console.error('Erro ao excluir inscrição:', error);
+      toast.error('Erro ao excluir inscrição');
+    }
+  };
+
+  const handleMarkAsRead = async (id: number | string) => {
+    try {
+      if (typeof id === 'string' && id.includes('-')) {
+        // UUID format (Supabase)
+        await supabase
+          .from('site_contact_messages')
+          .update({ read: true })
+          .eq('id', id);
+      } else {
+        // Local storage ID format
+        const updatedMessages = messages.map(message => 
+          message.id === id ? { ...message, read: true } : message
+        );
+        setMessages(updatedMessages);
+        localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
+      }
+      
+      toast.success('Mensagem marcada como lida!');
+      
+      // Reload messages
+      loadData();
+    } catch (error) {
+      console.error('Erro ao marcar mensagem como lida:', error);
+      toast.error('Erro ao marcar mensagem como lida');
+    }
   };
 
   const handleWebhookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWebhookUrl(e.target.value);
   };
 
-  const saveWebhook = () => {
+  const saveWebhook = async () => {
     setIsLoading(true);
     
-    // Load current settings
-    const savedTexts = localStorage.getItem('siteTexts');
-    if (savedTexts) {
-      const parsedTexts = JSON.parse(savedTexts);
-      // Update webhook URL
-      parsedTexts.webhookUrl = webhookUrl;
-      // Save back to localStorage
-      localStorage.setItem('siteTexts', JSON.stringify(parsedTexts));
-    }
-    
-    setTimeout(() => {
+    try {
+      // Save to Supabase
+      const { error } = await supabase
+        .from('site_texts')
+        .upsert([
+          { 
+            key: 'webhookUrl', 
+            content: webhookUrl,
+            type: 'text'
+          }
+        ]);
+      
+      if (error) throw error;
+      
+      // Also update localStorage for compatibility
+      const savedTexts = localStorage.getItem('siteTexts');
+      if (savedTexts) {
+        const parsedTexts = JSON.parse(savedTexts);
+        parsedTexts.webhookUrl = webhookUrl;
+        localStorage.setItem('siteTexts', JSON.stringify(parsedTexts));
+      }
+      
       toast.success('Webhook configurado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao salvar webhook:', error);
+      toast.error('Erro ao salvar webhook');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
-  const handleSendReply = () => {
+  const handleSendReply = async () => {
     if (!replyTo || !replyMessage.trim() || !webhookUrl) {
       toast.error('Por favor, preencha a mensagem e configure o webhook!');
       return;
@@ -163,30 +231,45 @@ export default function Messages() {
 
     setIsLoading(true);
 
-    // Simulate sending email via webhook
-    console.log('Sending reply via webhook:', {
-      to: replyTo.email,
-      from: "noreply@iadmin.com",
-      subject: `Re: Contato IAdmin - ${replyTo.firstName} ${replyTo.lastName}`,
-      message: replyMessage,
-      contactData: {
-        firstName: replyTo.firstName,
-        lastName: replyTo.lastName,
-        email: replyTo.email,
-        phone: replyTo.phone,
-        originalMessage: replyTo.message
+    try {
+      // Enviar via webhook
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          type: 'reply',
+          to: replyTo.email,
+          from: "noreply@iadmin.com",
+          subject: `Re: Contato IAdmin - ${replyTo.firstName} ${replyTo.lastName}`,
+          message: replyMessage,
+          contactData: {
+            firstName: replyTo.firstName,
+            lastName: replyTo.lastName,
+            email: replyTo.email,
+            phone: replyTo.phone,
+            originalMessage: replyTo.message
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook retornou status ${response.status}`);
       }
-    });
 
-    // Mark the message as read
-    handleMarkAsRead(replyTo.id);
-
-    setTimeout(() => {
+      // Marcar mensagem como lida
+      await handleMarkAsRead(replyTo.id);
+      
       toast.success(`Resposta enviada para ${replyTo.email}!`);
-      setIsLoading(false);
       setReplyTo(null);
       setReplyMessage('');
-    }, 1500);
+    } catch (error) {
+      console.error('Erro ao enviar resposta:', error);
+      toast.error('Erro ao enviar resposta. Verifique o webhook.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Format date to a more readable format

@@ -10,7 +10,8 @@ import {
   ChevronRight, 
   Menu,
   MessageCircleQuestion,
-  Layers
+  Layers,
+  FileText
 } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
 
@@ -33,9 +34,14 @@ const AdminLayout: React.FC = () => {
       icon: <LayoutDashboard size={20} />,
     },
     {
-      name: 'Seções da Página',
+      name: 'Seções da Home',
       path: '/admin/secoes',
       icon: <Layers size={20} />,
+    },
+    {
+      name: 'Seções de Páginas',
+      path: '/admin/paginas',
+      icon: <FileText size={20} />,
     },
     {
       name: 'Depoimentos',
@@ -100,7 +106,7 @@ const AdminLayout: React.FC = () => {
                     <Link
                       to={item.path}
                       className={`flex items-center px-4 py-2 rounded-md transition-colors ${
-                        pathname === item.path
+                        pathname === item.path || (item.path !== '/admin' && pathname.startsWith(item.path))
                           ? 'bg-primary-color bg-opacity-10 text-primary-color hover:bg-opacity-20'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}
@@ -157,7 +163,7 @@ const AdminLayout: React.FC = () => {
                     <Link
                       to={item.path}
                       className={`flex items-center px-4 py-2 rounded-md transition-colors ${
-                        pathname === item.path
+                        pathname === item.path || (item.path !== '/admin' && pathname.startsWith(item.path))
                           ? 'bg-primary-color bg-opacity-10 text-primary-color'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}

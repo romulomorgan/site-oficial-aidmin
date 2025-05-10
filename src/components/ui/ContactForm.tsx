@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from './CustomButton';
 import { saveContactMessage, getSiteTexts } from '@/utils/localStorage';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ContactFormProps {
   className?: string;
@@ -36,7 +37,7 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
     
     setIsSubmitting(true);
     
-    // Save to localStorage
+    // Save to localStorage for legacy support
     saveContactMessage({
       firstName,
       lastName,
@@ -45,24 +46,54 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       message
     });
     
-    // If webhook URL is defined, send message to webhook
-    if (webhookUrl) {
-      try {
-        console.log('Sending message to webhook:', webhookUrl, {
-          firstName,
-          lastName,
-          email,
-          phone,
-          message,
-          date: new Date().toISOString()
-        });
-        // In a real application, you would do a fetch here
-      } catch (error) {
-        console.error('Error sending message to webhook:', error);
+    // Save to Supabase database
+    try {
+      const contactData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        message,
+        read: false,
+        date: new Date().toISOString()
+      };
+      
+      // Insert into site_contact_messages table
+      const { error } = await supabase
+        .from('site_contact_messages')
+        .insert([contactData]);
+      
+      if (error) {
+        console.error('Erro ao salvar mensagem no banco de dados:', error);
+        toast.error('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.');
+        setIsSubmitting(false);
+        return;
       }
-    }
-    
-    setTimeout(() => {
+      
+      // If webhook URL is defined, send message to webhook
+      if (webhookUrl) {
+        try {
+          console.log('Sending message to webhook:', webhookUrl);
+          
+          await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              firstName,
+              lastName,
+              email,
+              phone,
+              message,
+              date: new Date().toISOString()
+            })
+          });
+        } catch (error) {
+          console.error('Error sending message to webhook:', error);
+        }
+      }
+      
       toast.success('Mensagem enviada com sucesso!');
       
       // Reset form
@@ -71,8 +102,12 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       setEmail('');
       setPhone('');
       setMessage('');
+    } catch (error) {
+      console.error('Erro ao processar envio:', error);
+      toast.error('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
   
   const inputClassName = isDark 

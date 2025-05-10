@@ -12,7 +12,8 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
       phone: '11912345678',
       message: 'Mensagem de teste do webhook',
       date: new Date().toISOString(),
-      testId: `test-${Date.now()}`
+      testId: `test-${Date.now()}`,
+      type: 'contact_message'
     };
     
     // Realizar uma solicitação de teste para o webhook
@@ -67,7 +68,8 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
         phone: '11912345678',
         message: 'Mensagem de teste do webhook',
         date: new Date().toISOString(),
-        testId: `test-${Date.now()}`
+        testId: `test-${Date.now()}`,
+        type: 'contact_message'
       },
       status: 0,
       success: false,
@@ -111,14 +113,28 @@ export function clearWebhookLogs(): void {
 }
 
 // Função para gerar um payload com dados formatados
-export function generateWebhookPayload(data: any): any {
-  // Formatar os dados para o webhook com base no template
-  return {
-    firstName: data.firstName || 'Visitante',
-    lastName: data.lastName || '',
-    email: data.email || 'sem-email@exemplo.com',
-    phone: data.phone || 'Não informado',
-    message: data.message || 'Mensagem não fornecida',
-    date: new Date().toISOString()
-  };
+export function generateWebhookPayload(data: any, type: string = 'contact_message'): any {
+  // Formatar os dados para o webhook com base no template e tipo
+  if (type === 'reply') {
+    return {
+      type: 'reply',
+      to: data.to,
+      from: data.from,
+      subject: data.subject,
+      message: data.message,
+      contactData: data.contactData,
+      date: new Date().toISOString()
+    };
+  } else {
+    // Contato padrão
+    return {
+      type: 'contact_message',
+      firstName: data.firstName || 'Visitante',
+      lastName: data.lastName || '',
+      email: data.email || 'sem-email@exemplo.com',
+      phone: data.phone || 'Não informado',
+      message: data.message || 'Mensagem não fornecida',
+      date: new Date().toISOString()
+    };
+  }
 }

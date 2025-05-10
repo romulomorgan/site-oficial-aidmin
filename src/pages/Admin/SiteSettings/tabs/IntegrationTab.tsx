@@ -1,12 +1,14 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Webhook, Logs } from 'lucide-react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { testWebhookUrl, clearWebhookLogs } from '@/utils/supabase/webhooks';
+import { testWebhookUrl, getWebhookLogs, clearWebhookLogs } from '@/utils/supabase/webhooks';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface IntegrationTabProps {
   webhookUrl: string;
@@ -24,6 +26,12 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   const [testingWebhook, setTestingWebhook] = useState(false);
   const [webhookTestResult, setWebhookTestResult] = useState<{success: boolean, status?: number, message?: string, payload?: any} | null>(null);
   const [showWebhookLogs, setShowWebhookLogs] = useState(false);
+
+  useEffect(() => {
+    // Carregar logs de webhook ao montar o componente
+    const logs = getWebhookLogs();
+    setWebhookLogs(logs);
+  }, [setWebhookLogs]);
 
   const handleWebhookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWebhookUrl(e.target.value);
@@ -51,6 +59,13 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
       } else {
         toast.error("Falha ao testar o webhook.");
       }
+      
+      // Salvar URL no Supabase também para garantir consistência
+      await supabase
+        .from('site_texts')
+        .upsert([
+          { key: 'webhookUrl', content: webhookUrl, type: 'text' }
+        ]);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       setWebhookTestResult({
@@ -71,10 +86,6 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
       toast.success("Logs de webhook limpos com sucesso");
     }
   };
-
-  // Importações necessárias
-  const { toast } = require('sonner');
-  const { getWebhookLogs } = require('@/utils/supabase/webhooks');
 
   return (
     <div>
