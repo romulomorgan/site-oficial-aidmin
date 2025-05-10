@@ -3,7 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomButton } from '@/components/ui/CustomButton';
-import { fetchSiteTexts, fetchColorTemplates, saveColorTemplate, fetchEmbedConfig } from '@/utils/supabaseClient';
+import { 
+  fetchSiteTexts, 
+  fetchColorTemplates, 
+  saveColorTemplate, 
+  fetchEmbedConfig,
+  updateSiteText,
+  saveEmbedConfig,
+  getWebhookLogs
+} from '@/utils/supabaseClient';
 
 import { AppearanceTab } from './tabs/AppearanceTab';
 import { FaviconTab } from './tabs/FaviconTab';
@@ -221,9 +229,6 @@ export default function SiteSettings() {
     
     setEditingTemplate({...template});
   };
-
-  // Importações de funções para webhooks e textos
-  const { updateSiteText, saveEmbedConfig, getWebhookLogs } = require('@/utils/supabaseClient');
 
   if (isInitialLoading) {
     return <div className="p-6">Carregando configurações do site...</div>;
