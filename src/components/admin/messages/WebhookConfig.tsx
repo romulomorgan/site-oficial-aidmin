@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { testWebhookUrl } from '@/utils/supabase/webhooks';
+import { useWebhook } from '@/hooks/useWebhook';
 import { toast } from 'sonner';
 
 interface WebhookConfigProps {
@@ -18,29 +18,8 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
   onWebhookChange,
   onSaveWebhook
 }) => {
-  const [isTesting, setIsTesting] = useState(false);
-
-  const handleTest = async () => {
-    if (!webhookUrl.trim()) {
-      toast.error('Por favor, insira um URL de webhook válido');
-      return;
-    }
-
-    setIsTesting(true);
-    try {
-      const result = await testWebhookUrl(webhookUrl);
-      if (result.success) {
-        toast.success('Teste de webhook bem-sucedido!');
-      } else {
-        toast.error(`Falha no teste: ${result.message || 'Erro desconhecido'}`);
-      }
-    } catch (error) {
-      toast.error('Erro ao testar webhook');
-      console.error(error);
-    } finally {
-      setIsTesting(false);
-    }
-  };
+  // Use the custom hook
+  const { testWebhook, isTesting } = useWebhook();
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -61,7 +40,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
         <div className="flex gap-2 mt-2 sm:mt-0">
           <CustomButton 
             variant="secondary" 
-            onClick={handleTest} 
+            onClick={() => testWebhook(webhookUrl)}
             disabled={isLoading || isTesting || !webhookUrl.trim()}
           >
             {isTesting ? 'Testando...' : 'Testar'}

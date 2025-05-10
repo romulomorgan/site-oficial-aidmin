@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -167,10 +166,6 @@ export default function Messages() {
     }
   };
 
-  const handleWebhookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWebhookUrl(e.target.value);
-  };
-
   const saveWebhook = async () => {
     setIsLoading(true);
     
@@ -261,7 +256,7 @@ export default function Messages() {
       <WebhookConfig 
         webhookUrl={webhookUrl}
         isLoading={isLoading}
-        onWebhookChange={handleWebhookChange}
+        onWebhookChange={setWebhookUrl}
         onSaveWebhook={saveWebhook}
       />
       
