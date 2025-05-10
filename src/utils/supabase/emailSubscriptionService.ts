@@ -1,9 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { EmailSubscription } from "./types";
-import { useWebhook } from "@/hooks/useWebhook";
 
-// Função para salvar uma inscrição de email
+// Função para salvar uma inscrição de email e notificar webhook
 export async function saveEmailSubscription(email: string, source?: string): Promise<boolean> {
   try {
     const { error } = await supabase
@@ -19,28 +18,8 @@ export async function saveEmailSubscription(email: string, source?: string): Pro
       return false;
     }
 
-    // Enviar para webhook se configurado
-    try {
-      // Buscar a URL do webhook
-      const { data } = await supabase
-        .from('site_texts')
-        .select('content')
-        .eq('key', 'webhookUrl')
-        .single();
-      
-      if (data && data.content) {
-        const webhookUrl = data.content;
-        
-        // Criar instância do hook de webhook
-        const { sendEmailSubscriptionWebhook } = useWebhook();
-        
-        // Enviar para o webhook
-        await sendEmailSubscriptionWebhook(webhookUrl, email, source || 'website');
-      }
-    } catch (webhookError) {
-      console.error('Erro ao enviar inscrição para webhook:', webhookError);
-      // Não interrompemos o fluxo se o webhook falhar
-    }
+    // Notificar o webhook sobre a nova inscrição
+    await notifyWebhookEmailSubscription(email, source);
 
     return true;
   } catch (error) {
@@ -69,7 +48,7 @@ export async function fetchEmailSubscriptions(): Promise<EmailSubscription[]> {
   }
 }
 
-// Nova função para notificar o webhook quando uma inscrição for adicionada
+// Função para notificar o webhook quando uma inscrição for adicionada
 export async function notifyWebhookEmailSubscription(email: string, source?: string): Promise<boolean> {
   try {
     // Buscar a URL do webhook

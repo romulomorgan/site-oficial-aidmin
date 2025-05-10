@@ -262,6 +262,76 @@ export function useWebhook(options: UseWebhookOptions = {}) {
     }
   };
 
+  const sendEmailSubscriptionWebhook = async (url: string, email: string, source: string = 'website') => {
+    if (!url.trim()) {
+      console.log('URL de webhook não configurada para inscrição de email');
+      return false;
+    }
+
+    try {
+      const payload = {
+        type: 'email_subscription',
+        email: email,
+        source: source,
+        date: new Date().toISOString(),
+        subscriptionId: `subscription_${Date.now()}`
+      };
+
+      console.log('Enviando inscrição para webhook:', payload);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      let responseText = '';
+      try {
+        responseText = await response.text();
+      } catch (e) {
+        responseText = 'Não foi possível obter o conteúdo da resposta';
+      }
+
+      // Criar objeto de resultado
+      const result = {
+        success: response.status >= 200 && response.status < 300,
+        status: response.status,
+        message: responseText,
+        payload,
+        url,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Salvar log
+      try {
+        await supabase
+          .from('webhook_logs')
+          .insert([{
+            url,
+            payload: JSON.stringify(payload),
+            status: response.status,
+            success: result.success,
+            response: responseText,
+            timestamp: new Date().toISOString(),
+            type: 'email_subscription'
+          }]);
+      } catch (e) {
+        console.error('Erro ao salvar log no banco de dados:', e);
+        // Fallback para localStorage
+        const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
+        webhookLogs.unshift(result);
+        localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
+      }
+      
+      return result.success;
+    } catch (error) {
+      console.error('Erro ao enviar inscrição para webhook:', error);
+      return false;
+    }
+  };
+
   const getWebhookLogs = async (): Promise<WebhookLog[]> => {
     try {
       const { data, error } = await supabase
@@ -286,6 +356,7 @@ export function useWebhook(options: UseWebhookOptions = {}) {
   return {
     testWebhook,
     sendWebhook,
+    sendEmailSubscriptionWebhook,
     getWebhookLogs,
     isTesting,
     saving,

@@ -90,7 +90,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
             variant="secondary" 
             onClick={handleTestWebhook}
             disabled={isLoading || isTesting || !webhookUrl.trim()}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap bg-gray-200 text-gray-800 border-gray-300"
           >
             <TestTube className="h-4 w-4 mr-1" />
             {isTesting ? 'Testando...' : 'Testar'}
@@ -114,7 +114,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
         <CustomButton
           variant="secondary" 
           onClick={handleShowLogs}
-          className="text-xs"
+          className="text-xs bg-gray-200 text-gray-800 border-gray-300"
           size="sm"
         >
           {showWebhookLogs ? 'Ocultar Logs' : 'Mostrar Logs'}

@@ -158,7 +158,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                 variant="secondary"
                 onClick={handleTestWebhook}
                 disabled={testingWebhook || !webhookUrl}
-                className="w-full md:w-auto"
+                className="w-full md:w-auto bg-gray-200 text-gray-800 border-gray-300"
               >
                 <Webhook className="mr-2 h-4 w-4" />
                 {testingWebhook ? "Testando..." : "Testar Webhook"}
@@ -168,7 +168,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                 type="button"
                 variant="secondary"
                 onClick={() => setShowWebhookLogs(!showWebhookLogs)}
-                className="w-full md:w-auto"
+                className="w-full md:w-auto bg-gray-200 text-gray-800 border-gray-300"
               >
                 <Logs className="mr-2 h-4 w-4" />
                 {showWebhookLogs ? "Ocultar Logs" : "Mostrar Logs"}
@@ -193,7 +193,8 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                     type="button"
                     variant="secondary"
                     onClick={handleClearWebhookLogs}
-                    className="text-xs"
+                    className="text-xs bg-gray-200 text-gray-800 border-gray-300"
+                    size="sm"
                   >
                     Limpar Logs
                   </CustomButton>
@@ -285,10 +286,25 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
 }, null, 2)}
                 </pre>
               </div>
+              
+              <div className="mt-3 border rounded overflow-hidden">
+                <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+                  Inscrição de Email
+                </div>
+                <pre className="bg-black/90 text-white rounded-b-md p-3 overflow-x-auto text-sm w-full">
+{JSON.stringify({
+  type: 'email_subscription',
+  email: 'usuario@exemplo.com',
+  source: 'website',
+  date: new Date().toISOString(),
+  subscriptionId: 'subscription_123456'
+}, null, 2)}
+                </pre>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}

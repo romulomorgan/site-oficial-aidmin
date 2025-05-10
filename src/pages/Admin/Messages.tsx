@@ -8,9 +8,7 @@ import MessageList from '@/components/admin/messages/MessageList';
 import EmailSubscriptionList from '@/components/admin/messages/EmailSubscriptionList';
 import ReplyDialog from '@/components/admin/messages/ReplyDialog';
 import ConfirmDeleteDialog from '@/components/admin/messages/ConfirmDeleteDialog';
-import WebhookConfig from '@/components/admin/messages/WebhookConfig';
 import { useWebhook } from '@/hooks/useWebhook';
-import { getWebhookLogs } from '@/utils/supabase/webhooks';
 
 export default function Messages() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
@@ -21,17 +19,12 @@ export default function Messages() {
   const [replyMessage, setReplyMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | string | null>(null);
   const [showDeleteEmailConfirm, setShowDeleteEmailConfirm] = useState<number | string | null>(null);
-  const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
-
+  
   // Usar o hook de webhook
-  const { testWebhook, sendWebhook } = useWebhook();
+  const { sendWebhook } = useWebhook();
 
   useEffect(() => {
     loadData();
-    
-    // Carregar logs de webhook
-    const logs = getWebhookLogs();
-    setWebhookLogs(logs);
   }, []);
 
   const loadData = async () => {
@@ -95,28 +88,6 @@ export default function Messages() {
             setWebhookUrl(parsedTexts.webhookUrl);
           }
         }
-      }
-      
-      // Carregar logs de webhook do banco de dados
-      try {
-        const { data: logsData } = await supabase
-          .from('webhook_logs')
-          .select('*')
-          .order('timestamp', { ascending: false })
-          .limit(50);
-          
-        if (logsData && logsData.length > 0) {
-          setWebhookLogs(logsData);
-        } else {
-          // Fallback para localStorage
-          const logs = getWebhookLogs();
-          setWebhookLogs(logs);
-        }
-      } catch (e) {
-        console.error('Erro ao carregar logs do webhook:', e);
-        // Fallback para localStorage
-        const logs = getWebhookLogs();
-        setWebhookLogs(logs);
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
@@ -199,45 +170,6 @@ export default function Messages() {
     }
   };
 
-  const saveWebhook = async () => {
-    setIsLoading(true);
-    
-    try {
-      // Save to Supabase
-      const { error } = await supabase
-        .from('site_texts')
-        .upsert([
-          { 
-            key: 'webhookUrl', 
-            content: webhookUrl,
-            type: 'text'
-          }
-        ]);
-      
-      if (error) throw error;
-      
-      // Also update localStorage for compatibility
-      const savedTexts = localStorage.getItem('siteTexts');
-      if (savedTexts) {
-        const parsedTexts = JSON.parse(savedTexts);
-        parsedTexts.webhookUrl = webhookUrl;
-        localStorage.setItem('siteTexts', JSON.stringify(parsedTexts));
-      }
-      
-      // Testar webhook após salvar
-      if (webhookUrl.trim()) {
-        await testWebhook(webhookUrl);
-      }
-      
-      toast.success('Webhook configurado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao salvar webhook:', error);
-      toast.error('Erro ao salvar webhook');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSendReply = async () => {
     if (!replyTo || !replyMessage.trim() || !webhookUrl) {
       toast.error('Por favor, preencha a mensagem e configure o webhook!');
@@ -289,13 +221,6 @@ export default function Messages() {
   return (
     <div className="w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Central de Mensagens</h1>
-      
-      <WebhookConfig 
-        webhookUrl={webhookUrl}
-        isLoading={isLoading}
-        onWebhookChange={setWebhookUrl}
-        onSaveWebhook={saveWebhook}
-      />
       
       <div className="bg-white rounded-lg shadow-sm p-6 w-full">
         <Tabs defaultValue="messages">

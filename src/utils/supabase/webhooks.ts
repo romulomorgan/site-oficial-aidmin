@@ -139,6 +139,14 @@ export function generateWebhookPayload(data: any, type: string = 'contact_messag
       threadId: data.threadId || `thread_${Date.now()}`,
       contactId: data.contactId || `contact_${Date.now()}`
     };
+  } else if (type === 'email_subscription') {
+    return {
+      type: 'email_subscription',
+      email: data.email,
+      source: data.source || 'website',
+      date: data.date || new Date().toISOString(),
+      subscriptionId: data.subscriptionId || `subscription_${Date.now()}`
+    };
   } else {
     // Contato padrão
     const firstName = data.firstName || data.firstname || 'Visitante';
