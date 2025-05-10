@@ -35,10 +35,10 @@ export default function Contato() {
         const dbTexts = await fetchSiteTexts();
         setSiteTexts(prev => ({
           ...prev,
-          contactImage: dbTexts.contatoImageUrl || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png',
-          contatoTitle: dbTexts.contatoTitle || 'Deixe seu contato',
-          contatoSubtitle: dbTexts.contatoSubtitle || 'Preencha o formulário e entraremos em contato rapidamente.',
-          contatoDescription: dbTexts.contatoDescription || 'Estamos prontos para entender suas necessidades e oferecer soluções personalizadas que impulsionam sua produtividade.'
+          contactImage: typeof dbTexts.contatoImageUrl === 'string' ? dbTexts.contatoImageUrl : '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png',
+          contatoTitle: typeof dbTexts.contatoTitle === 'string' ? dbTexts.contatoTitle : 'Deixe seu contato',
+          contatoSubtitle: typeof dbTexts.contatoSubtitle === 'string' ? dbTexts.contatoSubtitle : 'Preencha o formulário e entraremos em contato rapidamente.',
+          contatoDescription: typeof dbTexts.contatoDescription === 'string' ? dbTexts.contatoDescription : 'Estamos prontos para entender suas necessidades e oferecer soluções personalizadas que impulsionam sua produtividade.'
         }));
         
         // Load theme colors
@@ -131,9 +131,6 @@ export default function Contato() {
           </div>
         </div>
       </section>
-      
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }
