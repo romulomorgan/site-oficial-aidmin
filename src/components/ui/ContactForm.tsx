@@ -64,8 +64,8 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
     
     try {
       const contactData = {
-        firstName,
-        lastName,
+        firstname: firstName, // Corrigido para corresponder ao campo do banco de dados
+        lastname: lastName,   // Corrigido para corresponder ao campo do banco de dados
         email,
         phone,
         message,
@@ -76,7 +76,7 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       // Insert into database
       const { error } = await supabase
         .from('site_contact_messages')
-        .insert([contactData]);
+        .insert(contactData);
       
       if (error) {
         console.error('Erro ao salvar mensagem no banco de dados:', error);
@@ -89,7 +89,14 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       if (webhookUrl) {
         try {
           console.log('Sending message to webhook:', webhookUrl);
-          const payload = generateWebhookPayload(contactData);
+          const payload = generateWebhookPayload({
+            firstName, // Manter o formato original para o webhook
+            lastName,
+            email,
+            phone,
+            message,
+            date: new Date().toISOString()
+          });
           
           await fetch(webhookUrl, {
             method: 'POST',

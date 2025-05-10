@@ -30,8 +30,8 @@ export interface FAQItem {
 // Tipos para mensagens de contato
 export interface ContactMessage {
   id: string;
-  firstName: string;
-  lastName?: string;
+  firstname: string;
+  lastname?: string;
   email: string;
   phone?: string;
   message: string;

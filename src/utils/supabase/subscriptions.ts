@@ -38,12 +38,7 @@ export async function fetchEmailSubscriptions(): Promise<EmailSubscription[]> {
       return [];
     }
 
-    return data.map(subscription => ({
-      id: subscription.id,
-      email: subscription.email,
-      source: subscription.source,
-      createdAt: subscription.created_at
-    }));
+    return data as EmailSubscription[];
   } catch (error) {
     console.error('Erro ao processar busca de inscrições:', error);
     return [];
