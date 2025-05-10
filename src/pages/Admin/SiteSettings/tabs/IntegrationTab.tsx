@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { testWebhookUrl, getWebhookLogs, clearWebhookLogs } from '@/utils/supabase/webhooks';
+import { getWebhookLogs, clearWebhookLogs } from '@/utils/supabase/webhooks';
 import { toast } from 'sonner';
 import { useWebhook } from '@/hooks/useWebhook';
+import { supabase } from '@/integrations/supabase/client';
 
 interface IntegrationTabProps {
   webhookUrl: string;
@@ -28,19 +29,41 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   const [showWebhookLogs, setShowWebhookLogs] = useState(false);
   
   // Usar o hook personalizado para testar webhook
-  const { testWebhook, isTesting } = useWebhook({
+  const { testWebhook, isTesting, lastTestResult } = useWebhook({
     onSuccess: () => {
       // Atualizar logs após teste bem-sucedido
-      const updatedLogs = getWebhookLogs();
-      setWebhookLogs(updatedLogs);
+      loadWebhookLogs();
     }
   });
 
   useEffect(() => {
     // Carregar logs de webhook ao montar o componente
+    loadWebhookLogs();
+  }, []);
+
+  const loadWebhookLogs = async () => {
+    // Tentar carregar logs do banco de dados primeiro
+    try {
+      const { data: logsData, error } = await supabase
+        .from('webhook_logs')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(50);
+        
+      if (error) throw error;
+      
+      if (logsData && logsData.length > 0) {
+        setWebhookLogs(logsData);
+        return;
+      }
+    } catch (e) {
+      console.error('Erro ao carregar logs do webhook do banco de dados:', e);
+    }
+    
+    // Fallback para localStorage
     const logs = getWebhookLogs();
     setWebhookLogs(logs);
-  }, [setWebhookLogs]);
+  };
 
   const handleTestWebhook = async () => {
     if (!webhookUrl) {
@@ -52,17 +75,25 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
     setWebhookTestResult(null);
 
     try {
-      const result = await testWebhookUrl(webhookUrl);
-      setWebhookTestResult(result);
+      // Criar payload de teste mais completo
+      const testData = {
+        firstName: 'Usuário',
+        lastName: 'Teste',
+        email: 'usuario.teste@exemplo.com',
+        phone: '(11) 98765-4321',
+        message: 'Esta é uma mensagem de teste para verificar a funcionalidade do webhook.',
+        date: new Date().toISOString(),
+        threadId: `thread_test_${Date.now()}`,
+        contactId: `contact_test_${Date.now()}`
+      };
       
-      // Atualizar logs de webhook
-      const logs = getWebhookLogs();
-      setWebhookLogs(logs);
+      const success = await testWebhook(webhookUrl, testData);
       
-      if (result.success) {
-        toast.success("Teste de webhook bem-sucedido!");
-      } else {
-        toast.error("Falha ao testar o webhook: " + (result.message || "Erro desconhecido"));
+      // Carregar logs atualizados
+      await loadWebhookLogs();
+      
+      if (success && lastTestResult) {
+        setWebhookTestResult(lastTestResult);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -77,8 +108,19 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
     }
   };
   
-  const handleClearWebhookLogs = () => {
+  const handleClearWebhookLogs = async () => {
     if (window.confirm("Tem certeza que deseja limpar todos os logs de webhook? Esta ação não pode ser desfeita.")) {
+      // Limpar logs do banco de dados
+      try {
+        await supabase
+          .from('webhook_logs')
+          .delete()
+          .gte('id', 0); // Deletar todos
+      } catch (e) {
+        console.error('Erro ao limpar logs do banco de dados:', e);
+      }
+      
+      // Limpar logs do localStorage
       clearWebhookLogs();
       setWebhookLogs([]);
       toast.success("Logs de webhook limpos com sucesso");
@@ -92,7 +134,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
         Configure integrações com serviços externos para ampliar as funcionalidades do site.
       </p>
       
-      <div className="space-y-6">
+      <div className="space-y-6 w-full">
         <div className="bg-gray-50 p-6 rounded-lg border w-full">
           <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
             <Webhook className="h-5 w-5" /> 
@@ -147,7 +189,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                   <AlertDescription className="text-sm">
                     {webhookTestResult.success 
                       ? "O teste foi bem-sucedido! Seu webhook está funcionando." 
-                      : "Falha no teste do webhook. Verifique a URL e tente novamente."}
+                      : `Falha no teste do webhook: ${webhookTestResult.message || 'Erro desconhecido'}`}
                   </AlertDescription>
                 </Alert>
               )}
@@ -207,19 +249,51 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
             )}
             
             <div>
-              <h4 className="text-sm font-medium mt-3 mb-1">Formato do Payload</h4>
-              <pre className="bg-black/90 text-white rounded-md p-3 overflow-x-auto text-sm w-full">
-{`{
-  "firstName": "Nome do Usuário",
-  "lastName": "Sobrenome do Usuário",
-  "email": "email@exemplo.com",
-  "phone": "11912345678",
-  "message": "Mensagem enviada pelo usuário",
-  "date": "2024-05-08T14:30:00.000Z",
-  "threadId": "thread_123456", 
-  "contactId": "contact_123456"
-}`}
-              </pre>
+              <h4 className="text-sm font-medium mt-3 mb-1">Exemplos de Payload</h4>
+              
+              <div className="mt-3 border rounded overflow-hidden">
+                <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+                  Mensagem de Contato
+                </div>
+                <pre className="bg-black/90 text-white rounded-b-md p-3 overflow-x-auto text-sm w-full">
+{JSON.stringify({
+  type: 'contact_message',
+  firstName: 'Nome do Usuário',
+  lastName: 'Sobrenome do Usuário',
+  email: 'email@exemplo.com',
+  phone: '11912345678',
+  message: 'Mensagem enviada pelo usuário',
+  date: new Date().toISOString(),
+  threadId: 'thread_123456', 
+  contactId: 'contact_123456'
+}, null, 2)}
+                </pre>
+              </div>
+              
+              <div className="mt-3 border rounded overflow-hidden">
+                <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+                  Resposta à Mensagem
+                </div>
+                <pre className="bg-black/90 text-white rounded-b-md p-3 overflow-x-auto text-sm w-full">
+{JSON.stringify({
+  type: 'reply',
+  to: 'usuario@exemplo.com',
+  from: 'noreply@iadmin.com',
+  subject: 'Re: Contato IAdmin - Nome Sobrenome',
+  message: 'Obrigado pelo contato. Responderei em breve.',
+  contactData: {
+    firstName: 'Nome',
+    lastName: 'Sobrenome',
+    email: 'usuario@exemplo.com',
+    phone: '11912345678',
+    originalMessage: 'Mensagem original do usuário'
+  },
+  date: new Date().toISOString(),
+  threadId: 'thread_123456',
+  contactId: 'contact_123456'
+}, null, 2)}
+                </pre>
+              </div>
             </div>
           </div>
         </div>

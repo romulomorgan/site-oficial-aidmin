@@ -53,16 +53,20 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
     
     setIsSubmitting(true);
     
-    // Save to localStorage for legacy support
-    saveContactMessage({
-      firstName,
-      lastName,
-      email,
-      phone,
-      message
-    });
-    
     try {
+      // Gerar ID único para esta mensagem (para rastreamento)
+      const threadId = `thread_${Date.now()}`;
+      const contactId = `contact_${Date.now()}`;
+      
+      // Save to localStorage for legacy support
+      saveContactMessage({
+        firstName,
+        lastName,
+        email,
+        phone,
+        message
+      });
+      
       const contactData = {
         firstname: firstName, // Corrigido para corresponder ao campo do banco de dados
         lastname: lastName,   // Corrigido para corresponder ao campo do banco de dados
@@ -70,13 +74,16 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         phone,
         message,
         read: false,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        thread_id: threadId,
+        contact_id: contactId
       };
       
       // Insert into database
-      const { error } = await supabase
+      const { error, data } = await supabase
         .from('site_contact_messages')
-        .insert(contactData);
+        .insert(contactData)
+        .select();
       
       if (error) {
         console.error('Erro ao salvar mensagem no banco de dados:', error);
@@ -90,21 +97,44 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         try {
           console.log('Sending message to webhook:', webhookUrl);
           const payload = generateWebhookPayload({
-            firstName, // Manter o formato original para o webhook
+            firstName,
             lastName,
             email,
             phone,
             message,
-            date: new Date().toISOString()
+            date: new Date().toISOString(),
+            threadId,
+            contactId: data?.[0]?.id || contactId
           });
           
-          await fetch(webhookUrl, {
+          const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload)
           });
+          
+          // Log webhook response
+          try {
+            const responseText = await response.text();
+            console.log('Webhook response:', response.status, responseText);
+            
+            // Save log to database
+            await supabase
+              .from('webhook_logs')
+              .insert([{
+                url: webhookUrl,
+                payload,
+                status: response.status,
+                success: response.status >= 200 && response.status < 300,
+                response: responseText,
+                timestamp: new Date().toISOString(),
+                type: 'contact_message'
+              }]);
+          } catch (e) {
+            console.error('Erro ao processar resposta do webhook:', e);
+          }
         } catch (error) {
           console.error('Error sending message to webhook:', error);
         }

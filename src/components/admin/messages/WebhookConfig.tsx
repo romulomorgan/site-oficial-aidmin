@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, TestTube, Bot } from 'lucide-react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { useWebhook } from '@/hooks/useWebhook';
 
@@ -18,17 +18,40 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
   onSaveWebhook
 }) => {
   // Use the custom hook
-  const { testWebhook, isTesting } = useWebhook();
+  const { testWebhook, isTesting } = useWebhook({
+    onSuccess: () => {
+      console.log('Teste do webhook realizado com sucesso');
+    },
+    onError: (error) => {
+      console.error('Erro no teste do webhook:', error);
+    }
+  });
+
+  const handleTestWebhook = async () => {
+    // Criar um payload de teste mais completo
+    const testData = {
+      firstName: 'Usuário',
+      lastName: 'Teste',
+      email: 'usuario.teste@exemplo.com',
+      phone: '(11) 98765-4321',
+      message: 'Esta é uma mensagem de teste para verificar a funcionalidade do webhook.',
+      date: new Date().toISOString(),
+      threadId: `thread_test_${Date.now()}`,
+      contactId: `contact_test_${Date.now()}`
+    };
+    
+    await testWebhook(webhookUrl, testData);
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-6 w-full">
       <h2 className="text-lg font-medium text-gray-800 mb-4">Configurar Webhook</h2>
       <p className="text-sm text-gray-500 mb-4">
         Configure um endpoint para receber automaticamente as mensagens de contato em seu sistema.
         Todas as mensagens enviadas através do formulário de contato serão enviadas para esse URL.
       </p>
       
-      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full">
         <input
           type="text"
           value={webhookUrl}
@@ -39,15 +62,18 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
         <div className="flex gap-2 mt-2 sm:mt-0">
           <CustomButton 
             variant="secondary" 
-            onClick={() => testWebhook(webhookUrl)}
+            onClick={handleTestWebhook}
             disabled={isLoading || isTesting || !webhookUrl.trim()}
+            className="whitespace-nowrap"
           >
+            <TestTube className="h-4 w-4 mr-1" />
             {isTesting ? 'Testando...' : 'Testar'}
           </CustomButton>
           <CustomButton 
             variant="primary" 
             onClick={onSaveWebhook} 
             disabled={isLoading}
+            className="whitespace-nowrap"
           >
             {isLoading ? 'Salvando...' : 'Salvar'}
           </CustomButton>
@@ -60,6 +86,57 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
           As mensagens serão enviadas via POST para: {webhookUrl}
         </div>
       )}
+      
+      <div className="mt-4 pt-4 border-t">
+        <h3 className="text-sm font-medium mb-2 flex items-center">
+          <Bot className="h-4 w-4 mr-1" />
+          Exemplos de payload enviados
+        </h3>
+        
+        <div className="mt-2 border rounded overflow-hidden">
+          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+            Mensagem de Contato
+          </div>
+          <pre className="bg-black/90 text-white text-xs p-3 overflow-x-auto">
+{JSON.stringify({
+  type: 'contact_message',
+  firstName: 'Nome do Usuário',
+  lastName: 'Sobrenome do Usuário',
+  email: 'email@exemplo.com',
+  phone: '11912345678',
+  message: 'Mensagem enviada pelo usuário',
+  date: new Date().toISOString(),
+  threadId: 'thread_123456',
+  contactId: 'contact_123456'
+}, null, 2)}
+          </pre>
+        </div>
+        
+        <div className="mt-3 border rounded overflow-hidden">
+          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+            Resposta à Mensagem
+          </div>
+          <pre className="bg-black/90 text-white text-xs p-3 overflow-x-auto">
+{JSON.stringify({
+  type: 'reply',
+  to: 'usuario@exemplo.com',
+  from: 'noreply@iadmin.com',
+  subject: 'Re: Contato IAdmin - Nome Sobrenome',
+  message: 'Obrigado pelo contato. Responderei em breve.',
+  contactData: {
+    firstName: 'Nome',
+    lastName: 'Sobrenome',
+    email: 'usuario@exemplo.com',
+    phone: '11912345678',
+    originalMessage: 'Mensagem original do usuário'
+  },
+  date: new Date().toISOString(),
+  threadId: 'thread_123456',
+  contactId: 'contact_123456'
+}, null, 2)}
+          </pre>
+        </div>
+      </div>
     </div>
   );
 };

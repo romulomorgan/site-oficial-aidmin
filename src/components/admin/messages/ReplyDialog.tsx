@@ -9,6 +9,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useWebhook } from '@/hooks/useWebhook';
+import { toast } from 'sonner';
 
 interface ReplyDialogProps {
   message: ContactMessage | null;
@@ -29,6 +31,58 @@ const ReplyDialog: React.FC<ReplyDialogProps> = ({
   onSendReply,
   onClose
 }) => {
+  const { sendWebhook, saving, setSaving } = useWebhook({
+    onSuccess: () => {
+      toast.success(`Resposta enviada para ${message?.email}!`);
+      onClose();
+    },
+    onError: (error) => {
+      console.error('Erro ao enviar resposta:', error);
+      toast.error('Erro ao enviar resposta. Verifique o webhook.');
+    }
+  });
+
+  const handleSendReply = async () => {
+    if (!message || !replyContent.trim() || !webhookUrl) {
+      toast.error('Por favor, preencha a mensagem e configure o webhook!');
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      // Preparar payload para o webhook
+      const payload = {
+        type: 'reply',
+        to: message.email,
+        from: "noreply@iadmin.com",
+        subject: `Re: Contato IAdmin - ${message.firstname} ${message.lastname}`,
+        message: replyContent,
+        contactData: {
+          firstName: message.firstname,
+          lastName: message.lastname,
+          email: message.email,
+          phone: message.phone,
+          originalMessage: message.message
+        },
+        threadId: message.thread_id || `thread_${Date.now()}`,
+        contactId: message.id
+      };
+      
+      // Enviar via webhook usando o hook
+      const success = await sendWebhook(webhookUrl, payload);
+      
+      if (success) {
+        onSendReply(); // Para marcar como lida, etc.
+      }
+    } catch (error) {
+      console.error('Erro ao processar envio de resposta:', error);
+      toast.error('Erro ao enviar resposta. Verifique o webhook.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!message) return null;
 
   return (
@@ -79,10 +133,10 @@ const ReplyDialog: React.FC<ReplyDialogProps> = ({
           <CustomButton 
             type="button" 
             variant="primary"
-            disabled={!replyContent.trim() || !webhookUrl || isLoading}
-            onClick={onSendReply}
+            disabled={!replyContent.trim() || !webhookUrl || isLoading || saving}
+            onClick={handleSendReply}
           >
-            {isLoading ? "Enviando..." : "Enviar Resposta"}
+            {isLoading || saving ? "Enviando..." : "Enviar Resposta"}
           </CustomButton>
         </DialogFooter>
       </DialogContent>

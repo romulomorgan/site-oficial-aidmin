@@ -22,7 +22,7 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(testPayload)
+      body: JSON.stringify(generateWebhookPayload(testPayload))
     });
     
     // Capturar o texto da resposta (se possível)
@@ -37,7 +37,7 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
     const webhookLog = {
       timestamp: new Date().toISOString(),
       url,
-      payload: testPayload,
+      payload: generateWebhookPayload(testPayload),
       status: response.status,
       success: response.status >= 200 && response.status < 300,
       response: responseText
@@ -51,26 +51,28 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
       success: response.status >= 200 && response.status < 300,
       status: response.status,
       message: responseText,
-      payload: testPayload
+      payload: generateWebhookPayload(testPayload)
     };
   } catch (error) {
     console.error('Erro ao testar webhook:', error);
     
     // Registrar o erro no log
     const errorMessage = error instanceof Error ? error.message : String(error);
+    const testData = {
+      firstName: 'Teste',
+      lastName: 'Webhook',
+      email: 'teste@exemplo.com',
+      phone: '11912345678',
+      message: 'Mensagem de teste do webhook',
+      date: new Date().toISOString(),
+      testId: `test-${Date.now()}`,
+      type: 'contact_message'
+    };
+    
     const webhookLog = {
       timestamp: new Date().toISOString(),
       url,
-      payload: {
-        firstName: 'Teste',
-        lastName: 'Webhook',
-        email: 'teste@exemplo.com',
-        phone: '11912345678',
-        message: 'Mensagem de teste do webhook',
-        date: new Date().toISOString(),
-        testId: `test-${Date.now()}`,
-        type: 'contact_message'
-      },
+      payload: generateWebhookPayload(testData),
       status: 0,
       success: false,
       response: errorMessage
@@ -119,22 +121,35 @@ export function generateWebhookPayload(data: any, type: string = 'contact_messag
     return {
       type: 'reply',
       to: data.to,
-      from: data.from,
-      subject: data.subject,
+      from: data.from || "noreply@iadmin.com",
+      subject: data.subject || `Re: Contato - ${data.contactData?.firstName || ''} ${data.contactData?.lastName || ''}`,
       message: data.message,
-      contactData: data.contactData,
-      date: new Date().toISOString()
+      contactData: data.contactData || {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        originalMessage: data.originalMessage || data.message
+      },
+      date: new Date().toISOString(),
+      threadId: data.threadId || `thread_${Date.now()}`,
+      contactId: data.contactId || `contact_${Date.now()}`
     };
   } else {
     // Contato padrão
+    const firstName = data.firstName || data.firstname || 'Visitante';
+    const lastName = data.lastName || data.lastname || '';
+    
     return {
       type: 'contact_message',
-      firstName: data.firstName || 'Visitante',
-      lastName: data.lastName || '',
+      firstName: firstName,
+      lastName: lastName,
       email: data.email || 'sem-email@exemplo.com',
       phone: data.phone || 'Não informado',
       message: data.message || 'Mensagem não fornecida',
-      date: new Date().toISOString()
+      date: data.date || new Date().toISOString(),
+      threadId: data.threadId || `thread_${Date.now()}`,
+      contactId: data.contactId || `contact_${Date.now()}`
     };
   }
 }

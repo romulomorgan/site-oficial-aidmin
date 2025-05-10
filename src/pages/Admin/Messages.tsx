@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +9,8 @@ import EmailSubscriptionList from '@/components/admin/messages/EmailSubscription
 import ReplyDialog from '@/components/admin/messages/ReplyDialog';
 import ConfirmDeleteDialog from '@/components/admin/messages/ConfirmDeleteDialog';
 import WebhookConfig from '@/components/admin/messages/WebhookConfig';
+import { useWebhook } from '@/hooks/useWebhook';
+import { getWebhookLogs } from '@/utils/supabase/webhooks';
 
 export default function Messages() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
@@ -18,9 +21,17 @@ export default function Messages() {
   const [replyMessage, setReplyMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | string | null>(null);
   const [showDeleteEmailConfirm, setShowDeleteEmailConfirm] = useState<number | string | null>(null);
+  const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
+
+  // Usar o hook de webhook
+  const { testWebhook, sendWebhook } = useWebhook();
 
   useEffect(() => {
     loadData();
+    
+    // Carregar logs de webhook
+    const logs = getWebhookLogs();
+    setWebhookLogs(logs);
   }, []);
 
   const loadData = async () => {
@@ -84,6 +95,28 @@ export default function Messages() {
             setWebhookUrl(parsedTexts.webhookUrl);
           }
         }
+      }
+      
+      // Carregar logs de webhook do banco de dados
+      try {
+        const { data: logsData } = await supabase
+          .from('webhook_logs')
+          .select('*')
+          .order('timestamp', { ascending: false })
+          .limit(50);
+          
+        if (logsData && logsData.length > 0) {
+          setWebhookLogs(logsData);
+        } else {
+          // Fallback para localStorage
+          const logs = getWebhookLogs();
+          setWebhookLogs(logs);
+        }
+      } catch (e) {
+        console.error('Erro ao carregar logs do webhook:', e);
+        // Fallback para localStorage
+        const logs = getWebhookLogs();
+        setWebhookLogs(logs);
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
@@ -191,6 +224,11 @@ export default function Messages() {
         localStorage.setItem('siteTexts', JSON.stringify(parsedTexts));
       }
       
+      // Testar webhook após salvar
+      if (webhookUrl.trim()) {
+        await testWebhook(webhookUrl);
+      }
+      
       toast.success('Webhook configurado com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar webhook:', error);
@@ -209,38 +247,37 @@ export default function Messages() {
     setIsLoading(true);
 
     try {
-      // Enviar via webhook
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+      // Preparar dados para o webhook
+      const replyData = {
+        type: 'reply',
+        to: replyTo.email,
+        from: "noreply@iadmin.com",
+        subject: `Re: Contato IAdmin - ${replyTo.firstname} ${replyTo.lastname}`,
+        message: replyMessage,
+        contactData: {
+          firstName: replyTo.firstname,
+          lastName: replyTo.lastname,
+          email: replyTo.email,
+          phone: replyTo.phone,
+          originalMessage: replyTo.message
         },
-        body: JSON.stringify({
-          type: 'reply',
-          to: replyTo.email,
-          from: "noreply@iadmin.com",
-          subject: `Re: Contato IAdmin - ${replyTo.firstname} ${replyTo.lastname}`,
-          message: replyMessage,
-          contactData: {
-            firstName: replyTo.firstname,
-            lastName: replyTo.lastname,
-            email: replyTo.email,
-            phone: replyTo.phone,
-            originalMessage: replyTo.message
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Webhook retornou status ${response.status}`);
-      }
-
-      // Marcar mensagem como lida
-      await handleMarkAsRead(replyTo.id);
+        threadId: replyTo.thread_id || `thread_${Date.now()}`,
+        contactId: replyTo.id
+      };
       
-      toast.success(`Resposta enviada para ${replyTo.email}!`);
-      setReplyTo(null);
-      setReplyMessage('');
+      // Enviar via webhook usando o hook
+      const success = await sendWebhook(webhookUrl, replyData);
+      
+      if (success) {
+        // Marcar mensagem como lida
+        await handleMarkAsRead(replyTo.id);
+        
+        setReplyTo(null);
+        setReplyMessage('');
+        
+        // Recarregar dados para atualizar logs
+        loadData();
+      }
     } catch (error) {
       console.error('Erro ao enviar resposta:', error);
       toast.error('Erro ao enviar resposta. Verifique o webhook.');
@@ -250,7 +287,7 @@ export default function Messages() {
   };
 
   return (
-    <div>
+    <div className="w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Central de Mensagens</h1>
       
       <WebhookConfig 
@@ -260,7 +297,7 @@ export default function Messages() {
         onSaveWebhook={saveWebhook}
       />
       
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-white rounded-lg shadow-sm p-6 w-full">
         <Tabs defaultValue="messages">
           <TabsList className="border-b w-full mb-6">
             <TabsTrigger value="messages">Mensagens de Contato</TabsTrigger>
