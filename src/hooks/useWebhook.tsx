@@ -1,6 +1,8 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
+
+// Importando a função testWebhookUrl usando a sintaxe ESM
 import { testWebhookUrl } from '@/utils/supabase/webhooks';
 
 interface UseWebhookOptions {

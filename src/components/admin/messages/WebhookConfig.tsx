@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { useWebhook } from '@/hooks/useWebhook';
-import { toast } from 'sonner';
 
 interface WebhookConfigProps {
   webhookUrl: string;
