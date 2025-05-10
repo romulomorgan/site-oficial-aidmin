@@ -2,15 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { Link } from 'react-router-dom';
-import { fetchSiteTexts, fetchColorTemplates, SiteTexts, ColorTemplate, saveEmailSubscription } from '@/utils/supabaseClient';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { fetchSiteTexts, fetchColorTemplates, saveEmailSubscription } from '@/utils/supabaseClient';
 import { toast } from 'sonner';
 
 export default function Solucoes() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [siteTexts, setSiteTexts] = useState<SiteTexts>({
+  const [siteTexts, setSiteTexts] = useState({
     robotImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
     footerAbout: 'A sua assistente de AI',
     footerButtonText: 'Contrate uma AI Poderosa!',
@@ -25,8 +23,6 @@ export default function Solucoes() {
     backgroundColor: '#FFFFFF',
     textColor: '#222222'
   });
-  
-  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Carregar textos do site do Supabase
@@ -201,46 +197,6 @@ export default function Solucoes() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="w-full py-12" style={{backgroundColor: themeColors.backgroundColor}}>
-        <div className="max-w-[1140px] mx-auto px-5 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-[32px] font-semibold" style={{color: themeColors.primaryColor}}>
-              IAdmin
-            </h2>
-            <p style={{color: themeColors.secondaryColor}} className="mt-2">
-              {siteTexts.footerAbout as string}
-            </p>
-            <Link to="/contato">
-              <CustomButton variant="primary" className="mt-8">
-                {siteTexts.footerButtonText as string}
-              </CustomButton>
-            </Link>
-          </div>
-          <div className="flex justify-between md:justify-end">
-            <div className="mr-8">
-              <h3 className="text-lg font-semibold" style={{color: themeColors.secondaryColor}}>
-                Contato
-              </h3>
-              <div className="mt-4" style={{color: themeColors.textColor}}>
-                <p>{siteTexts.footerPhoneNumber as string}</p>
-                <p>{siteTexts.footerEmail as string}</p>
-              </div>
-            </div>
-            {!isMobile && (
-              <div>
-                <Link to="/admin" className="hover:text-[#ff196e] transition-colors" style={{color: themeColors.secondaryColor}}>
-                  Login
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="border-t border-[#D8D0D2] mt-12 pt-8 pb-8 text-center max-w-[1140px] mx-auto" style={{color: themeColors.secondaryColor}}>
-          {(siteTexts.copyrightText as string) || "© Todos os direitos reservados - IAdmin 2024"}
-        </div>
-      </footer>
     </main>
   );
 }

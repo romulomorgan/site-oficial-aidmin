@@ -21,12 +21,22 @@ export const Footer = () => {
     twitterActive: true
   });
 
+  // Cores com bom contraste para o rodapé
+  const [footerColors, setFooterColors] = useState({
+    bgColor: '#222222',
+    textColor: '#FFFFFF',
+    primaryColor: '#FF196E',
+    linkColor: '#FF4F8E'
+  });
+
   const isMobile = useIsMobile();
 
   useEffect(() => {
     const loadTexts = async () => {
       try {
         const siteTexts = await fetchSiteTexts();
+        
+        // Textos do rodapé
         setTexts({
           footerAbout: typeof siteTexts.footerAbout === 'string' ? siteTexts.footerAbout : 'A sua assistente de AI',
           footerPhoneNumber: typeof siteTexts.footerPhoneNumber === 'string' ? siteTexts.footerPhoneNumber : '(31) 98767-8307',
@@ -41,6 +51,32 @@ export const Footer = () => {
           instagramActive: siteTexts.instagramActive === false ? false : true,
           twitterActive: siteTexts.twitterActive === false ? false : true
         });
+        
+        // Carregar cores do template selecionado
+        const selectedTemplate = localStorage.getItem('selectedTemplate');
+        if (selectedTemplate) {
+          // Verificar templates salvos
+          const savedTemplates = localStorage.getItem('siteTemplates');
+          const defaultTemplates = JSON.parse(localStorage.getItem('defaultTemplates') || '[]');
+          let allTemplates = defaultTemplates;
+          
+          if (savedTemplates) {
+            allTemplates = [...defaultTemplates, ...JSON.parse(savedTemplates)];
+          }
+          
+          // Encontrar o template selecionado
+          const template = allTemplates.find(t => t.id === selectedTemplate);
+          
+          // Se encontrou o template, aplicar as cores adaptadas para o rodapé
+          if (template) {
+            setFooterColors({
+              bgColor: template.secondaryColor || '#222222',
+              textColor: '#FFFFFF', // Garantindo sempre bom contraste
+              primaryColor: template.primaryColor || '#FF196E',
+              linkColor: template.accentColor || '#FF4F8E'
+            });
+          }
+        }
       } catch (error) {
         console.error('Erro ao carregar textos:', error);
       }
@@ -56,22 +92,25 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-secondary-color text-white">
+    <footer style={{ backgroundColor: footerColors.bgColor, color: footerColors.textColor }}>
       <div className="container mx-auto py-8 px-4">
         {/* Parte superior do rodapé */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
           {/* Coluna 1 - Sobre */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-primary-color">{texts.companyName}</h3>
-            <p className="text-gray-300 mb-4">{texts.footerAbout}</p>
-            <Link to="/contato" className="bg-primary-color text-white px-4 py-2 rounded-md inline-block hover:bg-opacity-90 transition-all">
+            <h3 className="text-xl font-bold mb-4" style={{ color: footerColors.primaryColor }}>{texts.companyName}</h3>
+            <p className="mb-4 text-gray-300">{texts.footerAbout}</p>
+            <Link to="/contato" 
+              className="px-4 py-2 rounded-md inline-block hover:bg-opacity-90 transition-all text-white"
+              style={{ backgroundColor: footerColors.primaryColor }}
+            >
               {texts.footerButtonText}
             </Link>
           </div>
           
           {/* Coluna 2 - Links rápidos */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-primary-color">Links Rápidos</h3>
+            <h3 className="text-xl font-bold mb-4" style={{ color: footerColors.primaryColor }}>Links Rápidos</h3>
             <ul className="space-y-2">
               <li><Link to="/" className="text-gray-300 hover:text-primary-color transition-colors">Home</Link></li>
               <li><Link to="/solucoes" className="text-gray-300 hover:text-primary-color transition-colors">Nossas Soluções</Link></li>
@@ -82,14 +121,14 @@ export const Footer = () => {
           
           {/* Coluna 3 - Contato */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-primary-color">Contato</h3>
+            <h3 className="text-xl font-bold mb-4" style={{ color: footerColors.primaryColor }}>Contato</h3>
             <div className="space-y-2 text-gray-300">
               <p>{texts.footerPhoneNumber}</p>
               <p>{texts.footerEmail}</p>
             </div>
             
             <div className="mt-4">
-              <h3 className="text-lg font-medium mb-2 text-primary-color">Newsletter</h3>
+              <h3 className="text-lg font-medium mb-2" style={{ color: footerColors.primaryColor }}>Newsletter</h3>
               <div className="flex">
                 <input 
                   type="email" 
@@ -97,7 +136,8 @@ export const Footer = () => {
                   className="px-3 py-2 rounded-l outline-none text-gray-800 flex-1"
                 />
                 <button 
-                  className="bg-primary-color px-3 py-2 rounded-r text-white hover:bg-opacity-90 transition-colors"
+                  className="px-3 py-2 rounded-r text-white hover:bg-opacity-90 transition-colors"
+                  style={{ backgroundColor: footerColors.primaryColor }}
                 >
                   Enviar
                 </button>
@@ -116,6 +156,7 @@ export const Footer = () => {
                   onClick={() => handleSocialClick(texts.facebookUrl)}
                   className="text-gray-400 hover:text-primary-color transition-colors"
                   aria-label="Facebook"
+                  style={{ color: footerColors.linkColor }}
                 >
                   <Facebook size={20} />
                 </button>
@@ -125,6 +166,7 @@ export const Footer = () => {
                   onClick={() => handleSocialClick(texts.instagramUrl)}
                   className="text-gray-400 hover:text-primary-color transition-colors"
                   aria-label="Instagram"
+                  style={{ color: footerColors.linkColor }}
                 >
                   <Instagram size={20} />
                 </button>
@@ -134,6 +176,7 @@ export const Footer = () => {
                   onClick={() => handleSocialClick(texts.twitterUrl)}
                   className="text-gray-400 hover:text-primary-color transition-colors"
                   aria-label="Twitter"
+                  style={{ color: footerColors.linkColor }}
                 >
                   <Twitter size={20} />
                 </button>
