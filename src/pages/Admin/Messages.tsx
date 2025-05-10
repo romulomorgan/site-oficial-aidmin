@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
@@ -11,31 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
-
-interface Message {
-  id: number | string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  message: string;
-  date: string;
-  read: boolean;
-}
-
-interface EmailSubscription {
-  id: number | string;
-  email: string;
-  date: string;
-  source: string;
-}
+import { ContactMessage, EmailSubscription } from '@/utils/supabase/types';
 
 export default function Messages() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [emailSubscriptions, setEmailSubscriptions] = useState<EmailSubscription[]>([]);
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [replyTo, setReplyTo] = useState<Message | null>(null);
+  const [replyTo, setReplyTo] = useState<ContactMessage | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | string | null>(null);
   const [showDeleteEmailConfirm, setShowDeleteEmailConfirm] = useState<number | string | null>(null);
@@ -61,10 +45,22 @@ export default function Messages() {
         // Fallback to localStorage if database fails
         const savedMessages = localStorage.getItem('contactMessages');
         if (savedMessages) {
-          setMessages(JSON.parse(savedMessages));
+          const parsedMessages = JSON.parse(savedMessages);
+          setMessages(parsedMessages);
         }
-      } else {
-        setMessages(messagesData || []);
+      } else if (messagesData) {
+        // Map data to ensure interface conformity
+        const typedMessages: ContactMessage[] = messagesData.map(msg => ({
+          id: msg.id,
+          firstName: msg.firstname,
+          lastName: msg.lastname || '',
+          email: msg.email,
+          phone: msg.phone || '',
+          message: msg.message,
+          date: msg.date,
+          read: msg.read
+        }));
+        setMessages(typedMessages);
       }
       
       // Load email subscriptions
@@ -79,10 +75,18 @@ export default function Messages() {
         // Fallback to localStorage if database fails
         const savedEmailSubscriptions = localStorage.getItem('emailSubscriptions');
         if (savedEmailSubscriptions) {
-          setEmailSubscriptions(JSON.parse(savedEmailSubscriptions));
+          const parsedSubscriptions = JSON.parse(savedEmailSubscriptions);
+          setEmailSubscriptions(parsedSubscriptions);
         }
-      } else {
-        setEmailSubscriptions(subscriptionsData || []);
+      } else if (subscriptionsData) {
+        // Map data to ensure interface conformity
+        const typedSubscriptions: EmailSubscription[] = subscriptionsData.map(sub => ({
+          id: sub.id,
+          email: sub.email,
+          source: sub.source || '',
+          created_at: sub.created_at
+        }));
+        setEmailSubscriptions(typedSubscriptions);
       }
       
       // Load webhook URL
@@ -412,7 +416,7 @@ export default function Messages() {
                     {emailSubscriptions.map((subscription) => (
                       <tr key={subscription.id} className="hover:bg-gray-50">
                         <td className="py-2 px-4 border-b">{subscription.email}</td>
-                        <td className="py-2 px-4 border-b">{formatDate(subscription.date)}</td>
+                        <td className="py-2 px-4 border-b">{formatDate(subscription.created_at)}</td>
                         <td className="py-2 px-4 border-b">{subscription.source}</td>
                         <td className="py-2 px-4 border-b text-right">
                           <button

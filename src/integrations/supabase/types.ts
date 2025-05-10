@@ -717,6 +717,42 @@ export type Database = {
         }
         Relationships: []
       }
+      site_contact_messages: {
+        Row: {
+          created_at: string
+          date: string
+          email: string
+          firstname: string
+          id: string
+          lastname: string | null
+          message: string
+          phone: string | null
+          read: boolean
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          email: string
+          firstname: string
+          id?: string
+          lastname?: string | null
+          message: string
+          phone?: string | null
+          read?: boolean
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          email?: string
+          firstname?: string
+          id?: string
+          lastname?: string | null
+          message?: string
+          phone?: string | null
+          read?: boolean
+        }
+        Relationships: []
+      }
       site_email_subscriptions: {
         Row: {
           created_at: string

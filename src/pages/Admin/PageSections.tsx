@@ -32,7 +32,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             id="solucoesTitle"
             name="solucoesTitle"
             type="text"
-            value={sections.solucoesTitle || ''}
+            value={sections.solucoesTitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -46,7 +46,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             id="solucoesSubtitle"
             name="solucoesSubtitle"
             type="text"
-            value={sections.solucoesSubtitle || ''}
+            value={sections.solucoesSubtitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -59,7 +59,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
           <textarea
             id="solucoesDescription"
             name="solucoesDescription"
-            value={sections.solucoesDescription || ''}
+            value={sections.solucoesDescription as string || ''}
             onChange={handleInputChange}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -77,7 +77,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
                 id="solucao1Title"
                 name="solucao1Title"
                 type="text"
-                value={sections.solucao1Title || ''}
+                value={sections.solucao1Title as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -90,7 +90,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
                 id="solucao1Image"
                 name="solucao1Image"
                 type="text"
-                value={sections.solucao1Image || ''}
+                value={sections.solucao1Image as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -103,7 +103,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             <textarea
               id="solucao1Description"
               name="solucao1Description"
-              value={sections.solucao1Description || ''}
+              value={sections.solucao1Description as string || ''}
               onChange={handleInputChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -122,7 +122,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
                 id="solucao2Title"
                 name="solucao2Title"
                 type="text"
-                value={sections.solucao2Title || ''}
+                value={sections.solucao2Title as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -135,7 +135,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
                 id="solucao2Image"
                 name="solucao2Image"
                 type="text"
-                value={sections.solucao2Image || ''}
+                value={sections.solucao2Image as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -148,7 +148,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             <textarea
               id="solucao2Description"
               name="solucao2Description"
-              value={sections.solucao2Description || ''}
+              value={sections.solucao2Description as string || ''}
               onChange={handleInputChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -167,7 +167,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
                 id="solucao3Title"
                 name="solucao3Title"
                 type="text"
-                value={sections.solucao3Title || ''}
+                value={sections.solucao3Title as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -180,7 +180,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
                 id="solucao3Image"
                 name="solucao3Image"
                 type="text"
-                value={sections.solucao3Image || ''}
+                value={sections.solucao3Image as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -193,7 +193,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             <textarea
               id="solucao3Description"
               name="solucao3Description"
-              value={sections.solucao3Description || ''}
+              value={sections.solucao3Description as string || ''}
               onChange={handleInputChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -209,7 +209,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             id="solucoesCTATitle"
             name="solucoesCTATitle"
             type="text"
-            value={sections.solucoesCTATitle || ''}
+            value={sections.solucoesCTATitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -223,7 +223,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             id="solucoesCTAButtonText"
             name="solucoesCTAButtonText"
             type="text"
-            value={sections.solucoesCTAButtonText || ''}
+            value={sections.solucoesCTAButtonText as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -237,7 +237,7 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
             id="solucoesCTAButtonLink"
             name="solucoesCTAButtonLink"
             type="text"
-            value={sections.solucoesCTAButtonLink || ''}
+            value={sections.solucoesCTAButtonLink as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -277,7 +277,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             id="contatoTitle"
             name="contatoTitle"
             type="text"
-            value={sections.contatoTitle || ''}
+            value={sections.contatoTitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -291,7 +291,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             id="contatoSubtitle"
             name="contatoSubtitle"
             type="text"
-            value={sections.contatoSubtitle || ''}
+            value={sections.contatoSubtitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -304,7 +304,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
           <textarea
             id="contatoDescription"
             name="contatoDescription"
-            value={sections.contatoDescription || ''}
+            value={sections.contatoDescription as string || ''}
             onChange={handleInputChange}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -319,7 +319,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             id="contatoImageUrl"
             name="contatoImageUrl"
             type="text"
-            value={sections.contatoImageUrl || ''}
+            value={sections.contatoImageUrl as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -337,7 +337,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
                 id="contatoAddress"
                 name="contatoAddress"
                 type="text"
-                value={sections.contatoAddress || ''}
+                value={sections.contatoAddress as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -351,7 +351,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
                 id="contatoPhone"
                 name="contatoPhone"
                 type="text"
-                value={sections.contatoPhone || ''}
+                value={sections.contatoPhone as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -365,7 +365,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
                 id="contatoEmail"
                 name="contatoEmail"
                 type="email"
-                value={sections.contatoEmail || ''}
+                value={sections.contatoEmail as string || ''}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
@@ -381,7 +381,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             id="contatoFormTitle"
             name="contatoFormTitle"
             type="text"
-            value={sections.contatoFormTitle || ''}
+            value={sections.contatoFormTitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -395,7 +395,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             id="contatoFormSubtitle"
             name="contatoFormSubtitle"
             type="text"
-            value={sections.contatoFormSubtitle || ''}
+            value={sections.contatoFormSubtitle as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
@@ -409,7 +409,7 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             id="contatoButtonText"
             name="contatoButtonText"
             type="text"
-            value={sections.contatoButtonText || ''}
+            value={sections.contatoButtonText as string || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />

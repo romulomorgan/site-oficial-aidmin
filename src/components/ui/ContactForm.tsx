@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { CustomButton } from './CustomButton';
 import { saveContactMessage, getSiteTexts } from '@/utils/localStorage';
 import { supabase } from '@/integrations/supabase/client';
+import { generateWebhookPayload } from '@/utils/supabase/webhooks';
 
 interface ContactFormProps {
   className?: string;
@@ -25,6 +26,21 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
     if (siteTexts.webhookUrl) {
       setWebhookUrl(siteTexts.webhookUrl);
     }
+    
+    // Também buscar da base de dados se existir
+    const fetchWebhookUrl = async () => {
+      const { data } = await supabase
+        .from('site_texts')
+        .select('content')
+        .eq('key', 'webhookUrl')
+        .single();
+        
+      if (data?.content) {
+        setWebhookUrl(data.content);
+      }
+    };
+    
+    fetchWebhookUrl().catch(console.error);
   }, []);
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,7 +62,6 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       message
     });
     
-    // Save to Supabase database
     try {
       const contactData = {
         firstName,
@@ -58,7 +73,7 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         date: new Date().toISOString()
       };
       
-      // Insert into site_contact_messages table
+      // Insert into database
       const { error } = await supabase
         .from('site_contact_messages')
         .insert([contactData]);
@@ -74,20 +89,14 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       if (webhookUrl) {
         try {
           console.log('Sending message to webhook:', webhookUrl);
+          const payload = generateWebhookPayload(contactData);
           
           await fetch(webhookUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              firstName,
-              lastName,
-              email,
-              phone,
-              message,
-              date: new Date().toISOString()
-            })
+            body: JSON.stringify(payload)
           });
         } catch (error) {
           console.error('Error sending message to webhook:', error);

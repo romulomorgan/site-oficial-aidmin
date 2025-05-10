@@ -27,12 +27,25 @@ export interface FAQItem {
   order_index?: number;
 }
 
+// Tipos para mensagens de contato
+export interface ContactMessage {
+  id: string;
+  firstName: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  message: string;
+  date: string;
+  read: boolean;
+  created_at?: string;
+}
+
 // Tipos para inscrições de email
 export interface EmailSubscription {
   id: string;
   email: string;
   source?: string;
-  createdAt: string;
+  created_at: string;
 }
 
 // Tipos para configuração de embed
