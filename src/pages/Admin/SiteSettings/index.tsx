@@ -147,7 +147,7 @@ export default function SiteSettings() {
     }
   };
 
-  // Funções importadas do componente original
+  // Funções para gerenciamento de templates
   const handleAddTemplate = async () => {
     const newTemplate = {
       ...customTemplate,
@@ -235,11 +235,11 @@ export default function SiteSettings() {
   }
 
   return (
-    <div>
+    <div className="w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Configurações do Site</h1>
       
-      <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} className="bg-white rounded-lg shadow-sm">
-        <Tabs defaultValue="appearance">
+      <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} className="bg-white rounded-lg shadow-sm w-full">
+        <Tabs defaultValue="appearance" className="w-full">
           <TabsList className="border-b w-full rounded-t-lg">
             <TabsTrigger value="appearance">Aparência</TabsTrigger>
             <TabsTrigger value="favicon">Favicon</TabsTrigger>

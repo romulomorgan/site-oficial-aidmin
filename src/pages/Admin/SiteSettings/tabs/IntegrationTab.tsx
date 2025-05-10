@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { testWebhookUrl, getWebhookLogs, clearWebhookLogs } from '@/utils/supabase/webhooks';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { useWebhook } from '@/hooks/useWebhook';
 
 interface IntegrationTabProps {
   webhookUrl: string;
@@ -26,16 +26,21 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   const [testingWebhook, setTestingWebhook] = useState(false);
   const [webhookTestResult, setWebhookTestResult] = useState<{success: boolean, status?: number, message?: string, payload?: any} | null>(null);
   const [showWebhookLogs, setShowWebhookLogs] = useState(false);
+  
+  // Usar o hook personalizado para testar webhook
+  const { testWebhook, isTesting } = useWebhook({
+    onSuccess: () => {
+      // Atualizar logs após teste bem-sucedido
+      const updatedLogs = getWebhookLogs();
+      setWebhookLogs(updatedLogs);
+    }
+  });
 
   useEffect(() => {
     // Carregar logs de webhook ao montar o componente
     const logs = getWebhookLogs();
     setWebhookLogs(logs);
   }, [setWebhookLogs]);
-
-  const handleWebhookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWebhookUrl(e.target.value);
-  };
 
   const handleTestWebhook = async () => {
     if (!webhookUrl) {
@@ -57,22 +62,15 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
       if (result.success) {
         toast.success("Teste de webhook bem-sucedido!");
       } else {
-        toast.error("Falha ao testar o webhook.");
+        toast.error("Falha ao testar o webhook: " + (result.message || "Erro desconhecido"));
       }
-      
-      // Salvar URL no Supabase também para garantir consistência
-      await supabase
-        .from('site_texts')
-        .upsert([
-          { key: 'webhookUrl', content: webhookUrl, type: 'text' }
-        ]);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       setWebhookTestResult({
         success: false,
         message: errorMessage
       });
-      toast.error("Erro ao testar o webhook.");
+      toast.error("Erro ao testar o webhook: " + errorMessage);
       console.error("Webhook test error:", error);
     } finally {
       setTestingWebhook(false);
@@ -88,14 +86,14 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   };
 
   return (
-    <div>
+    <div className="w-full">
       <h2 className="text-xl font-medium text-gray-800 mb-4">Configurações de Integração</h2>
       <p className="text-gray-500 mb-6">
         Configure integrações com serviços externos para ampliar as funcionalidades do site.
       </p>
       
       <div className="space-y-6">
-        <div className="bg-gray-50 p-6 rounded-lg border">
+        <div className="bg-gray-50 p-6 rounded-lg border w-full">
           <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
             <Webhook className="h-5 w-5" /> 
             Webhook para Mensagens
@@ -113,7 +111,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                 id="webhookUrl"
                 type="url"
                 value={webhookUrl}
-                onChange={handleWebhookChange}
+                onChange={(e) => setWebhookUrl(e.target.value)}
                 placeholder="https://sua-api.com/webhook"
                 className="w-full"
               />
@@ -156,7 +154,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
             </div>
             
             {showWebhookLogs && (
-              <div className="mt-4 border rounded-md overflow-hidden">
+              <div className="mt-4 border rounded-md overflow-hidden w-full">
                 <div className="bg-gray-100 px-4 py-2 flex justify-between items-center border-b">
                   <h4 className="font-medium">Logs de Webhook</h4>
                   <CustomButton
@@ -169,7 +167,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                   </CustomButton>
                 </div>
                 
-                <ScrollArea className="h-60 rounded-b-md">
+                <ScrollArea className="h-60 rounded-b-md w-full">
                   {webhookLogs.length > 0 ? (
                     <div className="divide-y">
                       {webhookLogs.map((log, index) => (
@@ -210,14 +208,16 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
             
             <div>
               <h4 className="text-sm font-medium mt-3 mb-1">Formato do Payload</h4>
-              <pre className="bg-black/90 text-white rounded-md p-3 overflow-x-auto text-sm">
+              <pre className="bg-black/90 text-white rounded-md p-3 overflow-x-auto text-sm w-full">
 {`{
   "firstName": "Nome do Usuário",
   "lastName": "Sobrenome do Usuário",
   "email": "email@exemplo.com",
   "phone": "11912345678",
   "message": "Mensagem enviada pelo usuário",
-  "date": "2024-05-08T14:30:00.000Z"
+  "date": "2024-05-08T14:30:00.000Z",
+  "threadId": "thread_123456", 
+  "contactId": "contact_123456"
 }`}
               </pre>
             </div>

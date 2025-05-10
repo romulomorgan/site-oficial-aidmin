@@ -22,7 +22,31 @@ export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
       console.log('Nenhum template encontrado no Supabase, usando templates locais');
       // Se não há dados no Supabase, vamos tentar inserir os templates padrão
       await insertDefaultTemplates();
-      return getColorTemplatesFromLocalStorage();
+      
+      // Tentar buscar novamente após a inserção
+      const { data: newData, error: newError } = await supabase
+        .from('site_color_templates')
+        .select('*');
+        
+      if (newError || !newData || newData.length === 0) {
+        return getColorTemplatesFromLocalStorage();
+      }
+      
+      console.log(`${newData.length} templates encontrados após a inserção`);
+      
+      // Converter formato do banco para o formato usado no frontend
+      return newData.map(template => ({
+        id: template.id,
+        name: template.name,
+        primaryColor: template.primary_color,
+        secondaryColor: template.secondary_color,
+        accentColor: template.accent_color,
+        backgroundColor: template.background_color,
+        textColor: template.text_color,
+        buttonTextColor: template.button_text_color || '#FFFFFF',
+        menuTextColor: template.menu_text_color || '#FFFFFF',
+        isDefault: template.is_default
+      }));
     }
     
     console.log(`${data.length} templates encontrados no Supabase`);
@@ -49,7 +73,10 @@ export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
 // Função para inserir templates padrão no Supabase
 export async function insertDefaultTemplates(): Promise<boolean> {
   try {
-    const templatesForDb = defaultTemplates.map(template => ({
+    // Importar todos os templates, incluindo os modernos
+    const { allTemplates } = await import('../../themes');
+    
+    const templatesForDb = allTemplates.map(template => ({
       id: template.id,
       name: template.name,
       primary_color: template.primaryColor,
@@ -79,13 +106,18 @@ export async function insertDefaultTemplates(): Promise<boolean> {
       return true;
     }
 
-    const { error } = await supabase
-      .from('site_color_templates')
-      .insert(newTemplates);
-    
-    if (error) {
-      console.error('Erro ao inserir templates padrão:', error);
-      return false;
+    // Dividir a inserção em lotes menores para evitar problemas com limites de tamanho de payload
+    const batchSize = 10;
+    for (let i = 0; i < newTemplates.length; i += batchSize) {
+      const batch = newTemplates.slice(i, i + batchSize);
+      const { error } = await supabase
+        .from('site_color_templates')
+        .insert(batch);
+      
+      if (error) {
+        console.error(`Erro ao inserir lote de templates ${i}/${newTemplates.length}:`, error);
+        // Continuar com o próximo lote mesmo em caso de erro
+      }
     }
     
     console.log(`${newTemplates.length} templates padrão inseridos com sucesso`);

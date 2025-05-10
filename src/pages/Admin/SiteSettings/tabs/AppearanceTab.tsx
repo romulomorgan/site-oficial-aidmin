@@ -21,13 +21,13 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
   onOpenCreateDialog
 }) => {
   return (
-    <div>
+    <div className="w-full">
       <h2 className="text-xl font-medium text-gray-800 mb-4">Templates de Cores</h2>
       <p className="text-gray-500 mb-6">
         Escolha um modelo de cores predefinido ou crie seu próprio tema personalizado.
       </p>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {templates.map(template => (
           <div 
             key={template.id}
@@ -42,7 +42,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 {selectedTemplate === template.id && (
                   <Check size={16} className="text-[#FF196E]" />
                 )}
-                {template.id !== 'default' && (
+                {!template.id.includes('modern-') && template.id !== 'default' && (
                   <>
                     <button
                       type="button"
@@ -87,7 +87,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 />
               </div>
               <div className="text-xs text-gray-500 mt-2">
-                {template.id === "default" ? "Modelo padrão" : "Personalizado"}
+                {template.id === "default" ? "Modelo padrão" : 
+                 template.id.includes('modern-') ? "Modelo moderno" : "Personalizado"}
               </div>
             </div>
           </div>
@@ -102,6 +103,15 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             <span>Criar Template Personalizado</span>
           </div>
         </div>
+      </div>
+      
+      <div className="mt-8 bg-gray-50 p-4 rounded-lg border">
+        <h3 className="font-medium mb-2">Aplicação de Template</h3>
+        <p className="text-sm text-gray-600">
+          O template selecionado será aplicado a todas as páginas do site automaticamente, 
+          incluindo Home, Soluções e Contato. As alterações serão refletidas assim que você salvar 
+          as configurações.
+        </p>
       </div>
     </div>
   );

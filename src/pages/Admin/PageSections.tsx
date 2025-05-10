@@ -472,12 +472,12 @@ export default function PageSections() {
     setIsLoading(true);
     try {
       const siteTexts = await fetchSiteTexts();
-      const updatedSections: Record<string, string | boolean> = {};
+      const updatedSections: Record<string, string | boolean> = { ...sections };
       
       // Processar cada campo do objeto sections com os valores retornados
       Object.keys(sections).forEach(key => {
         const value = siteTexts[key];
-        updatedSections[key] = value?.toString() || '';
+        updatedSections[key] = value !== undefined ? value.toString() : '';
       });
       
       // Definições padrão para campos que podem não ter valores
@@ -485,6 +485,8 @@ export default function PageSections() {
       if (!updatedSections.contatoTitle) updatedSections.contatoTitle = 'Entre em Contato';
       
       setSections(updatedSections);
+      
+      console.log('Dados carregados do site:', updatedSections);
     } catch (error) {
       console.error('Erro ao carregar textos:', error);
       toast.error('Erro ao carregar conteúdo das seções');
@@ -544,12 +546,21 @@ export default function PageSections() {
           break;
       }
       
+      console.log(`Salvando seção ${section} com dados:`, updates);
+      
       // Salvar cada campo
-      for (const [key, value] of Object.entries(updates)) {
-        await updateSiteText(key, value);
-      }
+      const promises = Object.entries(updates).map(([key, value]) => {
+        return updateSiteText(key, value);
+      });
+      
+      await Promise.all(promises);
       
       toast.success('Seção atualizada com sucesso!');
+      
+      // Recarregar os dados para garantir que tudo foi salvo corretamente
+      setTimeout(() => {
+        loadData();
+      }, 500);
     } catch (error) {
       console.error(`Erro ao salvar seção ${section}:`, error);
       toast.error('Ocorreu um erro ao salvar as alterações');
@@ -563,16 +574,16 @@ export default function PageSections() {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Seções de Páginas</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 mb-6">
+        <TabsList className="grid grid-cols-2 mb-6 w-full">
           <TabsTrigger value="solucoes">Página de Soluções</TabsTrigger>
           <TabsTrigger value="contato">Página de Contato</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="solucoes">
+        <TabsContent value="solucoes" className="w-full">
           <SolucoesPageSection 
             sections={sections} 
             handleInputChange={handleInputChange} 
@@ -581,7 +592,7 @@ export default function PageSections() {
           />
         </TabsContent>
         
-        <TabsContent value="contato">
+        <TabsContent value="contato" className="w-full">
           <ContatoPageSection 
             sections={sections} 
             handleInputChange={handleInputChange} 
