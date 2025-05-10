@@ -112,7 +112,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
           {webhookUrl ? `As mensagens serão enviadas via POST para: ${webhookUrl}` : 'Configure um URL para receber as mensagens'}
         </div>
         <CustomButton
-          variant="ghost" 
+          variant="secondary" 
           onClick={handleShowLogs}
           className="text-xs"
           size="sm"
