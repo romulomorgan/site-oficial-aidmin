@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
@@ -49,18 +48,8 @@ export default function Messages() {
           setMessages(parsedMessages);
         }
       } else if (messagesData) {
-        // Map data to ensure interface conformity
-        const typedMessages: ContactMessage[] = messagesData.map(msg => ({
-          id: msg.id,
-          firstName: msg.firstname,
-          lastName: msg.lastname || '',
-          email: msg.email,
-          phone: msg.phone || '',
-          message: msg.message,
-          date: msg.date,
-          read: msg.read
-        }));
-        setMessages(typedMessages);
+        // Já está no formato correto, não precisa mapear
+        setMessages(messagesData);
       }
       
       // Load email subscriptions
@@ -79,14 +68,8 @@ export default function Messages() {
           setEmailSubscriptions(parsedSubscriptions);
         }
       } else if (subscriptionsData) {
-        // Map data to ensure interface conformity
-        const typedSubscriptions: EmailSubscription[] = subscriptionsData.map(sub => ({
-          id: sub.id,
-          email: sub.email,
-          source: sub.source || '',
-          created_at: sub.created_at
-        }));
-        setEmailSubscriptions(typedSubscriptions);
+        // Não precisamos mais mapear, já que os tipos estão corretos
+        setEmailSubscriptions(subscriptionsData);
       }
       
       // Load webhook URL
@@ -246,11 +229,11 @@ export default function Messages() {
           type: 'reply',
           to: replyTo.email,
           from: "noreply@iadmin.com",
-          subject: `Re: Contato IAdmin - ${replyTo.firstName} ${replyTo.lastName}`,
+          subject: `Re: Contato IAdmin - ${replyTo.firstname} ${replyTo.lastname}`,
           message: replyMessage,
           contactData: {
-            firstName: replyTo.firstName,
-            lastName: replyTo.lastName,
+            firstName: replyTo.firstname,
+            lastName: replyTo.lastname,
             email: replyTo.email,
             phone: replyTo.phone,
             originalMessage: replyTo.message
@@ -346,7 +329,7 @@ export default function Messages() {
                     <div className="flex justify-between mb-3">
                       <div>
                         <h3 className="font-medium flex items-center">
-                          {message.firstName} {message.lastName}
+                          {message.firstname} {message.lastname}
                           {!message.read && (
                             <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
                               Nova
@@ -447,7 +430,7 @@ export default function Messages() {
             
             <div className="space-y-4 py-4">
               <div className="bg-gray-50 p-3 rounded text-sm">
-                <p><strong>Para:</strong> {replyTo.firstName} {replyTo.lastName} ({replyTo.email})</p>
+                <p><strong>Para:</strong> {replyTo.firstname} {replyTo.lastname} ({replyTo.email})</p>
                 <p><strong>Mensagem original:</strong></p>
                 <p className="italic text-gray-600">{replyTo.message}</p>
               </div>
