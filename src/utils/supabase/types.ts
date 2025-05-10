@@ -38,6 +38,8 @@ export interface ContactMessage {
   date: string;
   read: boolean;
   created_at?: string;
+  thread_id?: string;  // Adicionado
+  contact_id?: string; // Adicionado
 }
 
 // Tipos para inscrições de email
@@ -56,6 +58,18 @@ export interface EmbedConfig {
   position: 'left' | 'right';
   buttonColor?: string;
   buttonIcon?: string;
+}
+
+// Tipos para logs de webhook
+export interface WebhookLog {
+  id: number;
+  url: string;
+  payload: any;
+  status: number;
+  success: boolean;
+  response: string;
+  timestamp: string;
+  type?: string;
 }
 
 // Tipos para webhooks

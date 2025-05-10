@@ -68,8 +68,8 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       });
       
       const contactData = {
-        firstname: firstName, // Corrigido para corresponder ao campo do banco de dados
-        lastname: lastName,   // Corrigido para corresponder ao campo do banco de dados
+        firstname: firstName,
+        lastname: lastName,
         email,
         phone,
         message,
@@ -123,15 +123,15 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
             // Save log to database
             await supabase
               .from('webhook_logs')
-              .insert([{
+              .insert({
                 url: webhookUrl,
-                payload,
+                payload: JSON.stringify(payload),
                 status: response.status,
                 success: response.status >= 200 && response.status < 300,
                 response: responseText,
                 timestamp: new Date().toISOString(),
                 type: 'contact_message'
-              }]);
+              });
           } catch (e) {
             console.error('Erro ao processar resposta do webhook:', e);
           }

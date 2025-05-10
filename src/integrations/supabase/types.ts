@@ -719,6 +719,7 @@ export type Database = {
       }
       site_contact_messages: {
         Row: {
+          contact_id: string | null
           created_at: string
           date: string
           email: string
@@ -728,8 +729,10 @@ export type Database = {
           message: string
           phone: string | null
           read: boolean
+          thread_id: string | null
         }
         Insert: {
+          contact_id?: string | null
           created_at?: string
           date?: string
           email: string
@@ -739,8 +742,10 @@ export type Database = {
           message: string
           phone?: string | null
           read?: boolean
+          thread_id?: string | null
         }
         Update: {
+          contact_id?: string | null
           created_at?: string
           date?: string
           email?: string
@@ -750,6 +755,7 @@ export type Database = {
           message?: string
           phone?: string | null
           read?: boolean
+          thread_id?: string | null
         }
         Relationships: []
       }
@@ -957,6 +963,39 @@ export type Database = {
           tipo_pessoa?: string | null
           unidades?: string | null
           whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          id: number
+          payload: Json
+          response: string | null
+          status: number | null
+          success: boolean | null
+          timestamp: string | null
+          type: string | null
+          url: string
+        }
+        Insert: {
+          id?: number
+          payload: Json
+          response?: string | null
+          status?: number | null
+          success?: boolean | null
+          timestamp?: string | null
+          type?: string | null
+          url: string
+        }
+        Update: {
+          id?: number
+          payload?: Json
+          response?: string | null
+          status?: number | null
+          success?: boolean | null
+          timestamp?: string | null
+          type?: string | null
+          url?: string
         }
         Relationships: []
       }

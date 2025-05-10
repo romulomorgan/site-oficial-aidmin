@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { generateWebhookPayload } from '@/utils/supabase/webhooks';
 import { supabase } from '@/integrations/supabase/client';
+import { WebhookLog } from '@/utils/supabase/types';
 
 interface UseWebhookOptions {
   onSuccess?: () => void;
@@ -76,13 +77,13 @@ export function useWebhook(options: UseWebhookOptions = {}) {
           .from('webhook_logs')
           .insert([{
             url,
-            payload,
+            payload: JSON.stringify(payload),
             status: response.status,
             success: result.success,
             response: responseText,
-            timestamp: new Date().toISOString()
-          }])
-          .select();
+            timestamp: new Date().toISOString(),
+            type: 'test'
+          }]);
       } catch (e) {
         console.error('Erro ao salvar log no banco de dados:', e);
         // Fallback para localStorage
@@ -128,13 +129,13 @@ export function useWebhook(options: UseWebhookOptions = {}) {
           .from('webhook_logs')
           .insert([{
             url,
-            payload: errorResult.payload,
+            payload: JSON.stringify(errorResult.payload),
             status: 0,
             success: false,
             response: errorResult.message,
-            timestamp: new Date().toISOString()
-          }])
-          .select();
+            timestamp: new Date().toISOString(),
+            type: 'test'
+          }]);
       } catch (e) {
         console.error('Erro ao salvar log no banco de dados:', e);
         // Fallback para localStorage
@@ -196,14 +197,13 @@ export function useWebhook(options: UseWebhookOptions = {}) {
           .from('webhook_logs')
           .insert([{
             url,
-            payload,
+            payload: JSON.stringify(payload),
             status: response.status,
             success: result.success,
             response: responseText,
             timestamp: new Date().toISOString(),
             type: data.type || 'contact_message'
-          }])
-          .select();
+          }]);
       } catch (e) {
         console.error('Erro ao salvar log no banco de dados:', e);
         // Fallback para localStorage
@@ -239,14 +239,13 @@ export function useWebhook(options: UseWebhookOptions = {}) {
           .from('webhook_logs')
           .insert([{
             url,
-            payload: data,
+            payload: JSON.stringify(data),
             status: 0,
             success: false,
             response: errorResult.message,
             timestamp: new Date().toISOString(),
             type: data.type || 'contact_message'
-          }])
-          .select();
+          }]);
       } catch (e) {
         console.error('Erro ao salvar log no banco de dados:', e);
         // Fallback para localStorage
@@ -263,9 +262,31 @@ export function useWebhook(options: UseWebhookOptions = {}) {
     }
   };
 
+  const getWebhookLogs = async (): Promise<WebhookLog[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('webhook_logs')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(50);
+        
+      if (error) {
+        throw error;
+      }
+        
+      return data as WebhookLog[];
+    } catch (e) {
+      console.error('Erro ao carregar logs do webhook:', e);
+      // Fallback para localStorage
+      const logs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
+      return logs;
+    }
+  };
+
   return {
     testWebhook,
     sendWebhook,
+    getWebhookLogs,
     isTesting,
     saving,
     setSaving,

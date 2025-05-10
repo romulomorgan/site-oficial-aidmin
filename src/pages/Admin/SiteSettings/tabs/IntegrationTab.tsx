@@ -6,10 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getWebhookLogs, clearWebhookLogs } from '@/utils/supabase/webhooks';
 import { toast } from 'sonner';
 import { useWebhook } from '@/hooks/useWebhook';
 import { supabase } from '@/integrations/supabase/client';
+import { WebhookLog } from '@/utils/supabase/types';
 
 interface IntegrationTabProps {
   webhookUrl: string;
@@ -29,10 +29,17 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   const [showWebhookLogs, setShowWebhookLogs] = useState(false);
   
   // Usar o hook personalizado para testar webhook
-  const { testWebhook, isTesting, lastTestResult } = useWebhook({
-    onSuccess: () => {
+  const { testWebhook, isTesting, lastTestResult, getWebhookLogs } = useWebhook({
+    onSuccess: async () => {
       // Atualizar logs após teste bem-sucedido
-      loadWebhookLogs();
+      await loadWebhookLogs();
+    },
+    onError: (error) => {
+      console.error('Erro no teste do webhook:', error);
+      setWebhookTestResult({
+        success: false,
+        message: error.message || 'Erro desconhecido'
+      });
     }
   });
 
@@ -42,27 +49,12 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   }, []);
 
   const loadWebhookLogs = async () => {
-    // Tentar carregar logs do banco de dados primeiro
     try {
-      const { data: logsData, error } = await supabase
-        .from('webhook_logs')
-        .select('*')
-        .order('timestamp', { ascending: false })
-        .limit(50);
-        
-      if (error) throw error;
-      
-      if (logsData && logsData.length > 0) {
-        setWebhookLogs(logsData);
-        return;
-      }
-    } catch (e) {
-      console.error('Erro ao carregar logs do webhook do banco de dados:', e);
+      const logs = await getWebhookLogs();
+      setWebhookLogs(logs);
+    } catch (error) {
+      console.error("Erro ao carregar logs:", error);
     }
-    
-    // Fallback para localStorage
-    const logs = getWebhookLogs();
-    setWebhookLogs(logs);
   };
 
   const handleTestWebhook = async () => {
@@ -110,18 +102,16 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
   
   const handleClearWebhookLogs = async () => {
     if (window.confirm("Tem certeza que deseja limpar todos os logs de webhook? Esta ação não pode ser desfeita.")) {
-      // Limpar logs do banco de dados
       try {
+        // Tentar limpar logs do banco de dados
         await supabase
           .from('webhook_logs')
           .delete()
-          .gte('id', 0); // Deletar todos
+          .gte('id', 0);
       } catch (e) {
         console.error('Erro ao limpar logs do banco de dados:', e);
       }
       
-      // Limpar logs do localStorage
-      clearWebhookLogs();
       setWebhookLogs([]);
       toast.success("Logs de webhook limpos com sucesso");
     }
@@ -212,7 +202,7 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                 <ScrollArea className="h-60 rounded-b-md w-full">
                   {webhookLogs.length > 0 ? (
                     <div className="divide-y">
-                      {webhookLogs.map((log, index) => (
+                      {webhookLogs.map((log: WebhookLog, index: number) => (
                         <div key={index} className="p-3 text-sm">
                           <div className="flex items-center gap-2 mb-1">
                             <span className={`inline-block w-3 h-3 rounded-full ${log.success ? 'bg-green-500' : 'bg-red-500'}`}></span>
@@ -225,7 +215,8 @@ export const IntegrationTab: React.FC<IntegrationTabProps> = ({
                             <div className="mt-1">
                               <strong>Payload:</strong>
                               <pre className="bg-gray-100 p-2 rounded mt-1 overflow-x-auto text-xs">
-                                {JSON.stringify(log.payload, null, 2)}
+                                {typeof log.payload === 'string' ? log.payload.substring(0, 500) : JSON.stringify(log.payload, null, 2)}
+                                {typeof log.payload === 'string' && log.payload.length > 500 ? '...' : ''}
                               </pre>
                             </div>
                             <div className="mt-1">

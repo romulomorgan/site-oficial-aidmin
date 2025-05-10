@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ExternalLink, TestTube, Bot } from 'lucide-react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { useWebhook } from '@/hooks/useWebhook';
+import { toast } from 'sonner';
+import { WebhookLog } from '@/utils/supabase/types';
 
 interface WebhookConfigProps {
   webhookUrl: string;
@@ -17,18 +19,30 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
   onWebhookChange,
   onSaveWebhook
 }) => {
+  const [showWebhookLogs, setShowWebhookLogs] = useState(false);
+  const [webhookLogs, setWebhookLogs] = useState<WebhookLog[]>([]);
+  
   // Use the custom hook
-  const { testWebhook, isTesting } = useWebhook({
-    onSuccess: () => {
-      console.log('Teste do webhook realizado com sucesso');
+  const { testWebhook, isTesting, getWebhookLogs } = useWebhook({
+    onSuccess: async () => {
+      toast.success('Teste de webhook realizado com sucesso!');
+      // Atualizar logs após teste bem-sucedido
+      const logs = await getWebhookLogs();
+      setWebhookLogs(logs);
+      setShowWebhookLogs(true);
     },
     onError: (error) => {
-      console.error('Erro no teste do webhook:', error);
+      toast.error('Erro no teste do webhook: ' + (error.message || 'Erro desconhecido'));
     }
   });
 
   const handleTestWebhook = async () => {
-    // Criar um payload de teste mais completo
+    if (!webhookUrl) {
+      toast.error('Por favor, insira uma URL de webhook para testar.');
+      return;
+    }
+
+    // Criar payload de teste mais completo
     const testData = {
       firstName: 'Usuário',
       lastName: 'Teste',
@@ -41,6 +55,18 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
     };
     
     await testWebhook(webhookUrl, testData);
+    
+    // Carregar logs atualizados
+    const logs = await getWebhookLogs();
+    setWebhookLogs(logs);
+  };
+  
+  const handleShowLogs = async () => {
+    if (!showWebhookLogs) {
+      const logs = await getWebhookLogs();
+      setWebhookLogs(logs);
+    }
+    setShowWebhookLogs(!showWebhookLogs);
   };
 
   return (
@@ -80,10 +106,47 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
         </div>
       </div>
       
-      {webhookUrl && (
-        <div className="mt-2 text-xs text-gray-500 flex items-center">
+      <div className="mt-2 flex items-center justify-between">
+        <div className="text-xs text-gray-500 flex items-center">
           <ExternalLink size={12} className="mr-1" />
-          As mensagens serão enviadas via POST para: {webhookUrl}
+          {webhookUrl ? `As mensagens serão enviadas via POST para: ${webhookUrl}` : 'Configure um URL para receber as mensagens'}
+        </div>
+        <CustomButton
+          variant="ghost" 
+          onClick={handleShowLogs}
+          className="text-xs"
+          size="sm"
+        >
+          {showWebhookLogs ? 'Ocultar Logs' : 'Mostrar Logs'}
+        </CustomButton>
+      </div>
+      
+      {showWebhookLogs && (
+        <div className="mt-4 border rounded overflow-auto max-h-60">
+          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+            Logs recentes de Webhook
+          </div>
+          
+          <div className="overflow-y-auto max-h-52">
+            {webhookLogs.length > 0 ? (
+              webhookLogs.map((log, index) => (
+                <div key={index} className="border-b p-2 text-xs">
+                  <div className="flex items-center gap-1">
+                    <span className={`inline-block w-2 h-2 rounded-full ${log.success ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    <span className="font-medium">{new Date(log.timestamp).toLocaleString()}</span>
+                    <span className="text-gray-500 ml-2">({log.type || 'mensagem'})</span>
+                  </div>
+                  <div className="text-gray-600 ml-3 mt-1">
+                    <span>Status: {log.status || 'N/A'}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-3 text-center text-gray-500 text-sm">
+                Nenhum log de webhook disponível
+              </div>
+            )}
+          </div>
         </div>
       )}
       

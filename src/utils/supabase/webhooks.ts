@@ -13,7 +13,9 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
       message: 'Mensagem de teste do webhook',
       date: new Date().toISOString(),
       testId: `test-${Date.now()}`,
-      type: 'contact_message'
+      type: 'contact_message',
+      threadId: `thread_test_${Date.now()}`,
+      contactId: `contact_test_${Date.now()}`
     };
     
     // Realizar uma solicitação de teste para o webhook
@@ -66,7 +68,9 @@ export async function testWebhookUrl(url: string): Promise<{success: boolean, st
       message: 'Mensagem de teste do webhook',
       date: new Date().toISOString(),
       testId: `test-${Date.now()}`,
-      type: 'contact_message'
+      type: 'contact_message',
+      threadId: `thread_test_${Date.now()}`,
+      contactId: `contact_test_${Date.now()}`
     };
     
     const webhookLog = {
