@@ -1,7 +1,6 @@
 
 import { ThemeTemplate } from './types';
 
-// Templates básicos com cores sólidas
 export const basicTemplates: ThemeTemplate[] = [
   {
     id: "default",
@@ -15,47 +14,25 @@ export const basicTemplates: ThemeTemplate[] = [
     menuTextColor: "#FFFFFF"
   },
   {
-    id: "blue",
-    name: "Azul",
-    primaryColor: "#0070f3",
-    secondaryColor: "#004299",
-    accentColor: "#66b1ff",
+    id: "basic-blue",
+    name: "Azul Clássico",
+    primaryColor: "#2563EB",
+    secondaryColor: "#1E40AF",
+    accentColor: "#60A5FA",
     backgroundColor: "#FFFFFF",
-    textColor: "#333333",
+    textColor: "#1E3A8A",
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
   },
   {
-    id: "green",
-    name: "Verde",
-    primaryColor: "#10B981",
-    secondaryColor: "#047857",
-    accentColor: "#6EE7B7",
+    id: "basic-green",
+    name: "Verde Natureza",
+    primaryColor: "#16A34A",
+    secondaryColor: "#166534",
+    accentColor: "#4ADE80",
     backgroundColor: "#FFFFFF",
-    textColor: "#333333",
+    textColor: "#14532D",
     buttonTextColor: "#FFFFFF",
     menuTextColor: "#FFFFFF"
-  },
-  {
-    id: "orange",
-    name: "Laranja",
-    primaryColor: "#F59E0B",
-    secondaryColor: "#B45309",
-    accentColor: "#FCD34D",
-    backgroundColor: "#FFFFFF",
-    textColor: "#333333",
-    buttonTextColor: "#FFFFFF",
-    menuTextColor: "#FFFFFF"
-  },
-  {
-    id: "purple",
-    name: "Roxo",
-    primaryColor: "#8B5CF6",
-    secondaryColor: "#6D28D9",
-    accentColor: "#C4B5FD",
-    backgroundColor: "#FFFFFF",
-    textColor: "#333333",
-    buttonTextColor: "#FFFFFF",
-    menuTextColor: "#FFFFFF"
-  },
+  }
 ];

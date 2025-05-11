@@ -1,4 +1,5 @@
 
+// Definição dos tipos para templates
 export interface ThemeTemplate {
   id: string;
   name: string;
@@ -7,6 +8,11 @@ export interface ThemeTemplate {
   accentColor: string;
   backgroundColor: string;
   textColor: string;
-  buttonTextColor: string;
-  menuTextColor: string;
+  buttonTextColor?: string;
+  menuTextColor?: string;
+}
+
+// Definição para CSS Variables
+export interface CSSVariables {
+  [key: string]: string;
 }

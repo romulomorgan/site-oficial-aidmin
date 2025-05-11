@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { fetchSiteTexts } from '@/utils/supabaseClient';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { toast } from 'sonner';
+import { saveEmailSubscription } from '@/utils/supabase/subscriptions';
 
 export const Footer = () => {
   const [texts, setTexts] = useState({
@@ -20,6 +22,9 @@ export const Footer = () => {
     instagramActive: true,
     twitterActive: true
   });
+
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Cores com bom contraste para o rodapé
   const [footerColors, setFooterColors] = useState({
@@ -91,6 +96,34 @@ export const Footer = () => {
     }
   };
 
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !email.includes('@')) {
+      toast.error('Por favor, insira um e-mail válido');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Salvar inscrição e disparar webhook usando a função existente
+      const success = await saveEmailSubscription(email, 'Newsletter Rodapé');
+      
+      if (success) {
+        toast.success('Inscrição realizada com sucesso!');
+        setEmail('');
+      } else {
+        throw new Error('Falha ao realizar inscrição');
+      }
+    } catch (error) {
+      console.error('Erro ao processar inscrição:', error);
+      toast.error('Ocorreu um erro ao processar sua inscrição');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer style={{ backgroundColor: footerColors.bgColor, color: footerColors.textColor }}>
       <div className="container mx-auto py-8 px-4">
@@ -103,6 +136,7 @@ export const Footer = () => {
             <Link to="/contato" 
               className="px-4 py-2 rounded-md inline-block hover:bg-opacity-90 transition-all text-white"
               style={{ backgroundColor: footerColors.primaryColor }}
+              onClick={() => window.scrollTo(0, 0)}
             >
               {texts.footerButtonText}
             </Link>
@@ -112,10 +146,10 @@ export const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4" style={{ color: footerColors.primaryColor }}>Links Rápidos</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-300 hover:text-primary-color transition-colors">Home</Link></li>
-              <li><Link to="/solucoes" className="text-gray-300 hover:text-primary-color transition-colors">Nossas Soluções</Link></li>
-              <li><Link to="/contato" className="text-gray-300 hover:text-primary-color transition-colors">Contato</Link></li>
-              <li><Link to="/admin/login" className="text-gray-300 hover:text-primary-color transition-colors">Login</Link></li>
+              <li><Link to="/" className="text-gray-300 hover:text-primary-color transition-colors" onClick={() => window.scrollTo(0, 0)}>Home</Link></li>
+              <li><Link to="/solucoes" className="text-gray-300 hover:text-primary-color transition-colors" onClick={() => window.scrollTo(0, 0)}>Nossas Soluções</Link></li>
+              <li><Link to="/contato" className="text-gray-300 hover:text-primary-color transition-colors" onClick={() => window.scrollTo(0, 0)}>Contato</Link></li>
+              <li><Link to="/admin/login" className="text-gray-300 hover:text-primary-color transition-colors" onClick={() => window.scrollTo(0, 0)}>Login</Link></li>
             </ul>
           </div>
           
@@ -129,19 +163,24 @@ export const Footer = () => {
             
             <div className="mt-4">
               <h3 className="text-lg font-medium mb-2" style={{ color: footerColors.primaryColor }}>Newsletter</h3>
-              <div className="flex">
+              <form onSubmit={handleNewsletterSubmit} className="flex">
                 <input 
                   type="email" 
                   placeholder="Seu e-mail" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="px-3 py-2 rounded-l outline-none text-gray-800 flex-1"
+                  required
                 />
                 <button 
+                  type="submit"
                   className="px-3 py-2 rounded-r text-white hover:bg-opacity-90 transition-colors"
                   style={{ backgroundColor: footerColors.primaryColor }}
+                  disabled={isSubmitting}
                 >
-                  Enviar
+                  {isSubmitting ? 'Enviando...' : 'Enviar'}
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>

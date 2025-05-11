@@ -4,16 +4,28 @@ import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { fetchSiteTexts, fetchColorTemplates, saveEmailSubscription } from '@/utils/supabaseClient';
 import { toast } from 'sonner';
+import { Footer } from '@/components/Footer';
 
 export default function Solucoes() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [siteTexts, setSiteTexts] = useState({
     robotImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
-    footerAbout: 'A sua assistente de AI',
-    footerButtonText: 'Contrate uma AI Poderosa!',
-    footerPhoneNumber: '(11) 93956-965',
-    footerEmail: 'iadminassistant@gmail.com'
+    solucoesTitle: 'Nossas Soluções',
+    solucoesSubtitle: '',
+    solucoesDescription: 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
+    solucao1Title: '',
+    solucao1Description: '',
+    solucao1Image: '',
+    solucao2Title: '',
+    solucao2Description: '',
+    solucao2Image: '',
+    solucao3Title: '',
+    solucao3Description: '',
+    solucao3Image: '',
+    solucoesCTATitle: 'Deixe seu contato',
+    solucoesCTAButtonText: 'Enviar',
+    solucoesCTAButtonLink: '/contato'
   });
   
   const [themeColors, setThemeColors] = useState({
@@ -25,13 +37,35 @@ export default function Solucoes() {
   });
   
   useEffect(() => {
+    // Função para rolar para o topo da página quando carregada
+    window.scrollTo(0, 0);
+    
     // Carregar textos do site do Supabase
     const loadSiteData = async () => {
       try {
         // Carregar textos do site
         const texts = await fetchSiteTexts();
         if (texts) {
-          setSiteTexts(prev => ({ ...prev, ...texts }));
+          const updatedTexts = {
+            robotImage: typeof texts.robotImage === 'string' ? texts.robotImage : '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+            solucoesTitle: typeof texts.solucoesTitle === 'string' ? texts.solucoesTitle : 'Nossas Soluções',
+            solucoesSubtitle: typeof texts.solucoesSubtitle === 'string' ? texts.solucoesSubtitle : '',
+            solucoesDescription: typeof texts.solucoesDescription === 'string' ? texts.solucoesDescription : 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
+            solucao1Title: typeof texts.solucao1Title === 'string' ? texts.solucao1Title : '',
+            solucao1Description: typeof texts.solucao1Description === 'string' ? texts.solucao1Description : '',
+            solucao1Image: typeof texts.solucao1Image === 'string' ? texts.solucao1Image : '',
+            solucao2Title: typeof texts.solucao2Title === 'string' ? texts.solucao2Title : '',
+            solucao2Description: typeof texts.solucao2Description === 'string' ? texts.solucao2Description : '',
+            solucao2Image: typeof texts.solucao2Image === 'string' ? texts.solucao2Image : '',
+            solucao3Title: typeof texts.solucao3Title === 'string' ? texts.solucao3Title : '',
+            solucao3Description: typeof texts.solucao3Description === 'string' ? texts.solucao3Description : '',
+            solucao3Image: typeof texts.solucao3Image === 'string' ? texts.solucao3Image : '',
+            solucoesCTATitle: typeof texts.solucoesCTATitle === 'string' ? texts.solucoesCTATitle : 'Deixe seu contato',
+            solucoesCTAButtonText: typeof texts.solucoesCTAButtonText === 'string' ? texts.solucoesCTAButtonText : 'Enviar',
+            solucoesCTAButtonLink: typeof texts.solucoesCTAButtonLink === 'string' ? texts.solucoesCTAButtonLink : '/contato',
+          };
+          
+          setSiteTexts(prev => ({ ...prev, ...updatedTexts }));
         }
 
         // Carregar templates de cores
@@ -109,11 +143,10 @@ export default function Solucoes() {
         
         <div className="relative z-10 max-w-[1140px] mx-auto mt-16 text-white">
           <h1 className="text-white text-[56px] font-semibold leading-tight mb-6 max-md:text-[40px]">
-            Nossas Soluções
+            {siteTexts.solucoesTitle}
           </h1>
           <p className="text-white/90 max-w-[600px] text-lg leading-relaxed">
-            Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de
-            software para turbinar processos operacionais de nossos parceiros.
+            {siteTexts.solucoesDescription}
           </p>
         </div>
       </section>
@@ -135,6 +168,10 @@ export default function Solucoes() {
                   src={siteTexts.robotImage as string}
                   alt="AI Robot" 
                   className="w-2/3 object-contain"
+                  onError={(e) => {
+                    console.error("Erro ao carregar imagem do robô:", e);
+                    e.currentTarget.src = '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png';
+                  }}
                 />
               </div>
             </div>
@@ -162,6 +199,97 @@ export default function Solucoes() {
             </div>
           </div>
         </div>
+        
+        {/* Soluções específicas - condicional baseado nos dados do banco */}
+        {siteTexts.solucao1Title && (
+          <div className="mb-16">
+            <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
+              {siteTexts.solucao1Title}
+            </h2>
+            
+            <div className="flex flex-col md:flex-row gap-8">
+              {siteTexts.solucao1Image && (
+                <div className="w-full md:w-1/3">
+                  <img 
+                    src={siteTexts.solucao1Image} 
+                    alt={siteTexts.solucao1Title}
+                    className="w-full rounded-lg object-cover"
+                    onError={(e) => {
+                      console.error("Erro ao carregar imagem da solução 1:", e);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              
+              <div className={`${siteTexts.solucao1Image ? 'md:w-2/3' : 'w-full'}`}>
+                <p className="leading-relaxed" style={{color: themeColors.textColor}}>
+                  {siteTexts.solucao1Description}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {siteTexts.solucao2Title && (
+          <div className="mb-16">
+            <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
+              {siteTexts.solucao2Title}
+            </h2>
+            
+            <div className="flex flex-col md:flex-row gap-8">
+              {siteTexts.solucao2Image && (
+                <div className="w-full md:w-1/3">
+                  <img 
+                    src={siteTexts.solucao2Image} 
+                    alt={siteTexts.solucao2Title}
+                    className="w-full rounded-lg object-cover"
+                    onError={(e) => {
+                      console.error("Erro ao carregar imagem da solução 2:", e);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              
+              <div className={`${siteTexts.solucao2Image ? 'md:w-2/3' : 'w-full'}`}>
+                <p className="leading-relaxed" style={{color: themeColors.textColor}}>
+                  {siteTexts.solucao2Description}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {siteTexts.solucao3Title && (
+          <div className="mb-16">
+            <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
+              {siteTexts.solucao3Title}
+            </h2>
+            
+            <div className="flex flex-col md:flex-row gap-8">
+              {siteTexts.solucao3Image && (
+                <div className="w-full md:w-1/3">
+                  <img 
+                    src={siteTexts.solucao3Image} 
+                    alt={siteTexts.solucao3Title}
+                    className="w-full rounded-lg object-cover"
+                    onError={(e) => {
+                      console.error("Erro ao carregar imagem da solução 3:", e);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              
+              <div className={`${siteTexts.solucao3Image ? 'md:w-2/3' : 'w-full'}`}>
+                <p className="leading-relaxed" style={{color: themeColors.textColor}}>
+                  {siteTexts.solucao3Description}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Contact Section */}
@@ -171,7 +299,7 @@ export default function Solucoes() {
         }}>
         <div className="max-w-[1140px] mx-auto px-5">
           <h2 className="text-white text-[40px] font-semibold mb-2">
-            Deixe seu contato
+            {siteTexts.solucoesCTATitle || 'Deixe seu contato'}
           </h2>
           <p className="text-white/80 mb-8">
             Entraremos em contato brevemente!
@@ -191,12 +319,15 @@ export default function Solucoes() {
                 className="w-full"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Enviando..." : "Enviar"}
+                {isSubmitting ? "Enviando..." : siteTexts.solucoesCTAButtonText || "Enviar"}
               </CustomButton>
             </form>
           </div>
         </div>
       </section>
+      
+      {/* Adicionar o Footer */}
+      <Footer />
     </main>
   );
 }

@@ -24,6 +24,9 @@ export default function Contato() {
   });
 
   useEffect(() => {
+    // Função para rolar para o topo da página quando carregada
+    window.scrollTo(0, 0);
+    
     // Load saved texts from localStorage and then from Supabase
     const loadTexts = async () => {
       try {
@@ -109,11 +112,11 @@ export default function Contato() {
         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="flex flex-col md:flex-row">
             {/* Left side - Image */}
-            <div className="w-full md:w-[400px]">
+            <div className="w-full md:w-[400px] p-8">
               <img 
                 src={siteTexts.contactImage} 
                 alt="Atendente de contato" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg"
                 onError={(e) => {
                   console.error("Erro ao carregar imagem:", e);
                   e.currentTarget.src = '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png';
@@ -131,6 +134,9 @@ export default function Contato() {
           </div>
         </div>
       </section>
+      
+      {/* Adicionar o Footer */}
+      <Footer />
     </main>
   );
 }

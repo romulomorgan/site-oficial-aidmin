@@ -326,54 +326,6 @@ const ContatoPageSection: React.FC<SectionProps> = ({
         </div>
         
         <div>
-          <h4 className="text-md font-medium mb-2">Informações de Contato</h4>
-          
-          <div className="space-y-3">
-            <div>
-              <label htmlFor="contatoAddress" className="block text-sm font-medium text-gray-700 mb-1">
-                Endereço
-              </label>
-              <input
-                id="contatoAddress"
-                name="contatoAddress"
-                type="text"
-                value={sections.contatoAddress as string || ''}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="contatoPhone" className="block text-sm font-medium text-gray-700 mb-1">
-                Telefone
-              </label>
-              <input
-                id="contatoPhone"
-                name="contatoPhone"
-                type="text"
-                value={sections.contatoPhone as string || ''}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="contatoEmail" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                id="contatoEmail"
-                name="contatoEmail"
-                type="email"
-                value={sections.contatoEmail as string || ''}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-          </div>
-        </div>
-        
-        <div>
           <label htmlFor="contatoFormTitle" className="block text-sm font-medium text-gray-700 mb-1">
             Título do Formulário
           </label>
@@ -454,9 +406,6 @@ export default function PageSections() {
     contatoSubtitle: '',
     contatoDescription: '',
     contatoImageUrl: '',
-    contatoAddress: '',
-    contatoPhone: '',
-    contatoEmail: '',
     contatoFormTitle: '',
     contatoFormSubtitle: '',
     contatoButtonText: '',
@@ -536,9 +485,6 @@ export default function PageSections() {
             contatoSubtitle: sections.contatoSubtitle,
             contatoDescription: sections.contatoDescription,
             contatoImageUrl: sections.contatoImageUrl,
-            contatoAddress: sections.contatoAddress,
-            contatoPhone: sections.contatoPhone,
-            contatoEmail: sections.contatoEmail,
             contatoFormTitle: sections.contatoFormTitle,
             contatoFormSubtitle: sections.contatoFormSubtitle,
             contatoButtonText: sections.contatoButtonText,
