@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -522,9 +521,11 @@ export default function PageSections() {
       
       console.log(`Salvando seção ${section} com dados:`, updates);
       
-      // Salvar cada campo
+      // Salvar cada campo - convertendo números para string para compatibilidade
       const promises = Object.entries(updates).map(([key, value]) => {
-        return updateSiteText(key, value);
+        // Converter números para string antes de salvar
+        const stringValue = typeof value === 'number' ? value.toString() : value;
+        return updateSiteText(key, stringValue);
       });
       
       await Promise.all(promises);
