@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
@@ -74,7 +73,7 @@ export default function Solucoes() {
             // AI Robot section
             solucoesAITitle: typeof texts.solucoesAITitle === 'string' ? texts.solucoesAITitle : 'Conectamos a nossa AI aos seus processos operacionais',
             solucoesAISubtitle: typeof texts.solucoesAISubtitle === 'string' ? texts.solucoesAISubtitle : 'ADOTE A NOSSA AI',
-            solucoesAIImage: typeof texts.solucoesAIImage === 'string' ? texts.solucoesAIImage : texts.robotImage || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+            solucoesAIImage: typeof texts.solucoesAIImage === 'string' ? texts.solucoesAIImage : (typeof texts.robotImage === 'string' ? texts.robotImage : '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png'),
             solucoesAIDescription1: typeof texts.solucoesAIDescription1 === 'string' ? texts.solucoesAIDescription1 : 'Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.',
             solucoesAIDescription2: typeof texts.solucoesAIDescription2 === 'string' ? texts.solucoesAIDescription2 : 'Por meio do BPO-PN (Business Process Optimization - Processos de Negócios), otimizamos fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de custos. Já com o BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento), nossa AI atua na gestão de projetos, aprimorando cronogramas, prevendo gargalos e gerando insights para um planejamento mais assertivo.',
             solucoesAIDescription3: typeof texts.solucoesAIDescription3 === 'string' ? texts.solucoesAIDescription3 : 'Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia trabalha em sintonia com seus processos, garantindo maior produtividade e inovação.',
@@ -106,7 +105,7 @@ export default function Solucoes() {
             solucao5Layout: typeof texts.solucao5Layout === 'string' ? texts.solucao5Layout : 'image-left',
           };
           
-          setSiteTexts(prev => ({ ...prev, ...updatedTexts }));
+          setSiteTexts(updatedTexts);
         }
 
         // Carregar templates de cores
@@ -142,7 +141,8 @@ export default function Solucoes() {
     loadSiteData();
   }, []);
   
-  const handleSubscribeEmail = async (e: React.FormEvent) => {
+  // Função para inscrição de emails
+  function handleSubscribeEmail(e: React.FormEvent) {
     e.preventDefault();
     
     if (!email) {
@@ -154,24 +154,31 @@ export default function Solucoes() {
     
     try {
       // Usar a função do supabaseClient para salvar a inscrição de email
-      const success = await saveEmailSubscription(email, 'Página de Soluções');
-      
-      if (success) {
-        toast.success('E-mail cadastrado com sucesso!');
-        setEmail('');
-      } else {
-        throw new Error('Falha ao cadastrar email');
-      }
+      saveEmailSubscription(email, 'Página de Soluções')
+        .then(success => {
+          if (success) {
+            toast.success('E-mail cadastrado com sucesso!');
+            setEmail('');
+          } else {
+            throw new Error('Falha ao cadastrar email');
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao cadastrar e-mail:', error);
+          toast.error('Ocorreu um erro ao cadastrar seu e-mail. Tente novamente.');
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
     } catch (error) {
       console.error('Erro ao cadastrar e-mail:', error);
       toast.error('Ocorreu um erro ao cadastrar seu e-mail. Tente novamente.');
-    } finally {
       setIsSubmitting(false);
     }
-  };
-
+  }
+  
   // Renderizar uma solução com base no layout
-  const renderSolucao = (index: number) => {
+  function renderSolucao(index: number) {
     const titulo = siteTexts[`solucao${index}Title`];
     const descricao = siteTexts[`solucao${index}Description`];
     const imagem = siteTexts[`solucao${index}Image`];
@@ -210,7 +217,7 @@ export default function Solucoes() {
         </div>
       </div>
     );
-  };
+  }
   
   return (
     <main className="flex flex-col items-center bg-white">
@@ -248,7 +255,7 @@ export default function Solucoes() {
             <div className="w-full md:w-[400px] relative hover-scale">
               <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
                 <img 
-                  src={siteTexts.solucoesAIImage as string || siteTexts.robotImage as string}
+                  src={siteTexts.solucoesAIImage}
                   alt="AI Robot" 
                   className="w-2/3 object-contain"
                   onError={(e) => {
@@ -276,7 +283,7 @@ export default function Solucoes() {
         </div>
         
         {/* Soluções específicas - baseado na quantidade e dados do banco */}
-        {Array.from({ length: parseInt(siteTexts.solucoesCount as string) || 0 }).map((_, idx) => 
+        {Array.from({ length: parseInt(siteTexts.solucoesCount) || 0 }).map((_, idx) => 
           renderSolucao(idx + 1)
         )}
       </section>
