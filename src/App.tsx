@@ -1,8 +1,9 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { useFavicon } from '@/utils/updateFavicon';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { useEffect } from 'react';
 import Index from '@/pages/Index';
 import Solucoes from '@/pages/Solucoes';
 import Contato from '@/pages/Contato';
@@ -21,12 +22,24 @@ import EmbedComponent from '@/components/EmbedComponent';
 import Footer from '@/components/Footer';
 import AnimationsLoader from '@/utils/animationsLoader';
 
+// Componente para rolar para o topo em mudanças de rota
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 function App() {
   // Use the custom favicon hook
   useFavicon();
   
   return (
     <Router>
+      <ScrollToTop /> {/* Adiciona comportamento de scroll para o topo ao navegar */}
       <AnimationsLoader />
       <div className="flex flex-col min-h-screen">
         <div className="flex-grow">

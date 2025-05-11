@@ -9,10 +9,6 @@ import HeaderSection from '@/components/admin/sections/HeaderSection';
 import HeroSection from '@/components/admin/sections/HeroSection';
 import WhatWeDoSection from '@/components/admin/sections/WhatWeDoSection';
 import ExpansionSection from '@/components/admin/sections/ExpansionSection';
-import TestimonialsSection from '@/components/admin/sections/TestimonialsSection';
-import WhatsappSection from '@/components/admin/sections/WhatsappSection';
-import FAQSection from '@/components/admin/sections/FAQSection';
-import ContactSection from '@/components/admin/sections/ContactSection';
 import FooterSection from '@/components/admin/sections/FooterSection';
 
 export default function HomePageSections() {
@@ -60,25 +56,6 @@ export default function HomePageSections() {
     statsProjects: '',
     statsCompanies: '',
     statsAutomations: '',
-    
-    // Depoimentos Section
-    testimonialsTitle: '',
-    
-    // WhatsApp Section
-    whatsappTitle: '',
-    whatsappSubtitle: '',
-    whatsappDescription: '',
-    whatsappButtonText: '',
-    whatsappButtonLink: '',
-    whatsappImage: '',
-    
-    // FAQ Section
-    faqTitle: '',
-    
-    // Contato Section
-    contactTitle: '',
-    contactSubtitle: '',
-    contactButtonText: '',
     
     // Footer Section
     companyName: '',
@@ -202,33 +179,6 @@ export default function HomePageSections() {
             statsAutomations: sections.statsAutomations,
           };
           break;
-        case 'testimonials':
-          updates = {
-            testimonialsTitle: sections.testimonialsTitle,
-          };
-          break;
-        case 'whatsapp':
-          updates = {
-            whatsappTitle: sections.whatsappTitle,
-            whatsappSubtitle: sections.whatsappSubtitle,
-            whatsappDescription: sections.whatsappDescription,
-            whatsappButtonText: sections.whatsappButtonText,
-            whatsappButtonLink: sections.whatsappButtonLink,
-            whatsappImage: sections.whatsappImage,
-          };
-          break;
-        case 'faq':
-          updates = {
-            faqTitle: sections.faqTitle,
-          };
-          break;
-        case 'contact':
-          updates = {
-            contactTitle: sections.contactTitle,
-            contactSubtitle: sections.contactSubtitle,
-            contactButtonText: sections.contactButtonText,
-          };
-          break;
         case 'footer':
           updates = {
             companyName: sections.companyName,
@@ -270,15 +220,11 @@ export default function HomePageSections() {
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Seções da Página Inicial</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 mb-6 overflow-x-auto">
+        <TabsList className="grid grid-cols-3 md:grid-cols-5 mb-6 overflow-x-auto">
           <TabsTrigger value="header">Cabeçalho</TabsTrigger>
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="whatWeDo">O que Fazemos</TabsTrigger>
           <TabsTrigger value="expansion">Em Expansão</TabsTrigger>
-          <TabsTrigger value="testimonials">Depoimentos</TabsTrigger>
-          <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
-          <TabsTrigger value="faq">FAQ</TabsTrigger>
-          <TabsTrigger value="contact">Contato</TabsTrigger>
           <TabsTrigger value="footer">Rodapé</TabsTrigger>
         </TabsList>
         
@@ -312,42 +258,6 @@ export default function HomePageSections() {
         
         <TabsContent value="expansion">
           <ExpansionSection 
-            sections={sections} 
-            handleInputChange={handleInputChange} 
-            isLoading={isLoading} 
-            handleSaveSection={handleSaveSection} 
-          />
-        </TabsContent>
-        
-        <TabsContent value="testimonials">
-          <TestimonialsSection 
-            sections={sections} 
-            handleInputChange={handleInputChange} 
-            isLoading={isLoading} 
-            handleSaveSection={handleSaveSection} 
-          />
-        </TabsContent>
-        
-        <TabsContent value="whatsapp">
-          <WhatsappSection 
-            sections={sections} 
-            handleInputChange={handleInputChange} 
-            isLoading={isLoading} 
-            handleSaveSection={handleSaveSection} 
-          />
-        </TabsContent>
-        
-        <TabsContent value="faq">
-          <FAQSection 
-            sections={sections} 
-            handleInputChange={handleInputChange} 
-            isLoading={isLoading} 
-            handleSaveSection={handleSaveSection} 
-          />
-        </TabsContent>
-        
-        <TabsContent value="contact">
-          <ContactSection 
             sections={sections} 
             handleInputChange={handleInputChange} 
             isLoading={isLoading} 

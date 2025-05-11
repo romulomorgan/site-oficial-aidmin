@@ -13,15 +13,27 @@ export default function Solucoes() {
     solucoesTitle: 'Nossas Soluções',
     solucoesSubtitle: '',
     solucoesDescription: 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
+    solucoesCount: '3',
     solucao1Title: '',
     solucao1Description: '',
     solucao1Image: '',
+    solucao1Layout: 'image-left',
     solucao2Title: '',
     solucao2Description: '',
     solucao2Image: '',
+    solucao2Layout: 'image-left',
     solucao3Title: '',
     solucao3Description: '',
     solucao3Image: '',
+    solucao3Layout: 'image-left',
+    solucao4Title: '',
+    solucao4Description: '',
+    solucao4Image: '',
+    solucao4Layout: 'image-left',
+    solucao5Title: '',
+    solucao5Description: '',
+    solucao5Image: '',
+    solucao5Layout: 'image-left',
     solucoesCTATitle: 'Deixe seu contato',
     solucoesCTAButtonText: 'Enviar',
     solucoesCTAButtonLink: '/contato'
@@ -50,15 +62,33 @@ export default function Solucoes() {
             solucoesTitle: typeof texts.solucoesTitle === 'string' ? texts.solucoesTitle : 'Nossas Soluções',
             solucoesSubtitle: typeof texts.solucoesSubtitle === 'string' ? texts.solucoesSubtitle : '',
             solucoesDescription: typeof texts.solucoesDescription === 'string' ? texts.solucoesDescription : 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
+            solucoesCount: typeof texts.solucoesCount === 'string' ? texts.solucoesCount : '3',
+            // Solução 1
             solucao1Title: typeof texts.solucao1Title === 'string' ? texts.solucao1Title : '',
             solucao1Description: typeof texts.solucao1Description === 'string' ? texts.solucao1Description : '',
             solucao1Image: typeof texts.solucao1Image === 'string' ? texts.solucao1Image : '',
+            solucao1Layout: typeof texts.solucao1Layout === 'string' ? texts.solucao1Layout : 'image-left',
+            // Solução 2
             solucao2Title: typeof texts.solucao2Title === 'string' ? texts.solucao2Title : '',
             solucao2Description: typeof texts.solucao2Description === 'string' ? texts.solucao2Description : '',
             solucao2Image: typeof texts.solucao2Image === 'string' ? texts.solucao2Image : '',
+            solucao2Layout: typeof texts.solucao2Layout === 'string' ? texts.solucao2Layout : 'image-left',
+            // Solução 3
             solucao3Title: typeof texts.solucao3Title === 'string' ? texts.solucao3Title : '',
             solucao3Description: typeof texts.solucao3Description === 'string' ? texts.solucao3Description : '',
             solucao3Image: typeof texts.solucao3Image === 'string' ? texts.solucao3Image : '',
+            solucao3Layout: typeof texts.solucao3Layout === 'string' ? texts.solucao3Layout : 'image-left',
+            // Solução 4
+            solucao4Title: typeof texts.solucao4Title === 'string' ? texts.solucao4Title : '',
+            solucao4Description: typeof texts.solucao4Description === 'string' ? texts.solucao4Description : '',
+            solucao4Image: typeof texts.solucao4Image === 'string' ? texts.solucao4Image : '',
+            solucao4Layout: typeof texts.solucao4Layout === 'string' ? texts.solucao4Layout : 'image-left',
+            // Solução 5
+            solucao5Title: typeof texts.solucao5Title === 'string' ? texts.solucao5Title : '',
+            solucao5Description: typeof texts.solucao5Description === 'string' ? texts.solucao5Description : '',
+            solucao5Image: typeof texts.solucao5Image === 'string' ? texts.solucao5Image : '',
+            solucao5Layout: typeof texts.solucao5Layout === 'string' ? texts.solucao5Layout : 'image-left',
+            // Call to action
             solucoesCTATitle: typeof texts.solucoesCTATitle === 'string' ? texts.solucoesCTATitle : 'Deixe seu contato',
             solucoesCTAButtonText: typeof texts.solucoesCTAButtonText === 'string' ? texts.solucoesCTAButtonText : 'Enviar',
             solucoesCTAButtonLink: typeof texts.solucoesCTAButtonLink === 'string' ? texts.solucoesCTAButtonLink : '/contato',
@@ -126,6 +156,48 @@ export default function Solucoes() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Renderizar uma solução com base no layout
+  const renderSolucao = (index: number) => {
+    const titulo = siteTexts[`solucao${index}Title`];
+    const descricao = siteTexts[`solucao${index}Description`];
+    const imagem = siteTexts[`solucao${index}Image`];
+    const layout = siteTexts[`solucao${index}Layout`];
+    
+    if (!titulo) return null;
+    
+    const isImageLeft = layout === 'image-left';
+    
+    return (
+      <div className="mb-16" key={`solucao-${index}`}>
+        <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
+          {titulo}
+        </h2>
+        
+        <div className={`flex flex-col ${isImageLeft ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8`}>
+          {imagem && (
+            <div className="w-full md:w-1/3">
+              <img 
+                src={imagem} 
+                alt={titulo as string}
+                className="w-full rounded-lg object-cover"
+                onError={(e) => {
+                  console.error(`Erro ao carregar imagem da solução ${index}:`, e);
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+          
+          <div className={`${imagem ? 'md:w-2/3' : 'w-full'}`}>
+            <p className="leading-relaxed" style={{color: themeColors.textColor}}>
+              {descricao}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   };
   
   return (
@@ -199,95 +271,9 @@ export default function Solucoes() {
           </div>
         </div>
         
-        {/* Soluções específicas - condicional baseado nos dados do banco */}
-        {siteTexts.solucao1Title && (
-          <div className="mb-16">
-            <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
-              {siteTexts.solucao1Title}
-            </h2>
-            
-            <div className="flex flex-col md:flex-row gap-8">
-              {siteTexts.solucao1Image && (
-                <div className="w-full md:w-1/3">
-                  <img 
-                    src={siteTexts.solucao1Image} 
-                    alt={siteTexts.solucao1Title}
-                    className="w-full rounded-lg object-cover"
-                    onError={(e) => {
-                      console.error("Erro ao carregar imagem da solução 1:", e);
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-              
-              <div className={`${siteTexts.solucao1Image ? 'md:w-2/3' : 'w-full'}`}>
-                <p className="leading-relaxed" style={{color: themeColors.textColor}}>
-                  {siteTexts.solucao1Description}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {siteTexts.solucao2Title && (
-          <div className="mb-16">
-            <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
-              {siteTexts.solucao2Title}
-            </h2>
-            
-            <div className="flex flex-col md:flex-row gap-8">
-              {siteTexts.solucao2Image && (
-                <div className="w-full md:w-1/3">
-                  <img 
-                    src={siteTexts.solucao2Image} 
-                    alt={siteTexts.solucao2Title}
-                    className="w-full rounded-lg object-cover"
-                    onError={(e) => {
-                      console.error("Erro ao carregar imagem da solução 2:", e);
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-              
-              <div className={`${siteTexts.solucao2Image ? 'md:w-2/3' : 'w-full'}`}>
-                <p className="leading-relaxed" style={{color: themeColors.textColor}}>
-                  {siteTexts.solucao2Description}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {siteTexts.solucao3Title && (
-          <div className="mb-16">
-            <h2 className="text-2xl font-semibold mb-6" style={{color: themeColors.textColor}}>
-              {siteTexts.solucao3Title}
-            </h2>
-            
-            <div className="flex flex-col md:flex-row gap-8">
-              {siteTexts.solucao3Image && (
-                <div className="w-full md:w-1/3">
-                  <img 
-                    src={siteTexts.solucao3Image} 
-                    alt={siteTexts.solucao3Title}
-                    className="w-full rounded-lg object-cover"
-                    onError={(e) => {
-                      console.error("Erro ao carregar imagem da solução 3:", e);
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-              
-              <div className={`${siteTexts.solucao3Image ? 'md:w-2/3' : 'w-full'}`}>
-                <p className="leading-relaxed" style={{color: themeColors.textColor}}>
-                  {siteTexts.solucao3Description}
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Soluções específicas - baseado na quantidade e dados do banco */}
+        {Array.from({ length: parseInt(siteTexts.solucoesCount as string) || 0 }).map((_, idx) => 
+          renderSolucao(idx + 1)
         )}
       </section>
 
