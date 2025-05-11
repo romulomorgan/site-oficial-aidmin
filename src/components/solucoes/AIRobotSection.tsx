@@ -24,15 +24,15 @@ export const AIRobotSection: React.FC<AIRobotSectionProps> = ({
 }) => {
   return (
     <div className="mb-16">
-      <h2 className="text-lg font-medium uppercase mb-4" style={{color: primaryColor}}>
+      <h2 className="text-lg font-medium uppercase mb-4 animate-on-scroll fade-on-scroll" style={{color: primaryColor}}>
         {solucoesAISubtitle}
       </h2>
-      <h3 className="text-[46px] font-semibold mb-8" style={{color: textColor}}>
+      <h3 className="text-[46px] font-semibold mb-8 animate-on-scroll slide-left-on-scroll" style={{color: textColor}}>
         {solucoesAITitle}
       </h3>
 
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-full md:w-[400px] relative hover-scale">
+        <div className="w-full md:w-[400px] relative animate-on-scroll scale-on-scroll hover-float">
           <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
             <img 
               src={solucoesAIImage}
@@ -46,16 +46,16 @@ export const AIRobotSection: React.FC<AIRobotSectionProps> = ({
           </div>
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 animate-on-scroll slide-right-on-scroll">
           <p className="leading-relaxed mb-4" style={{color: textColor}}>
             {solucoesAIDescription1}
           </p>
           
-          <p className="leading-relaxed mb-4" style={{color: textColor}}>
+          <p className="leading-relaxed mb-4" style={{color: textColor, animationDelay: '0.1s'}}>
             {solucoesAIDescription2}
           </p>
           
-          <p className="leading-relaxed mb-4" style={{color: textColor}}>
+          <p className="leading-relaxed mb-4" style={{color: textColor, animationDelay: '0.2s'}}>
             {solucoesAIDescription3}
           </p>
         </div>

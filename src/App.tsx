@@ -20,6 +20,7 @@ import HomePageSections from '@/pages/Admin/HomePageSections';
 import PageSections from '@/pages/Admin/PageSections';
 import EmbedComponent from '@/components/EmbedComponent';
 import Footer from '@/components/Footer';
+import AnimationProvider from '@/components/AnimationProvider';
 import AnimationsLoader from '@/utils/animationsLoader';
 
 // Componente para rolar para o topo em mudanças de rota
@@ -41,40 +42,42 @@ function App() {
     <Router>
       <ScrollToTop /> {/* Adiciona comportamento de scroll para o topo ao navegar */}
       <AnimationsLoader />
-      <div className="flex flex-col min-h-screen">
-        <div className="flex-grow">
+      <AnimationProvider>
+        <div className="flex flex-col min-h-screen">
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/solucoes" element={<Solucoes />} />
+              <Route path="/contato" element={<Contato />} />
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin" element={
+                <SidebarProvider defaultOpen={true}>
+                  <AdminLayout />
+                </SidebarProvider>
+              }>
+                <Route index element={<Dashboard />} />
+                <Route path="secoes" element={<HomePageSections />} />
+                <Route path="paginas" element={<PageSections />} />
+                <Route path="textos" element={<EditTexts />} />
+                <Route path="depoimentos" element={<Testimonials />} />
+                <Route path="faq" element={<FAQ />} />
+                <Route path="mensagens" element={<Messages />} />
+                <Route path="configuracoes/*" element={<SiteSettings />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+          
+          {/* Rodapé apenas para páginas públicas */}
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/solucoes" element={<Solucoes />} />
-            <Route path="/contato" element={<Contato />} />
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin" element={
-              <SidebarProvider defaultOpen={true}>
-                <AdminLayout />
-              </SidebarProvider>
-            }>
-              <Route index element={<Dashboard />} />
-              <Route path="secoes" element={<HomePageSections />} />
-              <Route path="paginas" element={<PageSections />} />
-              <Route path="textos" element={<EditTexts />} />
-              <Route path="depoimentos" element={<Testimonials />} />
-              <Route path="faq" element={<FAQ />} />
-              <Route path="mensagens" element={<Messages />} />
-              <Route path="configuracoes/*" element={<SiteSettings />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
+            <Route path="/admin/*" element={null} />
+            <Route path="/admin/login" element={null} />
+            <Route path="*" element={<Footer />} />
           </Routes>
         </div>
-        
-        {/* Rodapé apenas para páginas públicas */}
-        <Routes>
-          <Route path="/admin/*" element={null} />
-          <Route path="/admin/login" element={null} />
-          <Route path="*" element={<Footer />} />
-        </Routes>
-      </div>
-      <Toaster position="bottom-right" />
-      <EmbedComponent />
+        <Toaster position="bottom-right" />
+        <EmbedComponent />
+      </AnimationProvider>
     </Router>
   );
 }

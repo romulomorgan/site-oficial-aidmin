@@ -21,18 +21,18 @@ export const SolucaoItem: React.FC<SolucaoItemProps> = ({
   const isImageLeft = layout === 'image-left';
   
   return (
-    <div className="mb-16">
+    <div className="mb-16 animate-on-scroll fade-on-scroll">
       <h2 className="text-2xl font-semibold mb-6" style={{color: textColor}}>
         {titulo}
       </h2>
       
       <div className={`flex flex-col ${isImageLeft ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8`}>
         {imagem && (
-          <div className="w-full md:w-1/3">
+          <div className={`w-full md:w-1/3 animate-on-scroll ${isImageLeft ? 'slide-right-on-scroll' : 'slide-left-on-scroll'}`}>
             <img 
               src={imagem} 
               alt={titulo}
-              className="w-full rounded-lg object-cover"
+              className="w-full rounded-lg object-cover hover-scale"
               onError={(e) => {
                 console.error(`Erro ao carregar imagem da solução:`, e);
                 e.currentTarget.style.display = 'none';
@@ -41,7 +41,7 @@ export const SolucaoItem: React.FC<SolucaoItemProps> = ({
           </div>
         )}
         
-        <div className={`${imagem ? 'md:w-2/3' : 'w-full'}`}>
+        <div className={`${imagem ? 'md:w-2/3' : 'w-full'} animate-on-scroll ${isImageLeft ? 'slide-left-on-scroll' : 'slide-right-on-scroll'}`}>
           <p className="leading-relaxed" style={{color: textColor}}>
             {descricao}
           </p>

@@ -97,10 +97,10 @@ export default function Contato() {
         <NavigationBar />
         
         <div className="relative z-10 max-w-[1140px] mx-auto mt-16 text-center">
-          <h1 className="text-white text-[56px] font-semibold leading-tight mb-6 max-md:text-[40px]">
+          <h1 className="text-white text-[56px] font-semibold leading-tight mb-6 max-md:text-[40px] slide-left animate-on-scroll">
             {siteTexts.contatoTitle}
           </h1>
-          <p className="text-white/90 max-w-[600px] mx-auto text-lg leading-relaxed">
+          <p className="text-white/90 max-w-[600px] mx-auto text-lg leading-relaxed slide-left animate-on-scroll" style={{animationDelay: '0.2s'}}>
             {siteTexts.contatoDescription}
           </p>
         </div>
@@ -108,14 +108,14 @@ export default function Contato() {
 
       {/* Contact Form Card */}
       <section className="w-full max-w-[900px] -mt-10 px-5 z-10 mb-16">
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden">
+        <div className="bg-white rounded-lg shadow-xl overflow-hidden hover-shadow animate-on-scroll scale-on-scroll">
           <div className="flex flex-col md:flex-row">
             {/* Left side - Image */}
-            <div className="w-full md:w-[400px] p-8">
+            <div className="w-full md:w-[400px] p-8 animate-on-scroll slide-left-on-scroll">
               <img 
                 src={siteTexts.contactImage} 
                 alt="Atendente de contato" 
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-cover rounded-lg hover-scale"
                 onError={(e) => {
                   console.error("Erro ao carregar imagem:", e);
                   e.currentTarget.src = '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png';
@@ -124,7 +124,7 @@ export default function Contato() {
             </div>
 
             {/* Right side - Form */}
-            <div className="flex-1 p-8">
+            <div className="flex-1 p-8 animate-on-scroll slide-right-on-scroll">
               <h2 className="text-[#222] text-[32px] font-semibold mb-8">
                 Contato
               </h2>
@@ -133,8 +133,6 @@ export default function Contato() {
           </div>
         </div>
       </section>
-      
-      {/* Removida a importação e renderização do Footer aqui */}
     </main>
   );
 }
