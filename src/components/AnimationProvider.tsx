@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import '../styles/animations.css';
+import '../styles/animations/index.css';  // Atualizado para o novo caminho
 import { setupScrollAnimations, setupIntersectionObserver, applyCascadeAnimation } from '../utils/animations';
 
 export const AnimationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

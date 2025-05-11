@@ -1,0 +1,51 @@
+
+/* Animação com interseção - elementos aparecem quando visíveis */
+.animate-on-scroll {
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+.animate-on-scroll.fade-on-scroll {
+  transform: translateY(30px);
+}
+
+.animate-on-scroll.slide-left-on-scroll {
+  transform: translateX(-30px);
+}
+
+.animate-on-scroll.slide-right-on-scroll {
+  transform: translateX(30px);
+}
+
+.animate-on-scroll.scale-on-scroll {
+  transform: scale(0.9);
+}
+
+.animate-on-scroll.animate-visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+}
+
+/* Classes para scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Classes de estilo para elementos com fade-in no scroll */
+.scroll-fade {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

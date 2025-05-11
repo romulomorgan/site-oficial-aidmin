@@ -1,0 +1,8 @@
+
+/* Arquivo principal que importa todos os módulos de animação */
+@import './base.css';
+@import './scroll.css';
+@import './hover.css';
+@import './cards.css';
+@import './components.css';
+@import './keyframes.css';
