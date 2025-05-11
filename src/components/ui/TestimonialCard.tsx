@@ -17,13 +17,13 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
   const defaultAvatar = "https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true";
   
   return (
-    <div className="backdrop-blur-[10px] flex w-full flex-col items-stretch bg-[rgba(255,255,255,0.05)] px-6 py-[30px] rounded-xl">
+    <div className="testimonial-card backdrop-blur-[10px] flex w-full flex-col items-stretch bg-[rgba(255,255,255,0.05)] px-6 py-[30px] rounded-xl hover-shadow">
       <div className="flex items-stretch gap-2.5">
         <div className="max-w-[45px] overflow-hidden rounded-[76px]">
           <img
             src={avatarUrl || defaultAvatar}
             alt={`${name}'s avatar`}
-            className="aspect-[1] object-contain w-[45px] max-w-[45px]"
+            className="aspect-[1] object-contain w-[45px] max-w-[45px] hover-scale"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = defaultAvatar;

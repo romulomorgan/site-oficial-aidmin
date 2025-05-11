@@ -27,8 +27,30 @@ export const AnimationProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
     }, 100);
 
+    // Configurar observador de interseção para elementos FAQ
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1,
+    };
+
+    const faqObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.faq-item').forEach((el) => {
+      faqObserver.observe(el);
+    });
+
     return () => {
       cleanupScroll();
+      document.querySelectorAll('.faq-item').forEach((el) => {
+        faqObserver.unobserve(el);
+      });
     };
   }, [location.pathname]); // Re-executar quando a rota muda
 

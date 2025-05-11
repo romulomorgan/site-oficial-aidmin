@@ -32,7 +32,7 @@ export const SolucaoItem: React.FC<SolucaoItemProps> = ({
             <img 
               src={imagem} 
               alt={titulo}
-              className="w-full rounded-lg object-cover hover-scale"
+              className="w-full rounded-lg object-cover hover-scale hover-shadow"
               onError={(e) => {
                 console.error(`Erro ao carregar imagem da solução:`, e);
                 e.currentTarget.style.display = 'none';

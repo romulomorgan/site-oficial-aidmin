@@ -207,3 +207,64 @@
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
+
+/* NOVAS ANIMAÇÕES */
+
+/* Efeito especial para depoimentos */
+.testimonial-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.testimonial-card:hover {
+  transform: translateY(-10px) rotateX(5deg);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Efeito para FAQ accordion */
+.faq-item {
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+.faq-item.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.faq-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Menu de navegação com hover especial */
+.nav-menu-item {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-menu-item::before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.nav-menu-item:hover {
+  transform: translateY(-2px);
+}
+
+.nav-menu-item:hover::before {
+  width: 70%;
+}
+
+.nav-menu-item.active::before {
+  width: 70%;
+}
