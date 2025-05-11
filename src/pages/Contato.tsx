@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import { saveContactMessage, getSiteTexts } from '@/utils/localStorage';
 import { ContactForm } from '@/components/ui/ContactForm';
 import { fetchSiteTexts } from '@/utils/supabaseClient';
-import { Footer } from '@/components/Footer';
 
 export default function Contato() {
   const [siteTexts, setSiteTexts] = useState({
@@ -135,8 +134,7 @@ export default function Contato() {
         </div>
       </section>
       
-      {/* Adicionar o Footer */}
-      <Footer />
+      {/* Removida a importação e renderização do Footer aqui */}
     </main>
   );
 }

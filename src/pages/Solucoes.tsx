@@ -4,7 +4,6 @@ import { NavigationBar } from '@/components/ui/NavigationBar';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { fetchSiteTexts, fetchColorTemplates, saveEmailSubscription } from '@/utils/supabaseClient';
 import { toast } from 'sonner';
-import { Footer } from '@/components/Footer';
 
 export default function Solucoes() {
   const [email, setEmail] = useState('');
@@ -326,8 +325,7 @@ export default function Solucoes() {
         </div>
       </section>
       
-      {/* Adicionar o Footer */}
-      <Footer />
+      {/* Removida a importação e renderização do Footer aqui */}
     </main>
   );
 }
