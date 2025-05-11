@@ -14,6 +14,16 @@ export default function Solucoes() {
     solucoesSubtitle: '',
     solucoesDescription: 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
     solucoesCount: '3',
+    
+    // AI Robot section
+    solucoesAITitle: 'Conectamos a nossa AI aos seus processos operacionais',
+    solucoesAISubtitle: 'ADOTE A NOSSA AI',
+    solucoesAIImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+    solucoesAIDescription1: 'Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.',
+    solucoesAIDescription2: 'Por meio do BPO-PN (Business Process Optimization - Processos de Negócios), otimizamos fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de custos. Já com o BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento), nossa AI atua na gestão de projetos, aprimorando cronogramas, prevendo gargalos e gerando insights para um planejamento mais assertivo.',
+    solucoesAIDescription3: 'Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia trabalha em sintonia com seus processos, garantindo maior produtividade e inovação.',
+    
+    // Soluções individuais
     solucao1Title: '',
     solucao1Description: '',
     solucao1Image: '',
@@ -34,9 +44,6 @@ export default function Solucoes() {
     solucao5Description: '',
     solucao5Image: '',
     solucao5Layout: 'image-left',
-    solucoesCTATitle: 'Deixe seu contato',
-    solucoesCTAButtonText: 'Enviar',
-    solucoesCTAButtonLink: '/contato'
   });
   
   const [themeColors, setThemeColors] = useState({
@@ -63,6 +70,15 @@ export default function Solucoes() {
             solucoesSubtitle: typeof texts.solucoesSubtitle === 'string' ? texts.solucoesSubtitle : '',
             solucoesDescription: typeof texts.solucoesDescription === 'string' ? texts.solucoesDescription : 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
             solucoesCount: typeof texts.solucoesCount === 'string' ? texts.solucoesCount : '3',
+            
+            // AI Robot section
+            solucoesAITitle: typeof texts.solucoesAITitle === 'string' ? texts.solucoesAITitle : 'Conectamos a nossa AI aos seus processos operacionais',
+            solucoesAISubtitle: typeof texts.solucoesAISubtitle === 'string' ? texts.solucoesAISubtitle : 'ADOTE A NOSSA AI',
+            solucoesAIImage: typeof texts.solucoesAIImage === 'string' ? texts.solucoesAIImage : texts.robotImage || '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+            solucoesAIDescription1: typeof texts.solucoesAIDescription1 === 'string' ? texts.solucoesAIDescription1 : 'Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.',
+            solucoesAIDescription2: typeof texts.solucoesAIDescription2 === 'string' ? texts.solucoesAIDescription2 : 'Por meio do BPO-PN (Business Process Optimization - Processos de Negócios), otimizamos fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de custos. Já com o BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento), nossa AI atua na gestão de projetos, aprimorando cronogramas, prevendo gargalos e gerando insights para um planejamento mais assertivo.',
+            solucoesAIDescription3: typeof texts.solucoesAIDescription3 === 'string' ? texts.solucoesAIDescription3 : 'Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia trabalha em sintonia com seus processos, garantindo maior produtividade e inovação.',
+            
             // Solução 1
             solucao1Title: typeof texts.solucao1Title === 'string' ? texts.solucao1Title : '',
             solucao1Description: typeof texts.solucao1Description === 'string' ? texts.solucao1Description : '',
@@ -88,10 +104,6 @@ export default function Solucoes() {
             solucao5Description: typeof texts.solucao5Description === 'string' ? texts.solucao5Description : '',
             solucao5Image: typeof texts.solucao5Image === 'string' ? texts.solucao5Image : '',
             solucao5Layout: typeof texts.solucao5Layout === 'string' ? texts.solucao5Layout : 'image-left',
-            // Call to action
-            solucoesCTATitle: typeof texts.solucoesCTATitle === 'string' ? texts.solucoesCTATitle : 'Deixe seu contato',
-            solucoesCTAButtonText: typeof texts.solucoesCTAButtonText === 'string' ? texts.solucoesCTAButtonText : 'Enviar',
-            solucoesCTAButtonLink: typeof texts.solucoesCTAButtonLink === 'string' ? texts.solucoesCTAButtonLink : '/contato',
           };
           
           setSiteTexts(prev => ({ ...prev, ...updatedTexts }));
@@ -226,17 +238,17 @@ export default function Solucoes() {
       <section className="w-full max-w-[1140px] px-5 py-16 animate-fade-in" style={{animationDelay: '0.2s'}}>
         <div className="mb-16">
           <h2 className="text-lg font-medium uppercase mb-4" style={{color: themeColors.primaryColor}}>
-            ADOTE A NOSSA AI
+            {siteTexts.solucoesAISubtitle}
           </h2>
           <h3 className="text-[46px] font-semibold mb-8" style={{color: themeColors.textColor}}>
-            Conectamos a nossa AI aos seus<br className="hidden md:block" />processos operacionais
+            {siteTexts.solucoesAITitle}
           </h3>
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="w-full md:w-[400px] relative hover-scale">
               <div className="bg-pink-50 rounded-full aspect-square flex items-center justify-center">
                 <img 
-                  src={siteTexts.robotImage as string}
+                  src={siteTexts.solucoesAIImage as string || siteTexts.robotImage as string}
                   alt="AI Robot" 
                   className="w-2/3 object-contain"
                   onError={(e) => {
@@ -249,23 +261,15 @@ export default function Solucoes() {
 
             <div className="flex-1">
               <p className="leading-relaxed mb-4" style={{color: themeColors.textColor}}>
-                Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos
-                operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.
+                {siteTexts.solucoesAIDescription1}
               </p>
               
               <p className="leading-relaxed mb-4" style={{color: themeColors.textColor}}>
-                Por meio do <strong>BPO-PN (Business Process Optimization - Processos de Negócios)</strong>, otimizamos
-                fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de
-                custos. Já com o <strong>BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento)</strong>,
-                nossa AI atua na gestão de projetos, aprimorando cronogramas, prevendo gargalos e gerando
-                insights para um planejamento mais assertivo.
+                {siteTexts.solucoesAIDescription2}
               </p>
               
               <p className="leading-relaxed mb-4" style={{color: themeColors.textColor}}>
-                Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são
-                utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no
-                mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia
-                trabalha em sintonia com seus processos, garantindo maior produtividade e inovação.
+                {siteTexts.solucoesAIDescription3}
               </p>
             </div>
           </div>
@@ -284,7 +288,7 @@ export default function Solucoes() {
         }}>
         <div className="max-w-[1140px] mx-auto px-5">
           <h2 className="text-white text-[40px] font-semibold mb-2">
-            {siteTexts.solucoesCTATitle || 'Deixe seu contato'}
+            Deixe seu contato
           </h2>
           <p className="text-white/80 mb-8">
             Entraremos em contato brevemente!
@@ -304,14 +308,12 @@ export default function Solucoes() {
                 className="w-full"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Enviando..." : siteTexts.solucoesCTAButtonText || "Enviar"}
+                {isSubmitting ? "Enviando..." : "Enviar"}
               </CustomButton>
             </form>
           </div>
         </div>
       </section>
-      
-      {/* Removida a importação e renderização do Footer aqui */}
     </main>
   );
 }

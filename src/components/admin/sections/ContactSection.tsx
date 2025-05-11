@@ -36,17 +36,6 @@ const ContactSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
-          <input
-            type="text"
-            name="contactButtonText"
-            value={sections.contactButtonText as string}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
         <div className="flex justify-end">
           <CustomButton 
             onClick={() => handleSaveSection('contact')}

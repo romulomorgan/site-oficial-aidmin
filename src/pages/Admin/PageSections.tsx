@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -150,77 +151,126 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
           />
         </div>
         
-        <div className="mb-4">
-          <label htmlFor="solucoesCount" className="block text-sm font-medium text-gray-700 mb-1">
-            Número de Soluções (máximo 5)
-          </label>
-          <div className="flex items-center gap-2">
-            <input 
-              type="range" 
-              min="1" 
-              max="5" 
-              value={solucoesCount} 
-              onChange={(e) => handleNumberChange('solucoesCount', parseInt(e.target.value))}
-              className="w-40"
+        {/* Seção de informações do AI Robot, conforme imagem 3 */}
+        <div className="border-t pt-4 mt-6">
+          <h3 className="text-lg font-medium mb-4">Seção "Adote a Nossa AI"</h3>
+          
+          <div>
+            <label htmlFor="solucoesAITitle" className="block text-sm font-medium text-gray-700 mb-1">
+              Título da Seção AI
+            </label>
+            <input
+              id="solucoesAITitle"
+              name="solucoesAITitle"
+              type="text"
+              value={sections.solucoesAITitle as string || 'Conectamos a nossa AI aos seus processos operacionais'}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
-            <span className="text-sm font-medium">{solucoesCount}</span>
+          </div>
+          
+          <div className="mt-3">
+            <label htmlFor="solucoesAISubtitle" className="block text-sm font-medium text-gray-700 mb-1">
+              Subtítulo da Seção AI
+            </label>
+            <input
+              id="solucoesAISubtitle"
+              name="solucoesAISubtitle"
+              type="text"
+              value={sections.solucoesAISubtitle as string || 'ADOTE A NOSSA AI'}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div className="mt-3">
+            <label htmlFor="solucoesAIImage" className="block text-sm font-medium text-gray-700 mb-1">
+              URL da Imagem do Robô
+            </label>
+            <input
+              id="solucoesAIImage"
+              name="solucoesAIImage"
+              type="text"
+              value={sections.solucoesAIImage as string || sections.robotImage as string}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div className="mt-3">
+            <label htmlFor="solucoesAIDescription1" className="block text-sm font-medium text-gray-700 mb-1">
+              Descrição Parte 1
+            </label>
+            <textarea
+              id="solucoesAIDescription1"
+              name="solucoesAIDescription1"
+              value={sections.solucoesAIDescription1 as string || 'Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.'}
+              onChange={handleInputChange}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div className="mt-3">
+            <label htmlFor="solucoesAIDescription2" className="block text-sm font-medium text-gray-700 mb-1">
+              Descrição Parte 2 (com BPO-PN)
+            </label>
+            <textarea
+              id="solucoesAIDescription2"
+              name="solucoesAIDescription2"
+              value={sections.solucoesAIDescription2 as string || 'Por meio do BPO-PN (Business Process Optimization - Processos de Negócios), otimizamos fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de custos. Já com o BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento), nossa AI atua na gestão de projetos, aprimorando cronogramas, prevendo gargalos e gerando insights para um planejamento mais assertivo.'}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div className="mt-3">
+            <label htmlFor="solucoesAIDescription3" className="block text-sm font-medium text-gray-700 mb-1">
+              Descrição Parte 3
+            </label>
+            <textarea
+              id="solucoesAIDescription3"
+              name="solucoesAIDescription3"
+              value={sections.solucoesAIDescription3 as string || 'Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia trabalha em sintonia com seus processos, garantindo maior produtividade e inovação.'}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
           </div>
         </div>
         
-        <div className="space-y-2">
-          <h3 className="text-md font-medium">Soluções</h3>
+        <div className="border-t pt-4 mt-6">
+          <h3 className="text-lg font-medium mb-4">Soluções Personalizadas</h3>
           
-          {Array.from({ length: solucoesCount }).map((_, idx) => (
-            <SolucaoItem 
-              key={idx} 
-              index={idx + 1}
-              sections={sections}
-              handleInputChange={handleInputChange}
-              handleSwitchChange={handleSwitchChange}
-            />
-          ))}
-        </div>
-        
-        <div>
-          <label htmlFor="solucoesCTATitle" className="block text-sm font-medium text-gray-700 mb-1">
-            Título do CTA
-          </label>
-          <input
-            id="solucoesCTATitle"
-            name="solucoesCTATitle"
-            type="text"
-            value={sections.solucoesCTATitle as string || ''}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="solucoesCTAButtonText" className="block text-sm font-medium text-gray-700 mb-1">
-            Texto do Botão CTA
-          </label>
-          <input
-            id="solucoesCTAButtonText"
-            name="solucoesCTAButtonText"
-            type="text"
-            value={sections.solucoesCTAButtonText as string || ''}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="solucoesCTAButtonLink" className="block text-sm font-medium text-gray-700 mb-1">
-            Link do Botão CTA
-          </label>
-          <input
-            id="solucoesCTAButtonLink"
-            name="solucoesCTAButtonLink"
-            type="text"
-            value={sections.solucoesCTAButtonLink as string || ''}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
+          <div className="mb-4">
+            <label htmlFor="solucoesCount" className="block text-sm font-medium text-gray-700 mb-1">
+              Número de Soluções (máximo 5)
+            </label>
+            <div className="flex items-center gap-2">
+              <input 
+                type="range" 
+                min="1" 
+                max="5" 
+                value={solucoesCount} 
+                onChange={(e) => handleNumberChange('solucoesCount', parseInt(e.target.value))}
+                className="w-40"
+              />
+              <span className="text-sm font-medium">{solucoesCount}</span>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            {Array.from({ length: solucoesCount }).map((_, idx) => (
+              <SolucaoItem 
+                key={idx} 
+                index={idx + 1}
+                sections={sections}
+                handleInputChange={handleInputChange}
+                handleSwitchChange={handleSwitchChange}
+              />
+            ))}
+          </div>
         </div>
       </div>
       
@@ -241,8 +291,6 @@ const SolucoesPageSection: React.FC<SectionProps> = ({
 const ContatoPageSection: React.FC<SectionProps> = ({
   sections,
   handleInputChange,
-  handleSwitchChange,
-  handleNumberChange,
   isLoading,
   handleSaveSection
 }) => {
@@ -306,48 +354,6 @@ const ContatoPageSection: React.FC<SectionProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
         </div>
-        
-        <div>
-          <label htmlFor="contatoFormTitle" className="block text-sm font-medium text-gray-700 mb-1">
-            Título do Formulário
-          </label>
-          <input
-            id="contatoFormTitle"
-            name="contatoFormTitle"
-            type="text"
-            value={sections.contatoFormTitle as string || ''}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="contatoFormSubtitle" className="block text-sm font-medium text-gray-700 mb-1">
-            Subtítulo do Formulário
-          </label>
-          <input
-            id="contatoFormSubtitle"
-            name="contatoFormSubtitle"
-            type="text"
-            value={sections.contatoFormSubtitle as string || ''}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="contatoButtonText" className="block text-sm font-medium text-gray-700 mb-1">
-            Texto do Botão de Envio
-          </label>
-          <input
-            id="contatoButtonText"
-            name="contatoButtonText"
-            type="text"
-            value={sections.contatoButtonText as string || ''}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
       </div>
       
       <div className="mt-6">
@@ -371,6 +377,16 @@ export default function PageSections() {
     solucoesSubtitle: '',
     solucoesDescription: '',
     solucoesCount: 1,
+    
+    // AI Robot section
+    solucoesAITitle: '',
+    solucoesAISubtitle: '',
+    solucoesAIImage: '',
+    solucoesAIDescription1: '',
+    solucoesAIDescription2: '',
+    solucoesAIDescription3: '',
+    
+    // Soluções individuais
     solucao1Title: '',
     solucao1Description: '',
     solucao1Image: '',
@@ -391,18 +407,12 @@ export default function PageSections() {
     solucao5Description: '',
     solucao5Image: '',
     solucao5Layout: true,
-    solucoesCTATitle: '',
-    solucoesCTAButtonText: '',
-    solucoesCTAButtonLink: '',
     
     // Contato page
     contatoTitle: '',
     contatoSubtitle: '',
     contatoDescription: '',
     contatoImageUrl: '',
-    contatoFormTitle: '',
-    contatoFormSubtitle: '',
-    contatoButtonText: '',
   });
 
   const [activeTab, setActiveTab] = useState("solucoes");
@@ -441,6 +451,8 @@ export default function PageSections() {
       // Definições padrão para campos que podem não ter valores
       if (!updatedSections.solucoesTitle) updatedSections.solucoesTitle = 'Nossas Soluções';
       if (!updatedSections.contatoTitle) updatedSections.contatoTitle = 'Entre em Contato';
+      if (!updatedSections.solucoesAITitle) updatedSections.solucoesAITitle = 'Conectamos a nossa AI aos seus processos operacionais';
+      if (!updatedSections.solucoesAISubtitle) updatedSections.solucoesAISubtitle = 'ADOTE A NOSSA AI';
       
       setSections(updatedSections);
       
@@ -489,6 +501,12 @@ export default function PageSections() {
             solucoesSubtitle: sections.solucoesSubtitle,
             solucoesDescription: sections.solucoesDescription,
             solucoesCount: sections.solucoesCount,
+            solucoesAITitle: sections.solucoesAITitle,
+            solucoesAISubtitle: sections.solucoesAISubtitle,
+            solucoesAIImage: sections.solucoesAIImage,
+            solucoesAIDescription1: sections.solucoesAIDescription1,
+            solucoesAIDescription2: sections.solucoesAIDescription2,
+            solucoesAIDescription3: sections.solucoesAIDescription3,
           };
           
           // Adicionar todas as soluções com base no número configurado
@@ -501,10 +519,6 @@ export default function PageSections() {
               updates[`solucao${i}Layout`] = sections[`solucao${i}Layout`] ? 'image-left' : 'image-right';
             }
           }
-          
-          updates.solucoesCTATitle = sections.solucoesCTATitle;
-          updates.solucoesCTAButtonText = sections.solucoesCTAButtonText;
-          updates.solucoesCTAButtonLink = sections.solucoesCTAButtonLink;
           break;
         case 'contato':
           updates = {
@@ -512,9 +526,6 @@ export default function PageSections() {
             contatoSubtitle: sections.contatoSubtitle,
             contatoDescription: sections.contatoDescription,
             contatoImageUrl: sections.contatoImageUrl,
-            contatoFormTitle: sections.contatoFormTitle,
-            contatoFormSubtitle: sections.contatoFormSubtitle,
-            contatoButtonText: sections.contatoButtonText,
           };
           break;
       }
