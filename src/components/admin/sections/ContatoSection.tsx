@@ -5,6 +5,8 @@ import { CustomButton } from '@/components/ui/CustomButton';
 interface ContatoSectionProps {
   sections: Record<string, string | boolean | number>;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSwitchChange: (name: string, checked: boolean) => void;
+  handleNumberChange: (name: string, value: number) => void;
   isLoading: boolean;
   handleSaveSection: (section: string) => void;
 }
@@ -12,6 +14,8 @@ interface ContatoSectionProps {
 const ContatoSection: React.FC<ContatoSectionProps> = ({
   sections,
   handleInputChange,
+  handleSwitchChange,
+  handleNumberChange,
   isLoading,
   handleSaveSection
 }) => {
