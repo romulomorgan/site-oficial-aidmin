@@ -44,6 +44,16 @@ export default function Index() {
         // Carregar FAQs
         const faqData = await fetchFAQs();
         setFaqs(faqData || []);
+        
+        // Atualizar o título da página e metadados para IAdmin
+        document.title = 'IAdmin';
+        
+        // Atualizar metadados OG
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute('content', 'IAdmin');
+        
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.setAttribute('content', 'IAdmin - Plataforma de Inteligência Artificial para Empresas');
       } catch (error) {
         console.error('Erro ao carregar dados da página:', error);
       }

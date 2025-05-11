@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { fetchSiteTexts } from './supabaseClient';
 
@@ -20,36 +19,47 @@ export function useFavicon() {
           }
           
           console.log("Favicon atualizado do Supabase:", siteTexts.faviconUrl);
-          
-          // Também atualizar o título da página se estiver disponível
-          if (siteTexts.siteTitle && typeof siteTexts.siteTitle === 'string') {
-            document.title = siteTexts.siteTitle;
-            console.log("Título da página atualizado:", siteTexts.siteTitle);
-          }
         } else {
-          // Fallback para localStorage
-          const savedTexts = localStorage.getItem('siteTexts');
-          if (savedTexts) {
-            const parsedTexts = JSON.parse(savedTexts);
-            if (parsedTexts.faviconUrl && typeof parsedTexts.faviconUrl === 'string') {
-              const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
-              link.type = 'image/png';
-              link.rel = 'shortcut icon';
-              link.href = parsedTexts.faviconUrl;
-              
-              if (!document.querySelector("link[rel*='icon']")) {
-                document.getElementsByTagName('head')[0].appendChild(link);
-              }
-              
-              console.log("Favicon atualizado do localStorage:", parsedTexts.faviconUrl);
-            }
-            
-            // Atualizar também o título da página do localStorage
-            if (parsedTexts.siteTitle && typeof parsedTexts.siteTitle === 'string') {
-              document.title = parsedTexts.siteTitle;
-              console.log("Título da página atualizado do localStorage:", parsedTexts.siteTitle);
-            }
+          // Fallback padrão para IAdmin
+          const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
+          link.type = 'image/png';
+          link.rel = 'shortcut icon';
+          link.href = '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png';
+          
+          if (!document.querySelector("link[rel*='icon']")) {
+            document.getElementsByTagName('head')[0].appendChild(link);
           }
+        }
+        
+        // Atualizar título da página
+        if (siteTexts && siteTexts.siteTitle && typeof siteTexts.siteTitle === 'string') {
+          document.title = siteTexts.siteTitle;
+          
+          // Atualizar também as tags Open Graph
+          const ogTitle = document.querySelector('meta[property="og:title"]');
+          if (ogTitle) ogTitle.setAttribute('content', siteTexts.siteTitle);
+          
+          const ogDesc = document.querySelector('meta[property="og:description"]');
+          if (ogDesc && siteTexts.siteDescription) {
+            ogDesc.setAttribute('content', String(siteTexts.siteDescription));
+          } else if (ogDesc) {
+            ogDesc.setAttribute('content', 'IAdmin - Plataforma de Inteligência Artificial para Empresas');
+          }
+          
+          // Atualizar Twitter Card
+          const twitterSite = document.querySelector('meta[name="twitter:site"]');
+          if (twitterSite) twitterSite.setAttribute('content', '@iadmin');
+          
+        } else {
+          // Fallback para título padrão IAdmin
+          document.title = 'IAdmin';
+          
+          // Atualizar tags Open Graph com valores padrão
+          const ogTitle = document.querySelector('meta[property="og:title"]');
+          if (ogTitle) ogTitle.setAttribute('content', 'IAdmin');
+          
+          const ogDesc = document.querySelector('meta[property="og:description"]');
+          if (ogDesc) ogDesc.setAttribute('content', 'IAdmin - Plataforma de Inteligência Artificial para Empresas');
         }
 
         // Também aplica as cores do template selecionado
@@ -86,6 +96,15 @@ export function useFavicon() {
         }
       } catch (error) {
         console.error("Erro ao atualizar favicon e título da página:", error);
+        
+        // Em caso de erro, definir valores padrão de IAdmin
+        document.title = 'IAdmin';
+        
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute('content', 'IAdmin');
+        
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.setAttribute('content', 'IAdmin - Plataforma de Inteligência Artificial para Empresas');
       }
     };
     
