@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { generateWebhookPayload } from '@/utils/supabase/webhooks';
 import { WebhookLog } from '@/utils/supabase/types';
+import { Json } from '@/integrations/supabase/types';
 
 /**
  * Tests a webhook URL with test data
@@ -121,15 +122,39 @@ export async function testWebhook(
   }
 }
 
+// Define a type that ensures payload is required for saving to database
+type WebhookLogInsert = {
+  url: string;
+  payload: string | Json; // Ensure payload is required
+  status?: number;
+  success?: boolean;
+  response?: string;
+  timestamp?: string;
+  type?: string;
+};
+
 /**
  * Saves a webhook log to Supabase or localStorage as fallback
  */
-export async function saveWebhookLog(logData: Partial<WebhookLog>): Promise<void> {
+export async function saveWebhookLog(logData: WebhookLogInsert): Promise<void> {
   try {
-    // Fix: Ensure we're inserting a single object, not an array
+    // Ensure payload is a Json type as required by the database
+    const payload = typeof logData.payload === 'string' 
+      ? logData.payload 
+      : JSON.stringify(logData.payload);
+
+    // Insert with guaranteed payload field
     await supabase
       .from('webhook_logs')
-      .insert(logData);
+      .insert({
+        url: logData.url,
+        payload: payload,
+        status: logData.status,
+        success: logData.success,
+        response: logData.response,
+        timestamp: logData.timestamp,
+        type: logData.type
+      });
   } catch (e) {
     console.error('Erro ao salvar log no banco de dados:', e);
     // Fallback para localStorage
