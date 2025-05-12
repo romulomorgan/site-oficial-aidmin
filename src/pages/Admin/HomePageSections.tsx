@@ -64,6 +64,8 @@ export default function HomePageSections() {
     footerEmail: '',
     footerButtonText: '',
     copyrightText: '',
+    footerLocation: '',
+    footerLogoUrl: '',
     
     // Redes sociais
     facebookUrl: '',
@@ -103,6 +105,7 @@ export default function HomePageSections() {
       if (!updatedSections.heroSubtitle) updatedSections.heroSubtitle = 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.';
       if (!updatedSections.heroButtonText) updatedSections.heroButtonText = 'Fale Conosco';
       if (!updatedSections.heroButtonLink) updatedSections.heroButtonLink = '/solucoes';
+      if (!updatedSections.footerLocation) updatedSections.footerLocation = 'São Paulo, SP - Brasil';
       
       setSections(updatedSections);
     } catch (error) {
@@ -193,6 +196,8 @@ export default function HomePageSections() {
             facebookActive: sections.facebookActive,
             instagramActive: sections.instagramActive,
             twitterActive: sections.twitterActive,
+            footerLocation: sections.footerLocation,
+            footerLogoUrl: sections.footerLogoUrl,
           };
           break;
       }

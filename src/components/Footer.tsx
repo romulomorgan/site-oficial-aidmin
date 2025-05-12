@@ -17,7 +17,9 @@ const Footer = () => {
     footerPhoneNumber: '+55 (11) 99999-9999',
     footerEmail: 'contato@iadmin.com.br',
     copyrightText: '© 2023 iAdmin. Todos os direitos reservados.',
-    logoUrl: '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png'
+    logoUrl: '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png',
+    footerLogoUrl: '',
+    footerLocation: 'São Paulo, SP - Brasil'
   });
   const [socialLinks, setSocialLinks] = useState({
     facebookUrl: '#',
@@ -44,7 +46,9 @@ const Footer = () => {
           footerPhoneNumber: siteTexts.footerPhoneNumber?.toString() || '+55 (11) 99999-9999',
           footerEmail: siteTexts.footerEmail?.toString() || 'contato@iadmin.com.br',
           copyrightText: siteTexts.copyrightText?.toString() || '© 2023 iAdmin. Todos os direitos reservados.',
-          logoUrl: siteTexts.logoUrl?.toString() || '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png'
+          logoUrl: siteTexts.logoUrl?.toString() || '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png',
+          footerLogoUrl: siteTexts.footerLogoUrl?.toString() || '',
+          footerLocation: siteTexts.footerLocation?.toString() || 'São Paulo, SP - Brasil'
         });
         
         // Atualizar links de redes sociais
@@ -75,6 +79,8 @@ const Footer = () => {
     setLoading(true);
     
     try {
+      console.log('Enviando email para inscrição da newsletter:', email);
+      
       // 1. Salvar no banco de dados
       const { error } = await supabase
         .from('site_email_subscriptions')
@@ -99,6 +105,29 @@ const Footer = () => {
       // 3. Enviar para o webhook diretamente se URL estiver configurada
       if (webhookUrl && typeof webhookUrl === 'string' && webhookUrl.trim() !== '') {
         console.log('Enviando email para webhook:', email);
+        
+        // Tentativa forçada de envio usando a API fetch diretamente
+        try {
+          const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              type: 'email_subscription',
+              email: email,
+              source: 'Newsletter Rodapé',
+              date: new Date().toISOString(),
+              subscriptionId: `subscription_${Date.now()}`
+            })
+          });
+          
+          console.log('Resposta do webhook:', response.status, await response.text());
+        } catch (webhookError) {
+          console.error('Erro ao enviar diretamente para webhook:', webhookError);
+        }
+        
+        // Usar também o método do hook
         await sendEmailSubscriptionWebhook(webhookUrl, email, 'Newsletter Rodapé');
       } else {
         console.warn('URL de webhook não configurada para envio de email de inscrição');
@@ -121,7 +150,11 @@ const Footer = () => {
           {/* Coluna 1 - Logo e Sobre */}
           <div className="col-span-1 lg:col-span-1">
             <div className="mb-4">
-              <img src={footerData.logoUrl} alt="Logo iAdmin" className="h-12" />
+              <img 
+                src={footerData.footerLogoUrl || footerData.logoUrl} 
+                alt={`Logo ${footerData.companyName}`} 
+                className="h-12" 
+              />
             </div>
             <p className="text-gray-400 mb-4">
               {footerData.footerAbout}
@@ -145,7 +178,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="text-gray-400">{footerData.footerEmail}</li>
               <li className="text-gray-400">{footerData.footerPhoneNumber}</li>
-              <li className="text-gray-400">São Paulo, SP - Brasil</li>
+              <li className="text-gray-400">{footerData.footerLocation}</li>
             </ul>
           </div>
 

@@ -61,6 +61,19 @@ const FooterSection: React.FC<SectionProps> = ({
         </div>
         
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Cidade, Estado, País</label>
+          <input
+            type="text"
+            name="footerLocation"
+            value={sections.footerLocation as string}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="Ex: São Paulo, SP - Brasil"
+          />
+          <p className="text-xs text-gray-500 mt-1">Informe a localização que aparecerá no rodapé (ex: São Paulo, SP - Brasil)</p>
+        </div>
+        
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
           <input
             type="text"
@@ -80,6 +93,23 @@ const FooterSection: React.FC<SectionProps> = ({
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Logo do Rodapé</label>
+          <input
+            type="text"
+            name="footerLogoUrl"
+            value={sections.footerLogoUrl as string}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="URL do logo para o rodapé"
+          />
+          {sections.footerLogoUrl && (
+            <div className="mt-2 flex justify-center">
+              <img src={sections.footerLogoUrl as string} alt="Logo do Rodapé" className="h-12 object-contain" />
+            </div>
+          )}
         </div>
 
         <hr className="my-4" />

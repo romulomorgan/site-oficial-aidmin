@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { CustomButton } from './ui/CustomButton';
 
 interface HeroSectionProps {
@@ -20,12 +20,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   // Função para abrir o chat/botão flutuante quando solicitado
   const handleOpenChat = (e: React.MouseEvent) => {
     e.preventDefault();
+    console.log('Tentando abrir chat flutuante...');
+    
     // Procurar pelo botão de chat flutuante e clicar nele
     const chatButton = document.querySelector('.fixed button[aria-label="Abrir suporte"]') as HTMLButtonElement;
     if (chatButton) {
+      console.log('Botão de chat flutuante encontrado, clicando...');
       chatButton.click();
     } else {
       console.warn("Botão de chat flutuante não encontrado");
+      
+      // Tentar alternativa - verificar pela classe pulse-btn
+      const pulseButton = document.querySelector('.fixed .pulse-btn') as HTMLButtonElement;
+      if (pulseButton) {
+        console.log('Botão alternativo encontrado, clicando...');
+        pulseButton.click();
+      } else {
+        // Exibir mensagem de erro para o usuário
+        console.error('Chat não está disponível no momento');
+        alert('Chat não está disponível no momento. Por favor, tente novamente mais tarde.');
+      }
     }
   };
 

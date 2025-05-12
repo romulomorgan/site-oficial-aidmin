@@ -39,7 +39,7 @@ const HeaderSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
           />
           {sections.logoUrl && (
             <div className="mt-2 flex justify-center">
-              <img src={sections.logoUrl as string} alt="Preview do Logo" className="h-16 w-16 object-contain border rounded" />
+              <img src={sections.logoUrl as string} alt="Preview do Logo" className="h-16 w-auto object-contain border rounded" />
             </div>
           )}
         </div>
