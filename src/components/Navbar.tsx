@@ -22,7 +22,8 @@ export const Navbar = () => {
     if (siteTexts.logoUrl) {
       setLogoUrl(siteTexts.logoUrl);
     }
-    if (siteTexts.dashboardLogoUrl) {
+    // Fix: Ensuring dashboardLogoUrl is always a string
+    if (siteTexts.dashboardLogoUrl && typeof siteTexts.dashboardLogoUrl === 'string') {
       setDashboardLogoUrl(siteTexts.dashboardLogoUrl);
     }
   }, []);
