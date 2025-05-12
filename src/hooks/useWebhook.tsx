@@ -1,8 +1,8 @@
 
 import { useState } from 'react';
-import { toast } from 'sonner';
-import { generateWebhookPayload } from '@/utils/supabase/webhooks';
-import { supabase } from '@/integrations/supabase/client';
+import { testWebhook } from '@/utils/webhooks/webhookTesting';
+import { sendWebhook, sendEmailSubscriptionWebhook } from '@/utils/webhooks/webhookSender';
+import { getWebhookLogs, clearWebhookLogs } from '@/utils/webhooks/webhookLogs';
 import { WebhookLog } from '@/utils/supabase/types';
 
 interface UseWebhookOptions {
@@ -15,361 +15,59 @@ export function useWebhook(options: UseWebhookOptions = {}) {
   const [saving, setSaving] = useState(false);
   const [lastTestResult, setLastTestResult] = useState<any>(null);
   
-  const testWebhook = async (url: string, mockData: any = null) => {
-    if (!url.trim()) {
-      toast.error('Por favor, insira um URL de webhook válido');
-      return false;
-    }
-
+  const handleTestWebhook = async (url: string, mockData: any = null) => {
     setIsTesting(true);
     try {
-      // Criar payload de teste
-      const testData = mockData || {
-        firstName: 'Teste',
-        lastName: 'Webhook',
-        email: 'teste@exemplo.com',
-        phone: '11912345678',
-        message: 'Mensagem de teste do webhook',
-        date: new Date().toISOString(),
-        testId: `test-${Date.now()}`,
-      };
-
-      const payload = generateWebhookPayload(testData);
-      console.log('Testando webhook com payload:', payload);
+      const result = await testWebhook(
+        url, 
+        mockData,
+        options.onSuccess,
+        options.onError
+      );
       
-      // Enviar payload para o webhook
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      // Capturar texto da resposta
-      let responseText = '';
-      let responseData = null;
-      try {
-        responseText = await response.text();
-        try {
-          responseData = JSON.parse(responseText);
-        } catch (e) {
-          // Resposta não é um JSON válido
-        }
-      } catch (e) {
-        responseText = 'Não foi possível obter o conteúdo da resposta';
+      if (result) {
+        const logs = await getWebhookLogs();
+        setLastTestResult(logs[0]); // Get latest result
       }
       
-      // Criar objeto de resultado do teste
-      const result = {
-        success: response.status >= 200 && response.status < 300,
-        status: response.status,
-        message: responseText,
-        response: responseData,
-        payload,
-        url,
-        timestamp: new Date().toISOString()
-      };
-      
-      // Salvar log do teste no Supabase
-      try {
-        await supabase
-          .from('webhook_logs')
-          .insert([{
-            url,
-            payload: JSON.stringify(payload),
-            status: response.status,
-            success: result.success,
-            response: responseText,
-            timestamp: new Date().toISOString(),
-            type: 'test'
-          }]);
-      } catch (e) {
-        console.error('Erro ao salvar log no banco de dados:', e);
-        // Fallback para localStorage
-        const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
-        webhookLogs.unshift(result);
-        localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
-      }
-      
-      setLastTestResult(result);
-      
-      if (result.success) {
-        toast.success('Teste de webhook bem-sucedido!');
-        options.onSuccess?.();
-        return true;
-      } else {
-        toast.error(`Falha no teste: ${result.message || 'Erro desconhecido'}`);
-        options.onError?.(result);
-        return false;
-      }
-    } catch (error) {
-      console.error('Erro ao testar webhook:', error);
-      
-      // Criar objeto de resultado de erro
-      const errorResult = {
-        success: false,
-        message: error instanceof Error ? error.message : String(error),
-        url,
-        timestamp: new Date().toISOString(),
-        payload: mockData || {
-          firstName: 'Teste',
-          lastName: 'Webhook',
-          email: 'teste@exemplo.com',
-          phone: '11912345678',
-          message: 'Mensagem de teste do webhook'
-        }
-      };
-      
-      setLastTestResult(errorResult);
-      
-      // Salvar log de erro
-      try {
-        await supabase
-          .from('webhook_logs')
-          .insert([{
-            url,
-            payload: JSON.stringify(errorResult.payload),
-            status: 0,
-            success: false,
-            response: errorResult.message,
-            timestamp: new Date().toISOString(),
-            type: 'test'
-          }]);
-      } catch (e) {
-        console.error('Erro ao salvar log no banco de dados:', e);
-        // Fallback para localStorage
-        const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
-        webhookLogs.unshift(errorResult);
-        localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
-      }
-      
-      toast.error('Erro ao testar webhook');
-      options.onError?.(error);
-      return false;
+      return result;
     } finally {
       setIsTesting(false);
     }
   };
 
-  const sendWebhook = async (url: string, data: any) => {
-    if (!url || !url.trim()) {
-      console.error('URL de webhook não configurada');
-      toast.error('URL de webhook não configurada');
-      return false;
-    }
-
+  const handleSendWebhook = async (url: string, data: any) => {
     setSaving(true);
     try {
-      console.log(`Enviando webhook para ${url} com dados:`, data);
-      
-      // Gerar payload com base nos dados fornecidos
-      const payload = generateWebhookPayload(data, data.type || 'contact_message');
-      
-      // Enviar payload para o webhook
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      // Capturar texto da resposta
-      let responseText = '';
-      try {
-        responseText = await response.text();
-      } catch (e) {
-        responseText = 'Não foi possível obter o conteúdo da resposta';
-      }
-      
-      console.log(`Resposta do webhook (status ${response.status}):`, responseText);
-      
-      // Criar objeto de resultado
-      const result = {
-        success: response.status >= 200 && response.status < 300,
-        status: response.status,
-        message: responseText,
-        payload,
-        url,
-        timestamp: new Date().toISOString()
-      };
-      
-      // Salvar log
-      try {
-        await supabase
-          .from('webhook_logs')
-          .insert([{
-            url,
-            payload: JSON.stringify(payload),
-            status: response.status,
-            success: result.success,
-            response: responseText,
-            timestamp: new Date().toISOString(),
-            type: data.type || 'contact_message'
-          }]);
-      } catch (e) {
-        console.error('Erro ao salvar log no banco de dados:', e);
-        // Fallback para localStorage
-        const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
-        webhookLogs.unshift(result);
-        localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
-      }
-      
-      if (result.success) {
-        toast.success('Mensagem enviada com sucesso!');
-        options.onSuccess?.();
-        return true;
-      } else {
-        toast.error(`Erro ao enviar mensagem: ${result.message || 'Erro desconhecido'}`);
-        options.onError?.(result);
-        return false;
-      }
-    } catch (error) {
-      console.error('Erro ao enviar para webhook:', error);
-      
-      // Criar objeto de resultado de erro
-      const errorResult = {
-        success: false,
-        message: error instanceof Error ? error.message : String(error),
-        url,
-        timestamp: new Date().toISOString(),
-        payload: data
-      };
-      
-      // Salvar log de erro
-      try {
-        await supabase
-          .from('webhook_logs')
-          .insert([{
-            url,
-            payload: JSON.stringify(data),
-            status: 0,
-            success: false,
-            response: errorResult.message,
-            timestamp: new Date().toISOString(),
-            type: data.type || 'contact_message'
-          }]);
-      } catch (e) {
-        console.error('Erro ao salvar log no banco de dados:', e);
-        // Fallback para localStorage
-        const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
-        webhookLogs.unshift(errorResult);
-        localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
-      }
-      
-      toast.error('Erro ao enviar mensagem');
-      options.onError?.(error);
-      return false;
+      return await sendWebhook(
+        url, 
+        data, 
+        options.onSuccess, 
+        options.onError
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  const sendEmailSubscriptionWebhook = async (url: string, email: string, source: string = 'website') => {
-    if (!url || !url.trim()) {
-      console.error('URL de webhook não configurada para inscrição de email');
-      return false;
-    }
-
-    try {
-      console.log(`Enviando inscrição de email para webhook ${url}:`, email);
-      
-      const payload = {
-        type: 'email_subscription',
-        email: email,
-        source: source,
-        date: new Date().toISOString(),
-        subscriptionId: `subscription_${Date.now()}`
-      };
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      let responseText = '';
-      try {
-        responseText = await response.text();
-        console.log(`Resposta do webhook (status ${response.status}):`, responseText);
-      } catch (e) {
-        responseText = 'Não foi possível obter o conteúdo da resposta';
-        console.error('Erro ao ler resposta do webhook:', e);
-      }
-
-      // Criar objeto de resultado
-      const result = {
-        success: response.status >= 200 && response.status < 300,
-        status: response.status,
-        message: responseText,
-        payload,
-        url,
-        timestamp: new Date().toISOString()
-      };
-      
-      // Salvar log
-      try {
-        await supabase
-          .from('webhook_logs')
-          .insert([{
-            url,
-            payload: JSON.stringify(payload),
-            status: response.status,
-            success: result.success,
-            response: responseText,
-            timestamp: new Date().toISOString(),
-            type: 'email_subscription'
-          }]);
-      } catch (e) {
-        console.error('Erro ao salvar log no banco de dados:', e);
-        // Fallback para localStorage
-        const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
-        webhookLogs.unshift(result);
-        localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
-      }
-      
-      if (result.success) {
-        console.log('Webhook de inscrição de email enviado com sucesso');
-      } else {
-        console.error('Falha ao enviar webhook de inscrição de email:', result);
-      }
-      
-      return result.success;
-    } catch (error) {
-      console.error('Erro ao enviar inscrição para webhook:', error);
-      return false;
-    }
+  const handleEmailSubscription = async (url: string, email: string, source: string = 'website') => {
+    return sendEmailSubscriptionWebhook(url, email, source);
   };
 
-  const getWebhookLogs = async (): Promise<WebhookLog[]> => {
-    try {
-      const { data, error } = await supabase
-        .from('webhook_logs')
-        .select('*')
-        .order('timestamp', { ascending: false })
-        .limit(50);
-        
-      if (error) {
-        throw error;
-      }
-        
-      return data as WebhookLog[];
-    } catch (e) {
-      console.error('Erro ao carregar logs do webhook:', e);
-      // Fallback para localStorage
-      const logs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
-      return logs;
-    }
+  const handleGetLogs = async (): Promise<WebhookLog[]> => {
+    return getWebhookLogs();
+  };
+
+  const handleClearLogs = async (): Promise<void> => {
+    return clearWebhookLogs();
   };
 
   return {
-    testWebhook,
-    sendWebhook,
-    sendEmailSubscriptionWebhook,
-    getWebhookLogs,
+    testWebhook: handleTestWebhook,
+    sendWebhook: handleSendWebhook,
+    sendEmailSubscriptionWebhook: handleEmailSubscription,
+    getWebhookLogs: handleGetLogs,
+    clearWebhookLogs: handleClearLogs,
     isTesting,
     saving,
     setSaving,
