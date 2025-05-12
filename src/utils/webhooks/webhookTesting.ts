@@ -126,9 +126,10 @@ export async function testWebhook(
  */
 export async function saveWebhookLog(logData: Partial<WebhookLog>): Promise<void> {
   try {
+    // Fix: Ensure we're inserting a single object, not an array
     await supabase
       .from('webhook_logs')
-      .insert([logData]);
+      .insert(logData);
   } catch (e) {
     console.error('Erro ao salvar log no banco de dados:', e);
     // Fallback para localStorage
