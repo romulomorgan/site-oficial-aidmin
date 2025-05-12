@@ -8,6 +8,7 @@ import { getSiteTexts } from '@/utils/localStorage';
 export const Header: React.FC = () => {
   const [siteTitle, setSiteTitle] = useState('IAdmin');
   const [logoUrl, setLogoUrl] = useState('');
+  const [homeLogoIconUrl, setHomeLogoIconUrl] = useState('');
 
   useEffect(() => {
     // Carrega o título do site e a URL do logo do localStorage
@@ -19,6 +20,9 @@ export const Header: React.FC = () => {
     }
     if (siteTexts.logoUrl) {
       setLogoUrl(siteTexts.logoUrl);
+    }
+    if (siteTexts.homeLogoIconUrl && typeof siteTexts.homeLogoIconUrl === 'string') {
+      setHomeLogoIconUrl(siteTexts.homeLogoIconUrl);
     }
   }, []);
 

@@ -15,7 +15,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-secondary-color text-white z-50 flex flex-col">
       <div className="flex justify-between items-center p-4 border-b border-gray-800">
         <Link to="/" className="text-2xl font-bold text-primary-color">IAdmin</Link>
-        <button onClick={onClose} className="text-white p-2">
+        <button onClick={onClose} className="text-white p-2" aria-label="Fechar menu">
           <X size={24} />
         </button>
       </div>

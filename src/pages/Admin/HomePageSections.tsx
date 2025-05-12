@@ -19,6 +19,8 @@ export default function HomePageSections() {
     logoUrl: '',
     siteTitle: '',
     faviconUrl: '',
+    dashboardLogoUrl: '',
+    homeLogoIconUrl: '',
     
     // Hero Section
     heroTitle: '',
@@ -60,6 +62,7 @@ export default function HomePageSections() {
     
     // WhatsApp Section
     whatsappTitle: '',
+    whatsappSubtitle: '',
     whatsappDescription: '',
     whatsappImage: '',
     whatsappButtonText: '',
@@ -121,7 +124,9 @@ export default function HomePageSections() {
       if (!updatedSections.whatsappTitle) updatedSections.whatsappTitle = 'WhatsApp Business';
       if (!updatedSections.whatsappDescription) updatedSections.whatsappDescription = 'A IAdmin faz a ponte perfeita entre sua IA e o WhatsApp. A integração permite que sua assistente de IA converse diretamente com seus clientes, proporcionando atendimento personalizado e respostas instantâneas. Ganhe eficiência e escala sem perder o toque humano na comunicação.';
       if (!updatedSections.whatsappButtonText) updatedSections.whatsappButtonText = 'Contrate a IAdmin';
+      if (!updatedSections.whatsappButtonLink) updatedSections.whatsappButtonLink = '/contato';
       if (!updatedSections.whatsappSecondaryButtonText) updatedSections.whatsappSecondaryButtonText = 'Contrate uma AI Poderosa!';
+      if (!updatedSections.whatsappSecondaryButtonLink) updatedSections.whatsappSecondaryButtonLink = '/contato';
       
       setSections(updatedSections);
     } catch (error) {
@@ -160,6 +165,8 @@ export default function HomePageSections() {
             logoUrl: sections.logoUrl,
             siteTitle: sections.siteTitle,
             faviconUrl: sections.faviconUrl,
+            dashboardLogoUrl: sections.dashboardLogoUrl,
+            homeLogoIconUrl: sections.homeLogoIconUrl,
           };
           break;
         case 'hero':
@@ -201,6 +208,7 @@ export default function HomePageSections() {
         case 'whatsapp':
           updates = {
             whatsappTitle: sections.whatsappTitle,
+            whatsappSubtitle: sections.whatsappSubtitle,
             whatsappDescription: sections.whatsappDescription,
             whatsappImage: sections.whatsappImage,
             whatsappButtonText: sections.whatsappButtonText,

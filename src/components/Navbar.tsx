@@ -10,6 +10,7 @@ export const Navbar = () => {
   const [siteTitle, setSiteTitle] = useState('IAdmin');
   const [logoUrl, setLogoUrl] = useState('');
   const [dashboardLogoUrl, setDashboardLogoUrl] = useState('');
+  const [homeLogoIconUrl, setHomeLogoIconUrl] = useState('');
 
   useEffect(() => {
     // Carrega o título do site e a URL do logo do localStorage
@@ -26,6 +27,10 @@ export const Navbar = () => {
     if (siteTexts.dashboardLogoUrl && typeof siteTexts.dashboardLogoUrl === 'string') {
       setDashboardLogoUrl(siteTexts.dashboardLogoUrl);
     }
+    // Carregar o ícone circular da homepage
+    if (siteTexts.homeLogoIconUrl && typeof siteTexts.homeLogoIconUrl === 'string') {
+      setHomeLogoIconUrl(siteTexts.homeLogoIconUrl);
+    }
   }, []);
 
   const toggleMenu = () => {
@@ -37,7 +42,13 @@ export const Navbar = () => {
       <header className="bg-secondary-color text-white absolute top-0 left-0 w-full z-20">
         <div className="container mx-auto py-4 px-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2">
-            {(dashboardLogoUrl || logoUrl) ? (
+            {homeLogoIconUrl ? (
+              <img 
+                src={homeLogoIconUrl} 
+                alt="Logo Icon" 
+                className="w-10 h-10 object-contain"
+              />
+            ) : (dashboardLogoUrl || logoUrl) ? (
               <img 
                 src={dashboardLogoUrl || logoUrl} 
                 alt="Logo" 

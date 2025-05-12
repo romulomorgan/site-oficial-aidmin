@@ -13,6 +13,10 @@ interface HeroSectionProps {
     url: string;
     alt: string;
   };
+  whatsappButtonLink?: string;
+  whatsappButtonText?: string;
+  whatsappSecondaryButtonLink?: string;
+  whatsappSecondaryButtonText?: string;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ 
@@ -20,7 +24,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   subtitle = "Automatize respostas, gerencie clientes e aumente suas vendas com nossa solução completa de chatbot e CRM.", 
   bgImage = "/lovable-uploads/8a89a74c-2317-4428-a2e6-c3c27e68ce7c.webp",
   showButtons = true,
-  customLogo
+  customLogo,
+  whatsappButtonLink = "/contato",
+  whatsappButtonText = "Fale Conosco",
+  whatsappSecondaryButtonLink = "/contato",
+  whatsappSecondaryButtonText = "Contrate a iAdmin"
 }) => {
   return (
     <div className="relative overflow-hidden bg-cover bg-center py-28 md:py-36 w-full" style={{ backgroundImage: `url(${bgImage})` }}>
@@ -42,14 +50,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         
         {showButtons && (
           <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in-up animate-on-scroll" style={{animationDelay: '0.2s'}}>
-            <Link to="/contato">
+            <Link to={whatsappButtonLink || "/contato"}>
               <CustomButton size="lg" variant="primary" className="w-full sm:w-auto hover-float">
-                Fale Conosco <ArrowRight className="ml-2 h-5 w-5" />
+                {whatsappButtonText} <ArrowRight className="ml-2 h-5 w-5" />
               </CustomButton>
             </Link>
-            <Link to="/contato">
+            <Link to={whatsappSecondaryButtonLink || "/contato"}>
               <CustomButton size="lg" variant="secondary" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white hover-float">
-                Contrate a iAdmin
+                {whatsappSecondaryButtonText}
               </CustomButton>
             </Link>
           </div>

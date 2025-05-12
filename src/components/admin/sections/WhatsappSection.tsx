@@ -48,7 +48,7 @@ const WhatsappSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão Principal</label>
           <input
             type="text"
             name="whatsappButtonText"
@@ -59,13 +59,37 @@ const WhatsappSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão Principal</label>
           <input
             type="text"
             name="whatsappButtonLink"
             value={sections.whatsappButtonLink as string}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="Ex: /contato"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão Secundário</label>
+          <input
+            type="text"
+            name="whatsappSecondaryButtonText"
+            value={sections.whatsappSecondaryButtonText as string}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão Secundário</label>
+          <input
+            type="text"
+            name="whatsappSecondaryButtonLink"
+            value={sections.whatsappSecondaryButtonLink as string}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="Ex: /contato"
           />
         </div>
         

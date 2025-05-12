@@ -63,6 +63,24 @@ const HeaderSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Ícone Circular da Homepage</label>
+          <input
+            type="text"
+            name="homeLogoIconUrl"
+            value={sections.homeLogoIconUrl as string || ''}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="URL do ícone circular do menu principal"
+          />
+          <p className="text-xs text-gray-500 mt-1">Este é o ícone circular que aparece no menu principal ao lado do nome do site.</p>
+          {sections.homeLogoIconUrl && (
+            <div className="mt-2 flex justify-center">
+              <img src={sections.homeLogoIconUrl as string} alt="Preview do Ícone Circular" className="h-10 w-10 object-contain border rounded" />
+            </div>
+          )}
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">URL do Favicon</label>
           <input
             type="text"
