@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { getSiteTexts } from '@/utils/localStorage';
 
 interface MobileNavMenuProps {
   isOpen: boolean;
@@ -9,12 +10,21 @@ interface MobileNavMenuProps {
 }
 
 const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
+  const [siteTitle, setSiteTitle] = React.useState('IAdmin');
+  
+  React.useEffect(() => {
+    const siteTexts = getSiteTexts();
+    if (siteTexts.siteTitle) {
+      setSiteTitle(siteTexts.siteTitle);
+    }
+  }, []);
+  
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-secondary-color text-white z-50 flex flex-col">
       <div className="flex justify-between items-center p-4 border-b border-gray-800">
-        <Link to="/" className="text-2xl font-bold text-primary-color">IAdmin</Link>
+        <Link to="/" className="text-2xl font-bold text-primary-color">{siteTitle}</Link>
         <button onClick={onClose} className="text-white p-2" aria-label="Fechar menu">
           <X size={24} />
         </button>
