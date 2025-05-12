@@ -9,13 +9,18 @@ interface HeroSectionProps {
   subtitle?: string;
   bgImage?: string;
   showButtons?: boolean;
+  customLogo?: {
+    url: string;
+    alt: string;
+  };
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ 
   title = "Transforme seu atendimento com IA", 
   subtitle = "Automatize respostas, gerencie clientes e aumente suas vendas com nossa solução completa de chatbot e CRM.", 
   bgImage = "/lovable-uploads/8a89a74c-2317-4428-a2e6-c3c27e68ce7c.webp",
-  showButtons = true
+  showButtons = true,
+  customLogo
 }) => {
   return (
     <div className="relative overflow-hidden bg-cover bg-center py-28 md:py-36 w-full" style={{ backgroundImage: `url(${bgImage})` }}>
@@ -23,6 +28,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 bg-black bg-opacity-60"></div>
       
       <div className="relative z-10 container mx-auto px-6 text-center md:px-12">
+        {customLogo && (
+          <div className="mb-8 flex justify-center">
+            <img 
+              src={customLogo.url} 
+              alt={customLogo.alt} 
+              className="h-16 md:h-20 object-contain"
+            />
+          </div>
+        )}
         <h1 className="slide-in-right animate-on-scroll text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">{title}</h1>
         <p className="fade-in animate-on-scroll text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-10">{subtitle}</p>
         

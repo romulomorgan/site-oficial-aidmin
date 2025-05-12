@@ -9,6 +9,7 @@ export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [siteTitle, setSiteTitle] = useState('IAdmin');
   const [logoUrl, setLogoUrl] = useState('');
+  const [dashboardLogoUrl, setDashboardLogoUrl] = useState('');
 
   useEffect(() => {
     // Carrega o título do site e a URL do logo do localStorage
@@ -21,6 +22,9 @@ export const Navbar = () => {
     if (siteTexts.logoUrl) {
       setLogoUrl(siteTexts.logoUrl);
     }
+    if (siteTexts.dashboardLogoUrl) {
+      setDashboardLogoUrl(siteTexts.dashboardLogoUrl);
+    }
   }, []);
 
   const toggleMenu = () => {
@@ -32,8 +36,12 @@ export const Navbar = () => {
       <header className="bg-secondary-color text-white absolute top-0 left-0 w-full z-20">
         <div className="container mx-auto py-4 px-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2">
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="w-10 h-10 object-contain" />
+            {(dashboardLogoUrl || logoUrl) ? (
+              <img 
+                src={dashboardLogoUrl || logoUrl} 
+                alt="Logo" 
+                className="w-10 h-10 object-contain"
+              />
             ) : (
               <div className="w-10 h-10 bg-primary-color rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">I</span>

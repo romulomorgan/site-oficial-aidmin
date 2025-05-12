@@ -45,6 +45,24 @@ const HeaderSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">URL do Ícone do Logo (Dashboard)</label>
+          <input
+            type="text"
+            name="dashboardLogoUrl"
+            value={sections.dashboardLogoUrl as string || ''}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="URL do ícone para o painel administrativo"
+          />
+          <p className="text-xs text-gray-500 mt-1">Este ícone será exibido no cabeçalho do painel administrativo.</p>
+          {sections.dashboardLogoUrl && (
+            <div className="mt-2 flex justify-center">
+              <img src={sections.dashboardLogoUrl as string} alt="Preview do Ícone" className="h-10 w-10 object-contain border rounded" />
+            </div>
+          )}
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">URL do Favicon</label>
           <input
             type="text"
