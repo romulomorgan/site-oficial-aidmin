@@ -31,10 +31,15 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         {templates.map(template => (
           <div 
             key={template.id}
-            className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+            className={`template-card border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
               selectedTemplate === template.id ? 'ring-2 ring-[#FF196E]' : ''
             }`}
             onClick={() => onSelectTemplate(template.id)}
+            style={{
+              '--primary-color': template.primaryColor,
+              '--accent-color': template.accentColor,
+              '--primary-color-rgb': hexToRgb(template.primaryColor)
+            } as React.CSSProperties}
           >
             <div className="flex justify-between items-start mb-4">
               <h3 className="font-medium">{template.name}</h3>
@@ -71,17 +76,17 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
                 <div
-                  className="w-6 h-6 rounded-full border"
+                  className="template-color-dot w-6 h-6 rounded-full border"
                   style={{ backgroundColor: template.primaryColor }}
                   title="Cor Primária"
                 />
                 <div
-                  className="w-6 h-6 rounded-full border"
+                  className="template-color-dot w-6 h-6 rounded-full border"
                   style={{ backgroundColor: template.secondaryColor }}
                   title="Cor Secundária"
                 />
                 <div
-                  className="w-6 h-6 rounded-full border"
+                  className="template-color-dot w-6 h-6 rounded-full border"
                   style={{ backgroundColor: template.accentColor }}
                   title="Cor de Destaque"
                 />
@@ -95,7 +100,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         ))}
         
         <div 
-          className="border border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-50"
+          className="template-create-card rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-50"
           onClick={onOpenCreateDialog}
         >
           <div className="flex flex-col items-center gap-2 text-gray-500">
@@ -115,4 +120,17 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
       </div>
     </div>
   );
+};
+
+// Função utilitária para converter cores hexadecimais em RGB para uso em variáveis CSS
+const hexToRgb = (hex: string): string => {
+  // Remover o # se presente
+  hex = hex.replace('#', '');
+  
+  // Converter para RGB
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  return `${r}, ${g}, ${b}`;
 };

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { CustomButton } from './CustomButton';
 import { saveContactMessage, getSiteTexts } from '@/utils/localStorage';
 import { supabase } from '@/integrations/supabase/client';
-import { generateWebhookPayload } from '@/utils/supabase/webhooks';
+import { useWebhook } from '@/hooks/useWebhook';
 
 interface ContactFormProps {
   className?: string;
@@ -20,8 +20,11 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
   
+  // Usar o hook personalizado para webhook
+  const { sendWebhook } = useWebhook();
+  
   useEffect(() => {
-    // Load webhook URL from localStorage
+    // Carregar URL do webhook do localStorage e do banco de dados
     const siteTexts = getSiteTexts();
     if (siteTexts.webhookUrl) {
       setWebhookUrl(siteTexts.webhookUrl);
@@ -33,7 +36,7 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         .from('site_texts')
         .select('content')
         .eq('key', 'webhookUrl')
-        .single();
+        .maybeSingle();
         
       if (data?.content) {
         setWebhookUrl(data.content);
@@ -58,7 +61,19 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       const threadId = `thread_${Date.now()}`;
       const contactId = `contact_${Date.now()}`;
       
-      // Save to localStorage for legacy support
+      // Objeto de dados de contato
+      const contactData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        message,
+        threadId,
+        contactId,
+        date: new Date().toISOString()
+      };
+      
+      // Salvar no localStorage para compatibilidade com código legado
       saveContactMessage({
         firstName,
         lastName,
@@ -67,182 +82,141 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         message
       });
       
-      const contactData = {
-        firstname: firstName,
-        lastname: lastName,
-        email,
-        phone,
-        message,
-        read: false,
-        date: new Date().toISOString(),
-        thread_id: threadId,
-        contact_id: contactId
-      };
-      
-      // Insert into database
-      const { error, data } = await supabase
+      // Inserir no banco de dados
+      const { error } = await supabase
         .from('site_contact_messages')
-        .insert(contactData)
-        .select();
+        .insert([{
+          firstname: firstName,
+          lastname: lastName,
+          email,
+          phone,
+          message,
+          read: false,
+          thread_id: threadId,
+          contact_id: contactId,
+          date: new Date().toISOString()
+        }]);
       
       if (error) {
         console.error('Erro ao salvar mensagem no banco de dados:', error);
-        toast.error('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.');
-        setIsSubmitting(false);
-        return;
+        throw error;
       }
       
-      // If webhook URL is defined, send message to webhook
-      if (webhookUrl) {
-        try {
-          console.log('Sending message to webhook:', webhookUrl);
-          const payload = generateWebhookPayload({
-            firstName,
-            lastName,
-            email,
-            phone,
-            message,
-            date: new Date().toISOString(),
-            threadId,
-            contactId: data?.[0]?.id || contactId
-          });
-          
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
-          
-          // Log webhook response
-          try {
-            const responseText = await response.text();
-            console.log('Webhook response:', response.status, responseText);
-            
-            // Save log to database
-            await supabase
-              .from('webhook_logs')
-              .insert({
-                url: webhookUrl,
-                payload: JSON.stringify(payload),
-                status: response.status,
-                success: response.status >= 200 && response.status < 300,
-                response: responseText,
-                timestamp: new Date().toISOString(),
-                type: 'contact_message'
-              });
-          } catch (e) {
-            console.error('Erro ao processar resposta do webhook:', e);
-          }
-        } catch (error) {
-          console.error('Error sending message to webhook:', error);
-        }
+      // Enviar para webhook se URL estiver configurada
+      if (webhookUrl && webhookUrl.trim() !== '') {
+        await sendWebhook(webhookUrl, contactData);
+      } else {
+        console.log('URL de webhook não configurada. Pulando envio.');
       }
       
-      toast.success('Mensagem enviada com sucesso!');
+      toast.success('Mensagem enviada com sucesso! Entraremos em contato em breve.');
       
-      // Reset form
+      // Limpar formulário
       setFirstName('');
       setLastName('');
       setEmail('');
       setPhone('');
       setMessage('');
+      
     } catch (error) {
-      console.error('Erro ao processar envio:', error);
+      console.error('Erro ao enviar mensagem:', error);
       toast.error('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
   };
   
-  const inputClassName = isDark 
-    ? "w-full px-4 py-2 bg-transparent border border-white text-white placeholder:text-white/70 rounded" 
-    : "w-full px-4 py-2 border border-gray-300 rounded";
-  
-  const labelClassName = isDark
-    ? "block text-white mb-1"
-    : "block text-gray-800 mb-1";
-  
+  const inputClass = isDark
+    ? "bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+    : "bg-white border border-gray-300 text-gray-900 focus:border-gray-400";
+
   return (
-    <div className={`${className}`}>
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label htmlFor="firstName" className={labelClassName}>Primeiro Nome</label>
-            <input
-              id="firstName"
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className={inputClassName}
-              placeholder="Primeiro Nome"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="lastName" className={labelClassName}>Sobrenome</label>
-            <input
-              id="lastName"
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className={inputClassName}
-              placeholder="Sobrenome"
-            />
-          </div>
-        </div>
-  
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-          <div>
-            <label htmlFor="email" className={labelClassName}>E-mail</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClassName}
-              placeholder="E-mail"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="phone" className={labelClassName}>Telefone</label>
-            <input
-              id="phone"
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className={inputClassName}
-              placeholder="Telefone"
-            />
-          </div>
-        </div>
-  
-        <div className="mt-5">
-          <label htmlFor="message" className={labelClassName}>Mensagem</label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className={inputClassName}
-            placeholder="Digite aqui sua mensagem..."
-            rows={5}
+    <form onSubmit={handleSubmit} className={`space-y-6 ${className}`}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="firstName" className={`block text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'} mb-1`}>
+            Nome*
+          </label>
+          <input
+            id="firstName"
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+            placeholder="Seu nome"
             required
-          ></textarea>
+          />
         </div>
-  
-        <div className="mt-5">
-          <CustomButton
-            type="submit"
-            variant="primary"
-            disabled={isSubmitting}
-            className="w-full"
-          >
-            {isSubmitting ? "Enviando..." : "Enviar"}
-          </CustomButton>
+        <div>
+          <label htmlFor="lastName" className={`block text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'} mb-1`}>
+            Sobrenome
+          </label>
+          <input
+            id="lastName"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+            placeholder="Seu sobrenome"
+          />
         </div>
-      </form>
-    </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="email" className={`block text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'} mb-1`}>
+            Email*
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+            placeholder="seu@email.com"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="phone" className={`block text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'} mb-1`}>
+            Telefone
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+            placeholder="(11) 98765-4321"
+          />
+        </div>
+      </div>
+      
+      <div>
+        <label htmlFor="message" className={`block text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'} mb-1`}>
+          Mensagem*
+        </label>
+        <textarea
+          id="message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          rows={4}
+          className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+          placeholder="Como podemos ajudar?"
+          required
+        />
+      </div>
+      
+      <div>
+        <CustomButton 
+          type="submit" 
+          variant="primary" 
+          className="w-full mt-4" 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
+        </CustomButton>
+      </div>
+    </form>
   );
 }

@@ -1,0 +1,48 @@
+
+/* Animações específicas para templates de cores */
+.template-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.template-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.template-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.template-card:hover::before {
+  transform: scaleX(1);
+}
+
+.template-color-dot {
+  transition: all 0.2s ease;
+}
+
+.template-card:hover .template-color-dot {
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.template-create-card {
+  transition: all 0.3s ease;
+  border: 2px dashed #ddd;
+}
+
+.template-create-card:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+}

@@ -76,7 +76,122 @@ export async function insertDefaultTemplates(): Promise<boolean> {
     // Importar todos os templates, incluindo os modernos
     const { allTemplates } = await import('../../themes');
     
-    const templatesForDb = allTemplates.map(template => ({
+    // Adicionar templates modernos
+    const modernTemplates = [
+      {
+        id: 'modern-teal',
+        name: 'Moderno Teal',
+        primaryColor: '#00897B',
+        secondaryColor: '#263238',
+        accentColor: '#4DB6AC',
+        backgroundColor: '#FFFFFF',
+        textColor: '#263238',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-purple',
+        name: 'Moderno Roxo',
+        primaryColor: '#6A1B9A',
+        secondaryColor: '#283593',
+        accentColor: '#9575CD',
+        backgroundColor: '#F8F9FA',
+        textColor: '#37474F',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-navy',
+        name: 'Moderno Navy',
+        primaryColor: '#1A237E',
+        secondaryColor: '#0D47A1',
+        accentColor: '#42A5F5',
+        backgroundColor: '#FAFAFA',
+        textColor: '#212121',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-coral',
+        name: 'Moderno Coral',
+        primaryColor: '#FF5252',
+        secondaryColor: '#455A64',
+        accentColor: '#FF8A80',
+        backgroundColor: '#FFFFFF',
+        textColor: '#37474F',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-green',
+        name: 'Moderno Verde',
+        primaryColor: '#2E7D32',
+        secondaryColor: '#1B5E20',
+        accentColor: '#81C784',
+        backgroundColor: '#F5F5F5',
+        textColor: '#212121',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-amber',
+        name: 'Moderno Âmbar',
+        primaryColor: '#FF8F00',
+        secondaryColor: '#795548',
+        accentColor: '#FFB74D',
+        backgroundColor: '#FFFFFF',
+        textColor: '#37474F',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-red',
+        name: 'Moderno Vermelho',
+        primaryColor: '#C62828',
+        secondaryColor: '#37474F',
+        accentColor: '#EF5350',
+        backgroundColor: '#FAFAFA',
+        textColor: '#212121',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-indigo',
+        name: 'Moderno Índigo',
+        primaryColor: '#3949AB',
+        secondaryColor: '#283593',
+        accentColor: '#7986CB',
+        backgroundColor: '#FFFFFF',
+        textColor: '#212121',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-brown',
+        name: 'Moderno Marrom',
+        primaryColor: '#5D4037',
+        secondaryColor: '#3E2723',
+        accentColor: '#8D6E63',
+        backgroundColor: '#F5F5F5',
+        textColor: '#212121',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      },
+      {
+        id: 'modern-cyan',
+        name: 'Moderno Ciano',
+        primaryColor: '#0097A7',
+        secondaryColor: '#006064',
+        accentColor: '#4DD0E1',
+        backgroundColor: '#FFFFFF',
+        textColor: '#263238',
+        buttonTextColor: '#FFFFFF',
+        menuTextColor: '#FFFFFF'
+      }
+    ];
+    
+    // Combinar templates padrão com modernos
+    const templatesParaDb = [...allTemplates, ...modernTemplates].map(template => ({
       id: template.id,
       name: template.name,
       primary_color: template.primaryColor,
@@ -99,15 +214,17 @@ export async function insertDefaultTemplates(): Promise<boolean> {
     const existingIds = existingTemplates ? existingTemplates.map(t => t.id) : [];
     
     // Filtrar apenas templates que não existem ainda
-    const newTemplates = templatesForDb.filter(t => !existingIds.includes(t.id));
+    const newTemplates = templatesParaDb.filter(t => !existingIds.includes(t.id));
     
     if (newTemplates.length === 0) {
       console.log('Todos os templates padrão já estão inseridos');
       return true;
     }
 
+    console.log(`Inserindo ${newTemplates.length} templates no banco de dados...`);
+
     // Dividir a inserção em lotes menores para evitar problemas com limites de tamanho de payload
-    const batchSize = 10;
+    const batchSize = 5;
     for (let i = 0; i < newTemplates.length; i += batchSize) {
       const batch = newTemplates.slice(i, i + batchSize);
       const { error } = await supabase
@@ -117,6 +234,8 @@ export async function insertDefaultTemplates(): Promise<boolean> {
       if (error) {
         console.error(`Erro ao inserir lote de templates ${i}/${newTemplates.length}:`, error);
         // Continuar com o próximo lote mesmo em caso de erro
+      } else {
+        console.log(`Lote ${i/batchSize + 1} inserido com sucesso (${batch.length} templates)`);
       }
     }
     
@@ -131,6 +250,8 @@ export async function insertDefaultTemplates(): Promise<boolean> {
 // Função para salvar template de cores no Supabase
 export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean> {
   try {
+    console.log('Salvando template no banco de dados:', template);
+    
     // Verificar se o template já existe
     const { data } = await supabase
       .from('site_color_templates')
