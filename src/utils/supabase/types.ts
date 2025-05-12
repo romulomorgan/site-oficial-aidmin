@@ -51,7 +51,29 @@ export interface ContactMessage {
   phone?: string;
   message: string;
   created_at: string;
+  date: string; // Adicionando esta propriedade que estava faltando
   read: boolean;
   thread_id?: string;
   contact_id?: string;
+}
+
+// Adicionando tipo WebhookLog que estava faltando
+export interface WebhookLog {
+  id: number;
+  url: string;
+  payload: string | any;
+  status?: number;
+  success: boolean;
+  response?: string;
+  timestamp: string;
+  type?: string;
+}
+
+// Adicionando tipo SectionProps que estava faltando
+export interface SectionProps {
+  sections: Record<string, string | boolean>;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSwitchChange?: (key: string, value: boolean) => void;
+  isLoading: boolean;
+  handleSaveSection: (section: string) => Promise<void>;
 }

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -94,8 +93,17 @@ export default function SiteSettings() {
         }
         
         // Carregar logs de webhook
-        const logs = getWebhookLogs();
-        setWebhookLogs(logs);
+        const loadWebhookLogs = async () => {
+          try {
+            const logs = await getWebhookLogs();
+            setWebhookLogs(logs);
+          } catch (error) {
+            console.error('Erro ao carregar logs de webhook:', error);
+            setWebhookLogs([]);
+          }
+        };
+        
+        loadWebhookLogs();
       } catch (error) {
         console.error('Erro ao carregar dados do site:', error);
         toast.error('Erro ao carregar configurações do site');
