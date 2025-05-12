@@ -8,7 +8,7 @@ export * from "./supabase/types";
 export * from "./supabase/siteTexts";
 
 // Export color templates functionality
-export * from "./supabase/colorTemplates";
+export * from "./supabase/templates";
 
 // Export testimonials functionality
 export * from "./supabase/testimonials";

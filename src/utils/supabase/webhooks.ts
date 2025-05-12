@@ -1,167 +1,89 @@
 
-// Função para testar URL do webhook
-export async function testWebhookUrl(url: string): Promise<{success: boolean, status?: number, message?: string, payload?: any}> {
+import { supabase } from "@/integrations/supabase/client";
+
+// Função para obter logs de webhooks
+export async function getWebhookLogs(): Promise<any[]> {
   try {
-    console.log('Testando webhook URL:', url);
+    const { data, error } = await supabase
+      .from('webhook_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(50);
     
-    // Criar um payload de teste com timestamp para facilitar identificação nos logs
+    if (error) {
+      console.error('Erro ao buscar logs de webhook:', error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error('Erro ao buscar logs de webhook:', error);
+    return [];
+  }
+}
+
+// Função para testar uma URL de webhook
+export async function testWebhook(url: string): Promise<boolean> {
+  try {
+    // Criar payload de teste
     const testPayload = {
-      firstName: 'Teste',
-      lastName: 'Webhook',
-      email: 'teste@exemplo.com',
-      phone: '11912345678',
-      message: 'Mensagem de teste do webhook',
-      date: new Date().toISOString(),
-      testId: `test-${Date.now()}`,
-      type: 'contact_message',
-      threadId: `thread_test_${Date.now()}`,
-      contactId: `contact_test_${Date.now()}`
+      type: 'test',
+      message: 'Este é um teste de webhook',
+      timestamp: new Date().toISOString()
     };
     
-    // Realizar uma solicitação de teste para o webhook
+    // Enviar requisição de teste
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(generateWebhookPayload(testPayload))
+      body: JSON.stringify(testPayload)
     });
     
-    // Capturar o texto da resposta (se possível)
-    let responseText = '';
+    // Verificar resposta
+    const success = response.status >= 200 && response.status < 300;
+    
+    // Salvar log do teste
     try {
-      responseText = await response.text();
+      const responseText = await response.text();
+      
+      await supabase
+        .from('webhook_logs')
+        .insert([{
+          url,
+          payload: JSON.stringify(testPayload),
+          status: response.status,
+          success,
+          response: responseText,
+          timestamp: new Date().toISOString(),
+          type: 'test'
+        }]);
     } catch (e) {
-      responseText = 'Não foi possível obter o conteúdo da resposta';
+      console.error('Erro ao salvar log de teste no banco de dados:', e);
     }
     
-    // Registrar o log da tentativa
-    const webhookLog = {
-      timestamp: new Date().toISOString(),
-      url,
-      payload: generateWebhookPayload(testPayload),
-      status: response.status,
-      success: response.status >= 200 && response.status < 300,
-      response: responseText
-    };
-    
-    // Salvar o log na localStorage para consulta posterior
-    saveWebhookLog(webhookLog);
-    
-    // Retornar resultado do teste
-    return {
-      success: response.status >= 200 && response.status < 300,
-      status: response.status,
-      message: responseText,
-      payload: generateWebhookPayload(testPayload)
-    };
+    return success;
   } catch (error) {
     console.error('Erro ao testar webhook:', error);
     
-    // Registrar o erro no log
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    const testData = {
-      firstName: 'Teste',
-      lastName: 'Webhook',
-      email: 'teste@exemplo.com',
-      phone: '11912345678',
-      message: 'Mensagem de teste do webhook',
-      date: new Date().toISOString(),
-      testId: `test-${Date.now()}`,
-      type: 'contact_message',
-      threadId: `thread_test_${Date.now()}`,
-      contactId: `contact_test_${Date.now()}`
-    };
+    // Salvar log do erro
+    try {
+      await supabase
+        .from('webhook_logs')
+        .insert([{
+          url,
+          payload: JSON.stringify({ type: 'test' }),
+          status: 0,
+          success: false,
+          response: error instanceof Error ? error.message : 'Erro desconhecido',
+          timestamp: new Date().toISOString(),
+          type: 'test'
+        }]);
+    } catch (e) {
+      console.error('Erro ao salvar log de erro no banco de dados:', e);
+    }
     
-    const webhookLog = {
-      timestamp: new Date().toISOString(),
-      url,
-      payload: generateWebhookPayload(testData),
-      status: 0,
-      success: false,
-      response: errorMessage
-    };
-    
-    saveWebhookLog(webhookLog);
-    
-    return {
-      success: false,
-      message: errorMessage
-    };
-  }
-}
-
-// Salvar log de testes de webhook na localStorage
-export function saveWebhookLog(log: any): void {
-  try {
-    const existingLogs = getWebhookLogs();
-    const updatedLogs = [log, ...existingLogs].slice(0, 50); // Manter apenas os últimos 50 logs
-    localStorage.setItem('webhookLogs', JSON.stringify(updatedLogs));
-  } catch (error) {
-    console.error('Erro ao salvar log de webhook:', error);
-  }
-}
-
-// Recuperar logs salvos
-export function getWebhookLogs(): any[] {
-  try {
-    const logs = localStorage.getItem('webhookLogs');
-    return logs ? JSON.parse(logs) : [];
-  } catch (error) {
-    console.error('Erro ao recuperar logs de webhook:', error);
-    return [];
-  }
-}
-
-// Limpar logs
-export function clearWebhookLogs(): void {
-  localStorage.removeItem('webhookLogs');
-}
-
-// Função para gerar um payload com dados formatados
-export function generateWebhookPayload(data: any, type: string = 'contact_message'): any {
-  // Formatar os dados para o webhook com base no template e tipo
-  if (type === 'reply') {
-    return {
-      type: 'reply',
-      to: data.to,
-      from: data.from || "noreply@iadmin.com",
-      subject: data.subject || `Re: Contato - ${data.contactData?.firstName || ''} ${data.contactData?.lastName || ''}`,
-      message: data.message,
-      contactData: data.contactData || {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        originalMessage: data.originalMessage || data.message
-      },
-      date: new Date().toISOString(),
-      threadId: data.threadId || `thread_${Date.now()}`,
-      contactId: data.contactId || `contact_${Date.now()}`
-    };
-  } else if (type === 'email_subscription') {
-    return {
-      type: 'email_subscription',
-      email: data.email,
-      source: data.source || 'website',
-      date: data.date || new Date().toISOString(),
-      subscriptionId: data.subscriptionId || `subscription_${Date.now()}`
-    };
-  } else {
-    // Contato padrão
-    const firstName = data.firstName || data.firstname || 'Visitante';
-    const lastName = data.lastName || data.lastname || '';
-    
-    return {
-      type: 'contact_message',
-      firstName: firstName,
-      lastName: lastName,
-      email: data.email || 'sem-email@exemplo.com',
-      phone: data.phone || 'Não informado',
-      message: data.message || 'Mensagem não fornecida',
-      date: data.date || new Date().toISOString(),
-      threadId: data.threadId || `thread_${Date.now()}`,
-      contactId: data.contactId || `contact_${Date.now()}`
-    };
+    return false;
   }
 }

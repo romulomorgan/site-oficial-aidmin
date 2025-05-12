@@ -1,33 +1,48 @@
 
-// Tipos para dados do site
 export interface SiteTexts {
   [key: string]: string | boolean | undefined;
 }
 
-// Tipos para templates de cores (mantido para compatibilidade)
-export type ColorTemplate = import('../themes').ThemeTemplate & {
-  isDefault?: boolean;
-};
+export interface ColorTemplate {
+  id: string;
+  name: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  backgroundColor: string;
+  textColor: string;
+  buttonTextColor?: string;
+  menuTextColor?: string;
+}
 
-// Tipos para depoimentos
+export interface EmbedConfig {
+  code: string;
+  position: 'left' | 'right';
+  isActive: boolean;
+}
+
 export interface Testimonial {
   id: string;
   name: string;
   role: string;
   testimonial: string;
-  avatarUrl?: string;
+  avatarUrl: string;
 }
 
-// Tipos para perguntas frequentes
 export interface FAQItem {
   id: string;
   question: string;
   answer: string;
   active?: boolean;
-  order_index?: number;
 }
 
-// Tipos para mensagens de contato
+export interface EmailSubscription {
+  id: string;
+  email: string;
+  created_at: string;
+  source?: string;
+}
+
 export interface ContactMessage {
   id: string;
   firstname: string;
@@ -35,63 +50,8 @@ export interface ContactMessage {
   email: string;
   phone?: string;
   message: string;
-  date: string;
-  read: boolean;
-  created_at?: string;
-  thread_id?: string;  // Adicionado
-  contact_id?: string; // Adicionado
-}
-
-// Tipos para inscrições de email
-export interface EmailSubscription {
-  id: string;
-  email: string;
-  source?: string;
   created_at: string;
-}
-
-// Tipos para configuração de embed
-export interface EmbedConfig {
-  id?: string;
-  code: string;
-  isActive: boolean;
-  position: 'left' | 'right';
-  buttonColor?: string;
-  buttonIcon?: string;
-}
-
-// Tipos para logs de webhook
-export interface WebhookLog {
-  id: number;
-  url: string;
-  payload: any;
-  status: number;
-  success: boolean;
-  response: string;
-  timestamp: string;
-  type?: string;
-}
-
-// Tipos para webhooks
-export interface Webhook {
-  id: string;
-  name: string;
-  url: string;
-  isActive: boolean;
-  createdAt: string;
-}
-
-// Tipo para configuração de redes sociais
-export interface SocialMediaConfig {
-  url: string;
-  isActive: boolean;
-}
-
-// Tipo para seções da página inicial
-export interface SectionProps {
-  sections: Record<string, string | boolean>;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSwitchChange?: (name: string, checked: boolean) => void;
-  isLoading: boolean;
-  handleSaveSection: (section: string) => void;
+  read: boolean;
+  thread_id?: string;
+  contact_id?: string;
 }

@@ -69,7 +69,7 @@ export async function fetchEmailSubscriptions(): Promise<EmailSubscription[]> {
   }
 }
 
-// Nova função para notificar o webhook quando uma inscrição for adicionada
+// Função para notificar o webhook quando uma inscrição for adicionada
 export async function notifyWebhookEmailSubscription(email: string, source?: string): Promise<boolean> {
   try {
     // Buscar a URL do webhook

@@ -1,19 +1,20 @@
 
 import { ColorTemplate } from "../types";
 import { 
-  fetchColorTemplates as fetchFromDb, 
+  fetchFromDb as fetchColorTemplatesFromDb, 
   saveTemplateToDb, 
   deleteTemplateFromDb 
 } from "./dbOperations";
 import { 
   saveTemplateToLocalStorage, 
-  deleteTemplateFromLocalStorage 
+  deleteTemplateFromLocalStorage,
+  getColorTemplatesFromLocalStorage
 } from "./localStorage";
 import { defaultTemplates } from "../../themes";
 
 // Função para obter templates de cores
 export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
-  return await fetchFromDb();
+  return await fetchColorTemplatesFromDb();
 }
 
 // Função para salvar template de cores (banco e localStorage)
@@ -64,4 +65,4 @@ export async function deleteColorTemplate(templateId: string): Promise<boolean> 
 }
 
 // Reexportar funções para compatibilidade com código existente
-export { getColorTemplatesFromLocalStorage } from './localStorage';
+export { getColorTemplatesFromLocalStorage };
