@@ -17,32 +17,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   bgImage = "/lovable-uploads/8a89a74c-2317-4428-a2e6-c3c27e68ce7c.webp",
   showButtons = true
 }) => {
-  // Função para abrir o chat/botão flutuante quando solicitado
-  const handleOpenChat = (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log('Tentando abrir chat flutuante...');
-    
-    // Procurar pelo botão de chat flutuante e clicar nele
-    const chatButton = document.querySelector('.fixed button[aria-label="Abrir suporte"]') as HTMLButtonElement;
-    if (chatButton) {
-      console.log('Botão de chat flutuante encontrado, clicando...');
-      chatButton.click();
-    } else {
-      console.warn("Botão de chat flutuante não encontrado");
-      
-      // Tentar alternativa - verificar pela classe pulse-btn
-      const pulseButton = document.querySelector('.fixed .pulse-btn') as HTMLButtonElement;
-      if (pulseButton) {
-        console.log('Botão alternativo encontrado, clicando...');
-        pulseButton.click();
-      } else {
-        // Exibir mensagem de erro para o usuário
-        console.error('Chat não está disponível no momento');
-        alert('Chat não está disponível no momento. Por favor, tente novamente mais tarde.');
-      }
-    }
-  };
-
   return (
     <div className="relative overflow-hidden bg-cover bg-center py-28 md:py-36 w-full" style={{ backgroundImage: `url(${bgImage})` }}>
       {/* Overlay escuro */}
@@ -59,11 +33,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 Fale Conosco <ArrowRight className="ml-2 h-5 w-5" />
               </CustomButton>
             </Link>
-            <a href="#" onClick={handleOpenChat}>
+            <Link to="/contato">
               <CustomButton size="lg" variant="secondary" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white hover-float">
                 Contrate a iAdmin
               </CustomButton>
-            </a>
+            </Link>
           </div>
         )}
       </div>

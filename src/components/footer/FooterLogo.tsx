@@ -14,7 +14,8 @@ const FooterLogo: React.FC<FooterLogoProps> = ({ logoUrl, companyName, about }) 
         <img 
           src={logoUrl} 
           alt={`Logo ${companyName}`} 
-          className="h-12" 
+          className="h-auto max-h-16 w-auto object-contain" 
+          style={{ minHeight: '48px' }}
         />
       </div>
       <p className="text-gray-400 mb-4">

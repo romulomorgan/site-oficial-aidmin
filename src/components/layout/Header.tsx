@@ -1,10 +1,27 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CustomButton } from '../ui/CustomButton';
 import { NavigationBar } from '../ui/NavigationBar';
+import { getSiteTexts } from '@/utils/localStorage';
 
 export const Header: React.FC = () => {
+  const [siteTitle, setSiteTitle] = useState('IAdmin');
+  const [logoUrl, setLogoUrl] = useState('');
+
+  useEffect(() => {
+    // Carrega o título do site e a URL do logo do localStorage
+    const siteTexts = getSiteTexts();
+    if (siteTexts.siteTitle) {
+      setSiteTitle(siteTexts.siteTitle);
+      // Também atualizar o título da página
+      document.title = siteTexts.siteTitle;
+    }
+    if (siteTexts.logoUrl) {
+      setLogoUrl(siteTexts.logoUrl);
+    }
+  }, []);
+
   return (
     <header className="items-stretch relative flex min-h-[644px] w-full gap-[57.61px] bg-gradient-to-br from-[#2D0A16] to-[#FF196E] pt-[158px] pb-[120px] px-5 lg:px-[390px] max-md:max-w-full max-md:py-[100px]">
       <NavigationBar />
@@ -24,14 +41,14 @@ export const Header: React.FC = () => {
         </p>
 
         <div className="flex w-full items-stretch gap-[15px] flex-wrap mt-[50px] max-md:max-w-full max-md:mt-10">
-          <Link to="/solucoes">
+          <Link to="/contato">
             <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a1248679ed61fe6b54e693d50e9e1c968633d2bd?placeholderIfAbsent=true">
-              Soluções de AI
+              Fale Conosco
             </CustomButton>
           </Link>
           <Link to="/contato">
             <CustomButton variant="secondary">
-              Contrate uma AI Poderosa!
+              Contrate a IAdmin!
             </CustomButton>
           </Link>
         </div>

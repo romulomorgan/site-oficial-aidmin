@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationBar } from '@/components/ui/NavigationBar';
@@ -9,6 +10,7 @@ import { fetchSiteTexts, fetchTestimonials, fetchFAQs, Testimonial, FAQItem, sav
 import { toast } from 'sonner';
 import YouTube from 'react-youtube';
 import { supabase } from '@/integrations/supabase/client';
+import { sendEmailSubscriptionWebhook } from '@/utils/webhooks';
 
 export default function Index() {
   // Estado para armazenar textos do site
@@ -81,6 +83,25 @@ export default function Index() {
       const success = await saveEmailSubscription(email, 'Página Inicial');
       
       if (success) {
+        // Buscar URL do webhook para enviar a nova inscrição
+        const { data } = await supabase
+          .from('site_texts')
+          .select('content')
+          .eq('key', 'webhookUrl')
+          .single();
+        
+        const webhookUrl = data?.content?.toString();
+        
+        if (webhookUrl) {
+          // Usar a função de webhookSender para enviar a inscrição
+          await sendEmailSubscriptionWebhook(
+            webhookUrl,
+            email,
+            'Página Inicial'
+          );
+          console.log('Enviando email para webhook:', email, webhookUrl);
+        }
+        
         toast.success('E-mail cadastrado com sucesso!');
         setEmail('');
       } else {
