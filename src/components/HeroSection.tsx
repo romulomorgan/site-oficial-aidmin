@@ -34,7 +34,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </CustomButton>
             </Link>
             <Link to="/contato">
-              <CustomButton size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white hover-float">
+              <CustomButton size="lg" variant="secondary" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white hover-float">
                 Contrate a iAdmin
               </CustomButton>
             </Link>
