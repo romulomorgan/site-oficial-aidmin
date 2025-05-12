@@ -14,8 +14,15 @@ const EmbedComponent: React.FC = () => {
   useEffect(() => {
     const loadEmbedConfig = async () => {
       try {
+        console.log('Carregando configuração de embed...');
         const config = await fetchEmbedConfig();
-        setEmbedConfig(config);
+        console.log('Configuração de embed carregada:', config);
+        
+        if (config) {
+          setEmbedConfig(config);
+        } else {
+          console.warn('Nenhuma configuração de embed encontrada');
+        }
         
         // Carregar configurações extras do botão
         const siteTexts = await fetchSiteTexts();
@@ -100,7 +107,7 @@ const EmbedComponent: React.FC = () => {
         <button
           onClick={toggleEmbed}
           style={{ backgroundColor: buttonColor }}
-          className="text-white p-3 rounded-full shadow-lg m-4 hover:bg-opacity-90 transition-all"
+          className="text-white p-3 rounded-full shadow-lg m-4 hover:bg-opacity-90 transition-all pulse-btn"
           aria-label="Abrir suporte"
         >
           {renderButtonIcon()}

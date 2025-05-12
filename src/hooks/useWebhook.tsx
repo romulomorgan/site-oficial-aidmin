@@ -153,16 +153,18 @@ export function useWebhook(options: UseWebhookOptions = {}) {
   };
 
   const sendWebhook = async (url: string, data: any) => {
-    if (!url.trim()) {
+    if (!url || !url.trim()) {
+      console.error('URL de webhook não configurada');
       toast.error('URL de webhook não configurada');
       return false;
     }
 
     setSaving(true);
     try {
+      console.log(`Enviando webhook para ${url} com dados:`, data);
+      
       // Gerar payload com base nos dados fornecidos
       const payload = generateWebhookPayload(data, data.type || 'contact_message');
-      console.log('Enviando para webhook:', payload);
       
       // Enviar payload para o webhook
       const response = await fetch(url, {
@@ -180,6 +182,8 @@ export function useWebhook(options: UseWebhookOptions = {}) {
       } catch (e) {
         responseText = 'Não foi possível obter o conteúdo da resposta';
       }
+      
+      console.log(`Resposta do webhook (status ${response.status}):`, responseText);
       
       // Criar objeto de resultado
       const result = {
@@ -263,12 +267,14 @@ export function useWebhook(options: UseWebhookOptions = {}) {
   };
 
   const sendEmailSubscriptionWebhook = async (url: string, email: string, source: string = 'website') => {
-    if (!url.trim()) {
-      console.log('URL de webhook não configurada para inscrição de email');
+    if (!url || !url.trim()) {
+      console.error('URL de webhook não configurada para inscrição de email');
       return false;
     }
 
     try {
+      console.log(`Enviando inscrição de email para webhook ${url}:`, email);
+      
       const payload = {
         type: 'email_subscription',
         email: email,
@@ -276,8 +282,6 @@ export function useWebhook(options: UseWebhookOptions = {}) {
         date: new Date().toISOString(),
         subscriptionId: `subscription_${Date.now()}`
       };
-
-      console.log('Enviando inscrição para webhook:', payload);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -290,8 +294,10 @@ export function useWebhook(options: UseWebhookOptions = {}) {
       let responseText = '';
       try {
         responseText = await response.text();
+        console.log(`Resposta do webhook (status ${response.status}):`, responseText);
       } catch (e) {
         responseText = 'Não foi possível obter o conteúdo da resposta';
+        console.error('Erro ao ler resposta do webhook:', e);
       }
 
       // Criar objeto de resultado
@@ -323,6 +329,12 @@ export function useWebhook(options: UseWebhookOptions = {}) {
         const webhookLogs = JSON.parse(localStorage.getItem('webhookLogs') || '[]');
         webhookLogs.unshift(result);
         localStorage.setItem('webhookLogs', JSON.stringify(webhookLogs.slice(0, 50)));
+      }
+      
+      if (result.success) {
+        console.log('Webhook de inscrição de email enviado com sucesso');
+      } else {
+        console.error('Falha ao enviar webhook de inscrição de email:', result);
       }
       
       return result.success;

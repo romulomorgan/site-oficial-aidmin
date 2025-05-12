@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 import { CustomButton } from './ui/CustomButton';
 
 interface HeroSectionProps {
@@ -17,6 +17,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   bgImage = "/lovable-uploads/8a89a74c-2317-4428-a2e6-c3c27e68ce7c.webp",
   showButtons = true
 }) => {
+  // Função para abrir o chat/botão flutuante quando solicitado
+  const handleOpenChat = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Procurar pelo botão de chat flutuante e clicar nele
+    const chatButton = document.querySelector('.fixed button[aria-label="Abrir suporte"]') as HTMLButtonElement;
+    if (chatButton) {
+      chatButton.click();
+    } else {
+      console.warn("Botão de chat flutuante não encontrado");
+    }
+  };
+
   return (
     <div className="relative overflow-hidden bg-cover bg-center py-28 md:py-36 w-full" style={{ backgroundImage: `url(${bgImage})` }}>
       {/* Overlay escuro */}
@@ -33,11 +45,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 Fale Conosco <ArrowRight className="ml-2 h-5 w-5" />
               </CustomButton>
             </Link>
-            <Link to="/contato">
+            <a href="#" onClick={handleOpenChat}>
               <CustomButton size="lg" variant="secondary" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white hover-float">
                 Contrate a iAdmin
               </CustomButton>
-            </Link>
+            </a>
           </div>
         )}
       </div>

@@ -8,6 +8,7 @@ import { ArrowRight, Play, CheckCircle } from 'lucide-react';
 import { fetchSiteTexts, fetchTestimonials, fetchFAQs, Testimonial, FAQItem, saveEmailSubscription } from '@/utils/supabaseClient';
 import { toast } from 'sonner';
 import YouTube from 'react-youtube';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Index() {
   // Estado para armazenar textos do site

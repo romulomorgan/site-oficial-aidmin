@@ -39,7 +39,10 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         .maybeSingle();
         
       if (data?.content) {
+        console.log('Webhook URL carregado do banco de dados:', data.content);
         setWebhookUrl(data.content);
+      } else {
+        console.log('Webhook URL não encontrado no banco de dados');
       }
     };
     
@@ -57,6 +60,8 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
     setIsSubmitting(true);
     
     try {
+      console.log('Enviando formulário de contato...');
+      
       // Gerar ID único para esta mensagem (para rastreamento)
       const threadId = `thread_${Date.now()}`;
       const contactId = `contact_${Date.now()}`;
@@ -72,6 +77,9 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
         contactId,
         date: new Date().toISOString()
       };
+      
+      console.log('Dados do formulário:', contactData);
+      console.log('URL do webhook:', webhookUrl);
       
       // Salvar no localStorage para compatibilidade com código legado
       saveContactMessage({
@@ -104,9 +112,14 @@ export function ContactForm({ className = '', isDark = false }: ContactFormProps
       
       // Enviar para webhook se URL estiver configurada
       if (webhookUrl && webhookUrl.trim() !== '') {
-        await sendWebhook(webhookUrl, contactData);
+        console.log('Enviando para webhook:', webhookUrl);
+        const success = await sendWebhook(webhookUrl, contactData);
+        
+        if (!success) {
+          console.warn('Falha ao enviar para webhook, mas mensagem foi salva no banco de dados');
+        }
       } else {
-        console.log('URL de webhook não configurada. Pulando envio.');
+        console.warn('URL de webhook não configurada. Pulando envio de webhook.');
       }
       
       toast.success('Mensagem enviada com sucesso! Entraremos em contato em breve.');
