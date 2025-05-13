@@ -71,7 +71,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
       await addFAQ({
         question: newFaq.question,
         answer: newFaq.answer,
-        active: true // Adicionando a propriedade 'active' que estava faltando
+        active: true
       });
       
       setNewFaq({ question: '', answer: '' });
@@ -93,8 +93,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
     try {
       await updateFAQ(editingFaq.id, {
         question: editingFaq.question,
-        answer: editingFaq.answer,
-        active: editingFaq.active // Garantindo que mantemos o valor de 'active'
+        answer: editingFaq.answer
       });
       
       setEditingFaq(null);

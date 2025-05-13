@@ -3,9 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Trash, Edit } from 'lucide-react';
-import { fetchFAQs, addFAQ, deleteFAQ, updateFAQ } from '@/utils/supabaseClient';
+import { fetchFAQs, addFAQ, deleteFAQ, updateFAQ, FAQItem } from '@/utils/supabaseClient';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { FAQItem } from '@/utils/supabase/types';
 
 export default function FAQ() {
   const [faqItems, setFAQItems] = useState<FAQItem[]>([]);
@@ -13,8 +12,7 @@ export default function FAQ() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newFAQ, setNewFAQ] = useState<Omit<FAQItem, 'id'>>({
     question: '',
-    answer: '',
-    active: true
+    answer: ''
   });
   
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -85,8 +83,7 @@ export default function FAQ() {
       // Resetar formulário
       setNewFAQ({
         question: '',
-        answer: '',
-        active: true
+        answer: ''
       });
     } catch (error) {
       console.error('Erro ao salvar FAQ:', error);
@@ -99,8 +96,7 @@ export default function FAQ() {
   const handleEditFAQ = (faq: FAQItem) => {
     setNewFAQ({
       question: faq.question,
-      answer: faq.answer,
-      active: faq.active
+      answer: faq.answer
     });
     setEditingId(faq.id);
   };
@@ -108,8 +104,7 @@ export default function FAQ() {
   const handleCancelEdit = () => {
     setNewFAQ({
       question: '',
-      answer: '',
-      active: true
+      answer: ''
     });
     setEditingId(null);
   };

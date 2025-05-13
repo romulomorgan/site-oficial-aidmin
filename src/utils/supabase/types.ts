@@ -44,7 +44,7 @@ export interface ContactMessage {
   phone?: string;
   message: string;
   read: boolean;
-  date: string; // Garantindo que date é sempre string
+  date: string | Date;
   thread_id?: string;
   contact_id?: string;
 }
@@ -87,12 +87,12 @@ export interface FAQItem {
   updated_at?: string;
 }
 
-export interface Testimonial {
+export interface TestimonialItem {
   id: string;
   name: string;
   role: string;
   testimonial: string;
-  avatarUrl?: string;
+  avatar_url?: string;
   order_index?: number;
   created_at?: string;
   updated_at?: string;

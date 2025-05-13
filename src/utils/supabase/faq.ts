@@ -7,7 +7,7 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
   try {
     const { data, error } = await supabase
       .from('site_faqs')
-      .select('id, question, answer, active, order_index')
+      .select('id, question, answer')
       .eq('active', true)
       .order('order_index', { ascending: true });
 
@@ -24,7 +24,7 @@ export async function fetchFAQs(): Promise<FAQItem[]> {
     // Atualizar o localStorage para uso offline
     localStorage.setItem('faqs', JSON.stringify(data));
 
-    return data as FAQItem[];
+    return data;
   } catch (error) {
     console.error('Erro ao buscar FAQs:', error);
     return getFAQsFromLocalStorage();
@@ -120,12 +120,7 @@ function getFAQsFromLocalStorage(): FAQItem[] {
   const savedData = localStorage.getItem('faqs');
   if (savedData) {
     try {
-      const parsedData = JSON.parse(savedData);
-      // Garantir que todos os itens tenham a propriedade 'active'
-      return parsedData.map((item: any) => ({
-        ...item,
-        active: item.active !== undefined ? item.active : true
-      }));
+      return JSON.parse(savedData);
     } catch (e) {
       console.error('Erro ao parsear dados de FAQs do localStorage:', e);
     }
@@ -136,20 +131,17 @@ function getFAQsFromLocalStorage(): FAQItem[] {
     {
       id: '1',
       question: 'O que é um assistente de AI?',
-      answer: 'Um assistente de AI é uma solução de software que utiliza inteligência artificial para automatizar tarefas, responder perguntas e auxiliar em diversas atividades do dia a dia.',
-      active: true
+      answer: 'Um assistente de AI é uma solução de software que utiliza inteligência artificial para automatizar tarefas, responder perguntas e auxiliar em diversas atividades do dia a dia.'
     },
     {
       id: '2',
       question: 'Como a AI pode ajudar minha empresa?',
-      answer: 'A AI pode aumentar a eficiência operacional, melhorar o atendimento ao cliente, automatizar tarefas repetitivas, analisar grandes volumes de dados e gerar insights valiosos para a tomada de decisão.',
-      active: true
+      answer: 'A AI pode aumentar a eficiência operacional, melhorar o atendimento ao cliente, automatizar tarefas repetitivas, analisar grandes volumes de dados e gerar insights valiosos para a tomada de decisão.'
     },
     {
       id: '3',
       question: 'Quanto tempo leva para implementar uma solução de AI?',
-      answer: 'O tempo de implementação varia conforme a complexidade da solução. Projetos simples podem ser implementados em semanas, enquanto soluções mais complexas podem levar alguns meses.',
-      active: true
+      answer: 'O tempo de implementação varia conforme a complexidade da solução. Projetos simples podem ser implementados em semanas, enquanto soluções mais complexas podem levar alguns meses.'
     }
   ];
 }

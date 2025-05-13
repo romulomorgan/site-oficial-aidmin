@@ -1,45 +1,26 @@
 
-// Este arquivo funciona como um barrel file exportando tudo dos módulos específicos
+// This file is now a barrel file that exports all the functionality from the supabase modules
 
-export { supabase } from '@/integrations/supabase/client';
+// Export types
+export * from "./supabase/types";
 
-// Re-exportar tipos
-export type { 
-  SiteTexts,
-  FAQItem,
-  Testimonial,
-  ContactMessage,
-  WebhookLog,
-  ColorTemplate,
-  ThemeTemplate
-} from './supabase/types';
+// Export site texts functionality
+export * from "./supabase/siteTexts";
 
-// Re-exportar funções de FAQs
-export {
-  fetchFAQs,
-  addFAQ,
-  updateFAQ,
-  deleteFAQ,
-  getFAQs
-} from './supabase/faq';
+// Export color templates functionality
+export * from "./supabase/templates";
 
-// Re-exportar funções de Testimonials
-export {
-  fetchTestimonials,
-  addTestimonial,
-  updateTestimonial,
-  deleteTestimonial,
-  getTestimonials
-} from './supabase/testimonials';
+// Export testimonials functionality
+export * from "./supabase/testimonials";
 
-// Re-exportar funções de webhooks
-export * from './webhooks/webhookTesting';
-export * from './webhooks/webhookSender';
-export * from './webhooks/webhookLogs';
-export { generateWebhookPayload } from './webhooks';
+// Export FAQs functionality
+export * from "./supabase/faq";
 
-// Re-exportar outras funções conforme necessário
-export * from './supabase/siteTexts';
-export * from './supabase/colorTemplates';
-export * from './supabase/emailSubscriptionService';
-export * from './supabase/embedConfig';
+// Export email subscriptions functionality
+export * from "./supabase/subscriptions";
+
+// Export embed config functionality
+export * from "./supabase/embedConfig";
+
+// Export webhooks functionality
+export * from "./supabase/webhooks";

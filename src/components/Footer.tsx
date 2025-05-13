@@ -17,36 +17,31 @@ const Footer: React.FC = () => {
     const siteTexts = getSiteTexts();
     
     if (siteTexts.copyrightText) {
-      setCopyrightText(String(siteTexts.copyrightText));
+      setCopyrightText(siteTexts.copyrightText);
     }
     
     if (siteTexts.showNewsletter !== undefined) {
-      // Converter para boolean de forma segura
-      const showNewsletterValue = 
-        typeof siteTexts.showNewsletter === 'boolean' 
-          ? siteTexts.showNewsletter 
-          : siteTexts.showNewsletter === "true";
-      setShowNewsletter(showNewsletterValue);
+      setShowNewsletter(siteTexts.showNewsletter === "true" || siteTexts.showNewsletter === true);
     }
     
     if (siteTexts.siteTitle) {
-      setSiteTitle(String(siteTexts.siteTitle));
+      setSiteTitle(siteTexts.siteTitle);
     }
     
     if (siteTexts.contactEmail) {
-      setContactEmail(String(siteTexts.contactEmail));
+      setContactEmail(siteTexts.contactEmail);
     }
     
     if (siteTexts.contactPhone) {
-      setContactPhone(String(siteTexts.contactPhone));
+      setContactPhone(siteTexts.contactPhone);
     }
     
     if (siteTexts.contactAddress) {
-      setContactAddress(String(siteTexts.contactAddress));
+      setContactAddress(siteTexts.contactAddress);
     }
     
     if (siteTexts.logoUrl) {
-      setLogoUrl(String(siteTexts.logoUrl));
+      setLogoUrl(siteTexts.logoUrl);
     }
   }, []);
 

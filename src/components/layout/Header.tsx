@@ -1,118 +1,100 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { CustomButton } from '../ui/CustomButton';
+import { NavigationBar } from '../ui/NavigationBar';
 import { getSiteTexts } from '@/utils/localStorage';
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
   const [siteTitle, setSiteTitle] = useState('IAdmin');
   const [logoUrl, setLogoUrl] = useState('');
-  const [navbarBg, setNavbarBg] = useState('bg-transparent');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [primaryButtonText, setPrimaryButtonText] = useState('Contato');
-  const [primaryButtonUrl, setPrimaryButtonUrl] = useState('/contato');
+  const [homeLogoIconUrl, setHomeLogoIconUrl] = useState('');
+  const [heroButtonText, setHeroButtonText] = useState('Fale Conosco');
+  const [heroButtonLink, setHeroButtonLink] = useState('/contato');
+  const [heroSecondaryButtonText, setHeroSecondaryButtonText] = useState('Contrate a IAdmin!');
+  const [heroSecondaryButtonLink, setHeroSecondaryButtonLink] = useState('/contato');
 
   useEffect(() => {
+    // Carrega o título do site, a URL do logo e dados dos botões do localStorage
     const siteTexts = getSiteTexts();
-    
     if (siteTexts.siteTitle) {
-      setSiteTitle(String(siteTexts.siteTitle));
+      setSiteTitle(siteTexts.siteTitle);
+      // Também atualizar o título da página
+      document.title = siteTexts.siteTitle;
     }
-    
     if (siteTexts.logoUrl) {
-      setLogoUrl(String(siteTexts.logoUrl));
+      setLogoUrl(siteTexts.logoUrl);
+    }
+    if (siteTexts.homeLogoIconUrl && typeof siteTexts.homeLogoIconUrl === 'string') {
+      setHomeLogoIconUrl(siteTexts.homeLogoIconUrl);
     }
     
-    if (siteTexts.navbarBg) {
-      setNavbarBg(String(siteTexts.navbarBg));
+    // Carregar textos e links dos botões
+    if (siteTexts.heroButtonText) {
+      setHeroButtonText(siteTexts.heroButtonText);
     }
-    
-    if (siteTexts.primaryButtonText) {
-      setPrimaryButtonText(String(siteTexts.primaryButtonText));
+    if (siteTexts.heroButtonLink) {
+      setHeroButtonLink(siteTexts.heroButtonLink);
     }
-    
-    if (siteTexts.primaryButtonUrl) {
-      setPrimaryButtonUrl(String(siteTexts.primaryButtonUrl));
+    if (siteTexts.heroSecondaryButtonText) {
+      setHeroSecondaryButtonText(siteTexts.heroSecondaryButtonText);
+    }
+    if (siteTexts.heroSecondaryButtonLink) {
+      setHeroSecondaryButtonLink(siteTexts.heroSecondaryButtonLink);
     }
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all ${navbarBg}`}>
-      <div className="container mx-auto px-4 py-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          {logoUrl ? (
-            <img 
-              src={logoUrl} 
-              alt={siteTitle} 
-              className="w-10 h-10 object-contain"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-primary-color rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">I</span>
-            </div>
-          )}
-          <span className="text-primary-color text-2xl font-bold">{siteTitle}</span>
-        </Link>
+    <header className="items-stretch relative flex min-h-[644px] w-full gap-[57.61px] bg-gradient-to-br from-[#2D0A16] to-[#FF196E] pt-[158px] pb-[120px] px-5 lg:px-[390px] max-md:max-w-full max-md:py-[100px]">
+      <NavigationBar />
+      
+      <div className="absolute z-0 inset-0 bg-[url('/lovable-uploads/9f855b72-1dc3-430d-a32c-5f078ffca423.png')] bg-cover bg-center opacity-30 mix-blend-overlay"></div>
 
-        <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-white hover:text-primary-color transition-colors">
-            Home
-          </Link>
-          <Link to="/solucoes" className="text-white hover:text-primary-color transition-colors">
-            Soluções
-          </Link>
-          <Link to="/contato" className="text-white hover:text-primary-color transition-colors">
-            Contato
-          </Link>
-          <Link
-            to={primaryButtonUrl}
-            className="bg-primary-color hover:bg-primary-color/90 text-white py-2 px-4 rounded-md transition-colors"
-          >
-            {primaryButtonText}
-          </Link>
-        </nav>
+      <div className="max-w-[524.4px] z-10 min-w-60 w-full lg:w-[524px] max-md:max-w-full">
+        <h1 className="text-[56px] font-semibold leading-[73px] z-10 text-white pr-[104px] pb-px max-md:max-w-full max-md:text-[40px] max-md:leading-[58px] max-md:pr-5">
+          Destrave a<br />
+          fronteira da<br />
+          produtividade.
+        </h1>
+        
+        <p className="text-white text-lg font-normal leading-[27.9px] mt-6">
+          Exploramos os limites da <strong>AI Generativa</strong> para criar novos
+          produtos, avenidas de receitas e gerar eficiência operacional.
+        </p>
 
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden text-white focus:outline-none"
-          aria-label="Menu"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
+        <div className="flex w-full items-stretch gap-[15px] flex-wrap mt-[50px] max-md:max-w-full max-md:mt-10">
+          <Link to={heroButtonLink}>
+            <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a1248679ed61fe6b54e693d50e9e1c968633d2bd?placeholderIfAbsent=true">
+              {heroButtonText}
+            </CustomButton>
+          </Link>
+          <Link to={heroSecondaryButtonLink}>
+            <CustomButton variant="secondary">
+              {heroSecondaryButtonText}
+            </CustomButton>
+          </Link>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div className={`fixed top-0 right-0 h-full w-64 bg-secondary-color p-4 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out z-50 md:hidden`}>
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={() => setIsMenuOpen(false)}
-            className="text-white focus:outline-none"
-            aria-label="Close Menu"
-          >
-            <X className="h-6 w-6" />
-          </button>
+      <div className="relative z-10 min-w-60 w-[558px] my-auto rounded-lg max-md:max-w-full max-md:mt-10">
+        <div className="relative aspect-video w-full">
+          <img
+            src="/lovable-uploads/9f855b72-1dc3-430d-a32c-5f078ffca423.png"
+            alt="Demo video thumbnail"
+            className="absolute inset-0 w-full h-full object-cover rounded-lg"
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <a 
+              href="https://youtu.be/fWzFvNAkHuQ" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all"
+            >
+              <img src="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/91494e930bb0aaf5b5e948f35b371af07ffce75a?placeholderIfAbsent=true" alt="Play" className="w-10 h-10" />
+            </a>
+          </div>
         </div>
-        <nav className="flex flex-col space-y-4">
-          <Link to="/" className="text-white hover:text-primary-color transition-colors block" onClick={() => setIsMenuOpen(false)}>
-            Home
-          </Link>
-          <Link to="/solucoes" className="text-white hover:text-primary-color transition-colors block" onClick={() => setIsMenuOpen(false)}>
-            Soluções
-          </Link>
-          <Link to="/contato" className="text-white hover:text-primary-color transition-colors block" onClick={() => setIsMenuOpen(false)}>
-            Contato
-          </Link>
-          <Link
-            to={primaryButtonUrl}
-            className="bg-primary-color hover:bg-primary-color/90 text-white py-2 px-4 rounded-md transition-colors block"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            {primaryButtonText}
-          </Link>
-        </nav>
       </div>
     </header>
   );
 };
-
-export default Header;
