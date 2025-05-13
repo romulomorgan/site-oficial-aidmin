@@ -7,7 +7,7 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
   try {
     const { data, error } = await supabase
       .from('site_testimonials')
-      .select('id, name, role, testimonial, avatar_url')
+      .select('id, name, role, testimonial, avatar_url, order_index')
       .order('order_index', { ascending: true });
 
     if (error) {
@@ -26,8 +26,9 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
       name: item.name,
       role: item.role,
       testimonial: item.testimonial,
-      avatarUrl: item.avatar_url || 'https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true'
-    }));
+      avatarUrl: item.avatar_url || 'https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/99958c2062e54bcd396af977cf7591eddd0afa70?placeholderIfAbsent=true',
+      order_index: item.order_index
+    })) as Testimonial[];
 
     // Atualizar o localStorage para uso offline
     localStorage.setItem('testimonials', JSON.stringify(testimonials));
@@ -131,7 +132,7 @@ function getTestimonialsFromLocalStorage(): Testimonial[] {
   const savedData = localStorage.getItem('testimonials');
   if (savedData) {
     try {
-      return JSON.parse(savedData);
+      return JSON.parse(savedData) as Testimonial[];
     } catch (e) {
       console.error('Erro ao parsear dados de depoimentos do localStorage:', e);
     }

@@ -12,7 +12,8 @@ export default function FAQ() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newFAQ, setNewFAQ] = useState<Omit<FAQItem, 'id'>>({
     question: '',
-    answer: ''
+    answer: '',
+    active: true
   });
   
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -83,7 +84,8 @@ export default function FAQ() {
       // Resetar formulário
       setNewFAQ({
         question: '',
-        answer: ''
+        answer: '',
+        active: true
       });
     } catch (error) {
       console.error('Erro ao salvar FAQ:', error);
@@ -96,7 +98,8 @@ export default function FAQ() {
   const handleEditFAQ = (faq: FAQItem) => {
     setNewFAQ({
       question: faq.question,
-      answer: faq.answer
+      answer: faq.answer,
+      active: faq.active
     });
     setEditingId(faq.id);
   };
@@ -104,7 +107,8 @@ export default function FAQ() {
   const handleCancelEdit = () => {
     setNewFAQ({
       question: '',
-      answer: ''
+      answer: '',
+      active: true
     });
     setEditingId(null);
   };
