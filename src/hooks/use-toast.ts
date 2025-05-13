@@ -22,8 +22,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           success:
             "group-[.toaster]:bg-green-50 group-[.toaster]:text-green-900 group-[.toaster]:border-green-200",
           warning:
-            "group-[.toaster]:bg-yellow-50 group-[.toaster]:text-yellow-900 group-[.toaster]:border-yellow-200",
-        },
+            "group-[.toaster]:bg-yellow-50 group-[.toaster]:text-yellow-900 group-[.toaster]:border-yellow-200"
+        }
       }}
       expand={false}
       duration={3000}
@@ -96,7 +96,7 @@ export const useToast = () => {
     error: showError,
     success: showSuccess,
     warning: showWarning,
-    info: showInfo,
+    info: showInfo
   };
 };
 
