@@ -31,7 +31,7 @@ export default function PageSections() {
   }
 
   return (
-    <div className="animate-fade-in w-full max-w-full">
+    <div className="animate-fade-in w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Seções de Páginas</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

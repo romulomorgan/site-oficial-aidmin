@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -94,13 +93,17 @@ export default function SiteSettings() {
         }
         
         // Carregar logs de webhook
-        try {
-          const logs = await getWebhookLogs();
-          setWebhookLogs(logs);
-        } catch (error) {
-          console.error('Erro ao carregar logs de webhook:', error);
-          setWebhookLogs([]);
-        }
+        const loadWebhookLogs = async () => {
+          try {
+            const logs = await getWebhookLogs();
+            setWebhookLogs(logs);
+          } catch (error) {
+            console.error('Erro ao carregar logs de webhook:', error);
+            setWebhookLogs([]);
+          }
+        };
+        
+        loadWebhookLogs();
       } catch (error) {
         console.error('Erro ao carregar dados do site:', error);
         toast.error('Erro ao carregar configurações do site');
@@ -240,7 +243,7 @@ export default function SiteSettings() {
   }
 
   return (
-    <div className="w-full max-w-full">
+    <div className="w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Configurações do Site</h1>
       
       <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} className="bg-white rounded-lg shadow-sm w-full">

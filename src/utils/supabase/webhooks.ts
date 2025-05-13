@@ -1,15 +1,14 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { WebhookLog } from "./types";
 
-// Buscar logs de webhooks
-export async function getWebhookLogs(limit = 50): Promise<WebhookLog[]> {
+// Função para obter logs de webhooks
+export async function getWebhookLogs(): Promise<any[]> {
   try {
     const { data, error } = await supabase
       .from('webhook_logs')
       .select('*')
       .order('timestamp', { ascending: false })
-      .limit(limit);
+      .limit(50);
     
     if (error) {
       console.error('Erro ao buscar logs de webhook:', error);
@@ -23,89 +22,116 @@ export async function getWebhookLogs(limit = 50): Promise<WebhookLog[]> {
   }
 }
 
-// Gerar payload para webhook
-export function generateWebhookPayload(data: any, type = 'contact_message'): any {
-  return {
-    type,
-    data,
-    timestamp: new Date().toISOString()
+// Função para gerar payload padrão para webhooks
+export function generateWebhookPayload(data: any, type: string = 'contact_message'): any {
+  // Cria uma cópia do objeto para não modificar o original
+  const payload = {
+    type: type,
+    ...data,
+    timestamp: new Date().toISOString(),
   };
+
+  // Mapear campos específicos dependendo do tipo
+  if (type === 'contact_message') {
+    return {
+      type: type,
+      firstName: data.firstName || data.firstname || '',
+      lastName: data.lastName || data.lastname || '',
+      email: data.email || '',
+      phone: data.phone || '',
+      message: data.message || '',
+      date: data.date || new Date().toISOString(),
+      threadId: data.threadId || data.thread_id || `thread_${Date.now()}`,
+      contactId: data.contactId || data.contact_id || `contact_${Date.now()}`
+    };
+  } else if (type === 'reply') {
+    return {
+      type: type,
+      to: data.to || '',
+      from: data.from || "noreply@iadmin.com",
+      subject: data.subject || '',
+      message: data.message || '',
+      contactData: data.contactData || {},
+      date: data.date || new Date().toISOString(),
+      threadId: data.threadId || data.thread_id || '',
+      contactId: data.contactId || data.contact_id || ''
+    };
+  } else if (type === 'email_subscription') {
+    return {
+      type: type,
+      email: data.email || '',
+      source: data.source || 'website',
+      date: data.date || new Date().toISOString(),
+      subscriptionId: data.subscriptionId || `subscription_${Date.now()}`
+    };
+  } else {
+    // Para outros tipos, retorna o payload enriquecido
+    return payload;
+  }
 }
 
-// Enviar webhook
-export async function sendWebhook(url: string, data: any, type = 'contact_message'): Promise<WebhookLog> {
-  const payload = generateWebhookPayload(data, type);
-  
+// Função para testar uma URL de webhook
+export async function testWebhook(url: string): Promise<boolean> {
   try {
+    // Criar payload de teste
+    const testPayload = {
+      type: 'test',
+      message: 'Este é um teste de webhook',
+      timestamp: new Date().toISOString()
+    };
+    
+    // Enviar requisição de teste
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(testPayload)
     });
     
-    const responseText = await response.text();
-    const success = response.ok;
+    // Verificar resposta
+    const success = response.status >= 200 && response.status < 300;
     
-    // Salvar log no banco de dados
-    const { data: logData, error } = await supabase
-      .from('webhook_logs')
-      .insert([
-        {
+    // Salvar log do teste
+    try {
+      const responseText = await response.text();
+      
+      await supabase
+        .from('webhook_logs')
+        .insert([{
           url,
-          payload,
-          response: responseText,
+          payload: JSON.stringify(testPayload),
           status: response.status,
           success,
-          type
-        }
-      ])
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Erro ao salvar log de webhook:', error);
+          response: responseText,
+          timestamp: new Date().toISOString(),
+          type: 'test'
+        }]);
+    } catch (e) {
+      console.error('Erro ao salvar log de teste no banco de dados:', e);
     }
     
-    return {
-      id: logData?.id || 0,
-      url,
-      payload,
-      response: responseText,
-      status: response.status,
-      success,
-      timestamp: new Date().toISOString(),
-      type
-    };
+    return success;
   } catch (error) {
-    console.error('Erro ao enviar webhook:', error);
+    console.error('Erro ao testar webhook:', error);
     
-    // Salvar log de erro no banco de dados
-    const { data: logData } = await supabase
-      .from('webhook_logs')
-      .insert([
-        {
+    // Salvar log do erro
+    try {
+      await supabase
+        .from('webhook_logs')
+        .insert([{
           url,
-          payload,
-          response: error instanceof Error ? error.message : 'Erro desconhecido',
+          payload: JSON.stringify({ type: 'test' }),
           status: 0,
           success: false,
-          type
-        }
-      ])
-      .select()
-      .single();
+          response: error instanceof Error ? error.message : 'Erro desconhecido',
+          timestamp: new Date().toISOString(),
+          type: 'test'
+        }]);
+    } catch (e) {
+      console.error('Erro ao salvar log de erro no banco de dados:', e);
+    }
     
-    return {
-      id: logData?.id || 0,
-      url,
-      payload,
-      response: error instanceof Error ? error.message : 'Erro desconhecido',
-      status: 0,
-      success: false,
-      timestamp: new Date().toISOString(),
-      type
-    };
+    return false;
   }
 }

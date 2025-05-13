@@ -9,13 +9,9 @@ export const Header: React.FC = () => {
   const [siteTitle, setSiteTitle] = useState('IAdmin');
   const [logoUrl, setLogoUrl] = useState('');
   const [homeLogoIconUrl, setHomeLogoIconUrl] = useState('');
-  const [heroButtonText, setHeroButtonText] = useState('Fale Conosco');
-  const [heroButtonLink, setHeroButtonLink] = useState('/contato');
-  const [heroSecondaryButtonText, setHeroSecondaryButtonText] = useState('Contrate a IAdmin!');
-  const [heroSecondaryButtonLink, setHeroSecondaryButtonLink] = useState('/contato');
 
   useEffect(() => {
-    // Carrega o título do site, a URL do logo e dados dos botões do localStorage
+    // Carrega o título do site e a URL do logo do localStorage
     const siteTexts = getSiteTexts();
     if (siteTexts.siteTitle) {
       setSiteTitle(siteTexts.siteTitle);
@@ -27,20 +23,6 @@ export const Header: React.FC = () => {
     }
     if (siteTexts.homeLogoIconUrl && typeof siteTexts.homeLogoIconUrl === 'string') {
       setHomeLogoIconUrl(siteTexts.homeLogoIconUrl);
-    }
-    
-    // Carregar textos e links dos botões
-    if (siteTexts.heroButtonText) {
-      setHeroButtonText(siteTexts.heroButtonText);
-    }
-    if (siteTexts.heroButtonLink) {
-      setHeroButtonLink(siteTexts.heroButtonLink);
-    }
-    if (siteTexts.heroSecondaryButtonText) {
-      setHeroSecondaryButtonText(siteTexts.heroSecondaryButtonText);
-    }
-    if (siteTexts.heroSecondaryButtonLink) {
-      setHeroSecondaryButtonLink(siteTexts.heroSecondaryButtonLink);
     }
   }, []);
 
@@ -63,14 +45,14 @@ export const Header: React.FC = () => {
         </p>
 
         <div className="flex w-full items-stretch gap-[15px] flex-wrap mt-[50px] max-md:max-w-full max-md:mt-10">
-          <Link to={heroButtonLink}>
+          <Link to="/contato">
             <CustomButton variant="primary" icon="https://cdn.builder.io/api/v1/image/assets/1c07b1cd58224b228ea174fbb56360aa/a1248679ed61fe6b54e693d50e9e1c968633d2bd?placeholderIfAbsent=true">
-              {heroButtonText}
+              Fale Conosco
             </CustomButton>
           </Link>
-          <Link to={heroSecondaryButtonLink}>
+          <Link to="/contato">
             <CustomButton variant="secondary">
-              {heroSecondaryButtonText}
+              Contrate a IAdmin!
             </CustomButton>
           </Link>
         </div>
