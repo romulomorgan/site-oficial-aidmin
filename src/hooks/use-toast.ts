@@ -90,7 +90,7 @@ export const useToast = () => {
   };
 
   const showInfo = (message: string, options: UseToastOptions = {}) => {
-    return toast.info(message);
+    return toast.info(message, options);
   };
 
   return {
