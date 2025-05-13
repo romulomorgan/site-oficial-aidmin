@@ -2,79 +2,102 @@
 import { supabase } from "@/integrations/supabase/client";
 import { FAQItem } from "./types";
 
-// Função para buscar FAQs do Supabase
+// Função para buscar todas as FAQs
 export async function fetchFAQs(): Promise<FAQItem[]> {
   try {
     const { data, error } = await supabase
       .from('site_faqs')
-      .select('id, question, answer')
-      .eq('active', true)
+      .select('*')
       .order('order_index', { ascending: true });
-
+    
     if (error) {
-      console.error('Erro ao buscar FAQs:', error);
-      return getFAQsFromLocalStorage();
+      console.error('Erro ao carregar FAQs:', error);
+      return [];
     }
-
-    if (!data || data.length === 0) {
-      console.warn('Nenhuma FAQ encontrada, usando localStorage');
-      return getFAQsFromLocalStorage();
-    }
-
-    // Atualizar o localStorage para uso offline
-    localStorage.setItem('faqs', JSON.stringify(data));
-
-    return data;
+    
+    // Mapear dados para o formato FAQItem
+    const faqs: FAQItem[] = data.map(item => ({
+      id: item.id,
+      question: item.question,
+      answer: item.answer,
+      order: item.order_index || 0,
+      active: item.active
+    }));
+    
+    return faqs;
   } catch (error) {
     console.error('Erro ao buscar FAQs:', error);
-    return getFAQsFromLocalStorage();
+    return [];
   }
 }
 
 // Função para adicionar uma nova FAQ
-export async function addFAQ(faq: Omit<FAQItem, 'id'>): Promise<boolean> {
+export async function addFAQ(faqData: Omit<FAQItem, "id">): Promise<string | null> {
   try {
-    console.log('Adicionando FAQ:', faq);
-    const { error } = await supabase
+    // Verificar se a FAQ já existe
+    const { data: existingFaq } = await supabase
       .from('site_faqs')
-      .insert({
-        question: faq.question,
-        answer: faq.answer,
-        active: faq.active !== undefined ? faq.active : true,
-        order_index: await getNextOrderIndex()
-      });
-
-    if (error) {
-      console.error('Erro ao adicionar FAQ:', error);
-      throw error;
+      .select('id')
+      .eq('question', faqData.question)
+      .maybeSingle();
+    
+    if (existingFaq) {
+      console.error('FAQ com esta pergunta já existe');
+      return null;
     }
-    return true;
+    
+    // Criar nova FAQ
+    const { data, error } = await supabase
+      .from('site_faqs')
+      .insert([{ 
+        question: faqData.question,
+        answer: faqData.answer,
+        order_index: faqData.order,
+        active: faqData.active !== undefined ? faqData.active : true
+      }])
+      .select();
+    
+    if (error) {
+      console.error('Erro ao criar FAQ:', error);
+      return null;
+    }
+    
+    if (data && data.length > 0) {
+      console.log('FAQ criada com sucesso:', data[0].id);
+      return data[0].id;
+    }
+    
+    return null;
   } catch (error) {
     console.error('Erro ao adicionar FAQ:', error);
-    return false;
+    return null;
   }
 }
 
 // Função para atualizar uma FAQ existente
-export async function updateFAQ(id: string, faq: Omit<FAQItem, 'id'>): Promise<boolean> {
+export async function updateFAQ(id: string, faqData: Partial<Omit<FAQItem, "id">>): Promise<boolean> {
   try {
-    console.log('Atualizando FAQ:', id, faq);
+    const updateData: any = {};
+    
+    if (faqData.question !== undefined) updateData.question = faqData.question;
+    if (faqData.answer !== undefined) updateData.answer = faqData.answer;
+    if (faqData.order !== undefined) updateData.order_index = faqData.order;
+    if (faqData.active !== undefined) updateData.active = faqData.active;
+    
     const { error } = await supabase
       .from('site_faqs')
-      .update({
-        question: faq.question,
-        answer: faq.answer,
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('id', id);
-
+    
     if (error) {
-      console.error('Erro ao atualizar FAQ:', error);
-      throw error;
+      console.error(`Erro ao atualizar FAQ ${id}:`, error);
+      return false;
     }
+    
+    console.log(`FAQ ${id} atualizada com sucesso`);
     return true;
   } catch (error) {
-    console.error('Erro ao atualizar FAQ:', error);
+    console.error(`Erro ao atualizar FAQ ${id}:`, error);
     return false;
   }
 }
@@ -86,73 +109,43 @@ export async function deleteFAQ(id: string): Promise<boolean> {
       .from('site_faqs')
       .delete()
       .eq('id', id);
-
+    
     if (error) {
-      console.error('Erro ao excluir FAQ:', error);
-      throw error;
+      console.error(`Erro ao excluir FAQ ${id}:`, error);
+      return false;
     }
+    
+    console.log(`FAQ ${id} excluída com sucesso`);
     return true;
   } catch (error) {
-    console.error('Erro ao excluir FAQ:', error);
+    console.error(`Erro ao excluir FAQ ${id}:`, error);
     return false;
   }
 }
 
-// Função auxiliar para obter o próximo índice de ordenação
-async function getNextOrderIndex(): Promise<number> {
+// Função para reordenar FAQs
+export async function reorderFAQs(orderedIds: string[]): Promise<boolean> {
   try {
-    const { data, error } = await supabase
+    // Preparar atualizações em lote
+    const updates = orderedIds.map((id, index) => ({
+      id,
+      order_index: index + 1
+    }));
+    
+    // Executar atualizações em lote
+    const { error } = await supabase
       .from('site_faqs')
-      .select('order_index')
-      .order('order_index', { ascending: false })
-      .limit(1);
-
-    if (error || !data || data.length === 0) return 0;
-    return (data[0].order_index || 0) + 1;
+      .upsert(updates);
+    
+    if (error) {
+      console.error('Erro ao reordenar FAQs:', error);
+      return false;
+    }
+    
+    console.log('FAQs reordenadas com sucesso');
+    return true;
   } catch (error) {
-    console.error('Erro ao obter próximo índice para FAQ:', error);
-    return 0;
+    console.error('Erro ao reordenar FAQs:', error);
+    return false;
   }
 }
-
-// Função para obter FAQs do localStorage (fallback)
-function getFAQsFromLocalStorage(): FAQItem[] {
-  const savedData = localStorage.getItem('faqs');
-  if (savedData) {
-    try {
-      return JSON.parse(savedData);
-    } catch (e) {
-      console.error('Erro ao parsear dados de FAQs do localStorage:', e);
-    }
-  }
-  
-  // Retornar dados padrão caso não haja dados no localStorage
-  return [
-    {
-      id: '1',
-      question: 'O que é um assistente de AI?',
-      answer: 'Um assistente de AI é uma solução de software que utiliza inteligência artificial para automatizar tarefas, responder perguntas e auxiliar em diversas atividades do dia a dia.'
-    },
-    {
-      id: '2',
-      question: 'Como a AI pode ajudar minha empresa?',
-      answer: 'A AI pode aumentar a eficiência operacional, melhorar o atendimento ao cliente, automatizar tarefas repetitivas, analisar grandes volumes de dados e gerar insights valiosos para a tomada de decisão.'
-    },
-    {
-      id: '3',
-      question: 'Quanto tempo leva para implementar uma solução de AI?',
-      answer: 'O tempo de implementação varia conforme a complexidade da solução. Projetos simples podem ser implementados em semanas, enquanto soluções mais complexas podem levar alguns meses.'
-    }
-  ];
-}
-
-// Função para uso síncrono que busca do localStorage e inicia carregamento do Supabase
-export const getFAQs = (): FAQItem[] => {
-  // Inicia o carregamento assíncrono para atualizar o localStorage posteriormente
-  fetchFAQs().catch(err => {
-    console.error("Erro ao sincronizar FAQs com Supabase:", err);
-  });
-  
-  // Retorna os dados do localStorage imediatamente
-  return getFAQsFromLocalStorage();
-};

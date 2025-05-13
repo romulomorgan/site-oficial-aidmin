@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { fetchFAQs, addFAQ, updateFAQ, deleteFAQ } from '@/utils/supabaseClient';
 import { PlusCircle, Edit, Trash, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { FAQItem } from '@/utils/supabase/types';
+import { FAQItem, SectionProps } from '@/utils/supabase/types';
 
 interface FAQSectionProps {
   sections: Record<string, string | boolean>;
@@ -13,7 +12,7 @@ interface FAQSectionProps {
   handleSaveSection: (section: string) => void;
 }
 
-const FAQSection: React.FC<FAQSectionProps> = ({ 
+const FAQSection: React.FC<SectionProps> = ({ 
   sections, 
   handleInputChange, 
   isLoading, 
@@ -71,6 +70,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
       await addFAQ({
         question: newFaq.question,
         answer: newFaq.answer,
+        order: faqs.length + 1,
         active: true
       });
       
@@ -93,7 +93,8 @@ const FAQSection: React.FC<FAQSectionProps> = ({
     try {
       await updateFAQ(editingFaq.id, {
         question: editingFaq.question,
-        answer: editingFaq.answer
+        answer: editingFaq.answer,
+        order: editingFaq.order
       });
       
       setEditingFaq(null);

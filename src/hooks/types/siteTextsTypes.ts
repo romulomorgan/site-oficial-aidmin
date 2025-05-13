@@ -36,6 +36,17 @@ export interface SiteTextsState {
   solucao5Description: string;
   solucao5Image: string;
   solucao5Layout: string;
+
+  // Footer properties
+  footerDescription: string;
+  footerEmail: string;
+  footerPhone: string;
+  footerAddress: string;
+  facebookUrl: string;
+  twitterUrl: string;
+  instagramUrl: string;
+  linkedinUrl: string;
+  copyrightText: string;
 }
 
 export interface ThemeColors {

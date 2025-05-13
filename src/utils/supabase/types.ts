@@ -24,6 +24,7 @@ export interface FAQItem {
   question: string;
   answer: string;
   order: number;
+  active?: boolean;
 }
 
 export interface Testimonial {
@@ -36,12 +37,18 @@ export interface Testimonial {
 
 export interface ContactMessage {
   id: string;
-  name: string;
+  name?: string;
+  firstname: string;
+  lastname?: string;
   email: string;
   phone?: string;
   message: string;
   created_at: string;
-  replied: boolean;
+  date: string;
+  replied?: boolean;
+  read: boolean;
+  contact_id?: string;
+  thread_id?: string;
 }
 
 export interface EmbedConfig {
@@ -51,10 +58,28 @@ export interface EmbedConfig {
 }
 
 export interface WebhookLog {
-  id: string;
+  id: string | number;
   webhook_url: string;
+  url?: string;
   payload: any;
-  response_status: number;
-  response_body: string;
+  response?: string;
+  response_status?: number;
+  status?: number;
+  response_body?: string;
   created_at: string;
+  timestamp?: string;
+  success?: boolean;
+  type?: string;
+}
+
+export interface SectionProps {
+  sections: Record<string, string | boolean>;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSwitchChange?: (key: string, value: boolean) => void;
+  isLoading: boolean;
+  handleSaveSection: (section: string) => void;
+}
+
+export interface SiteTexts {
+  [key: string]: string | boolean | undefined;
 }
