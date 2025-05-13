@@ -35,6 +35,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
 export { Toaster };
 
+// Define window.toast for TypeScript
+declare global {
+  interface Window {
+    toast: {
+      (message: string, options?: any): void;
+      error: (message: string, options?: any) => void;
+      success: (message: string, options?: any) => void;
+      warning: (message: string, options?: any) => void;
+      info: (message: string, options?: any) => void;
+    };
+  }
+}
+
 export const toast = (message: string) => {
   return window.toast(message);
 };
@@ -51,10 +64,8 @@ toast.warning = (message: string) => {
   return window.toast.warning(message);
 };
 
-toast.info = (message: string) => {
-  return window.toast.info(message, {
-    duration: 3000,
-  });
+toast.info = (message: string, options = { duration: 3000 }) => {
+  return window.toast.info(message, options);
 };
 
 interface UseToastOptions {
