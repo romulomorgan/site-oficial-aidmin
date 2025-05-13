@@ -13,6 +13,7 @@ export interface ColorTemplate {
   textColor: string;
   buttonTextColor?: string;
   menuTextColor?: string;
+  is_default?: boolean;  // Adicionando a propriedade is_default que estava faltando
 }
 
 export interface EmbedConfig {
