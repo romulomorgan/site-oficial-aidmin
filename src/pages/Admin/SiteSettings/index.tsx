@@ -61,6 +61,7 @@ export default function SiteSettings() {
         const colorTemplates = await fetchColorTemplates();
         if (colorTemplates.length > 0) {
           setTemplates(colorTemplates);
+          console.log('Templates carregados do banco:', colorTemplates.length);
         }
         
         // Carregar textos do site
@@ -90,6 +91,7 @@ export default function SiteSettings() {
         const savedSelectedTemplate = localStorage.getItem('selectedTemplate');
         if (savedSelectedTemplate) {
           setSelectedTemplate(savedSelectedTemplate);
+          console.log('Template selecionado carregado:', savedSelectedTemplate);
         }
         
         // Carregar logs de webhook
@@ -121,6 +123,29 @@ export default function SiteSettings() {
     try {
       // Salvar template selecionado
       localStorage.setItem('selectedTemplate', selectedTemplate);
+      console.log('Template selecionado salvo:', selectedTemplate);
+      
+      // Aplicar o template selecionado imediatamente
+      if (templates.length > 0) {
+        const selectedTemplateObj = templates.find(t => t.id === selectedTemplate);
+        if (selectedTemplateObj) {
+          const colorVars = {
+            '--primary-color': selectedTemplateObj.primaryColor,
+            '--secondary-color': selectedTemplateObj.secondaryColor,
+            '--accent-color': selectedTemplateObj.accentColor,
+            '--background-color': selectedTemplateObj.backgroundColor,
+            '--text-color': selectedTemplateObj.textColor,
+            '--button-text-color': selectedTemplateObj.buttonTextColor || '#FFFFFF',
+            '--menu-text-color': selectedTemplateObj.menuTextColor || '#FFFFFF'
+          };
+          
+          // Aplicar em ambos document.documentElement e document.body
+          Object.entries(colorVars).forEach(([key, value]) => {
+            document.documentElement.style.setProperty(key, value);
+            document.body.style.setProperty(key, value);
+          });
+        }
+      }
       
       // Salvar textos do site
       await Promise.all([
@@ -143,9 +168,16 @@ export default function SiteSettings() {
       
       toast.success('Configurações salvas com sucesso!');
       
-      // Recarregar a página para aplicar as mudanças
+      // Para aplicar as mudanças sem recarregar a página inteira
+      // Dispatch um evento personalizado para que outros componentes possam reagir
+      const event = new CustomEvent('themeChanged', { 
+        detail: { selectedTemplate } 
+      });
+      window.dispatchEvent(event);
+      
+      // Aguardar um pequeno intervalo para permitir que o evento seja processado
       setTimeout(() => {
-        window.location.reload();
+        toast.info('Tema aplicado com sucesso! Navegue para outras páginas para ver as mudanças.');
       }, 1000);
     } catch (error) {
       console.error('Erro ao salvar configurações:', error);

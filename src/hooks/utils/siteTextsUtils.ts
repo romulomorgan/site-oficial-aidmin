@@ -1,5 +1,5 @@
 
-import { SiteTextsState } from '../types/siteTextsTypes';
+import { SiteTextsState, ThemeColors } from '../types/siteTextsTypes';
 import { defaultSiteTexts } from '../defaults/siteTextsDefaults';
 
 export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => {
@@ -52,10 +52,12 @@ export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => 
 };
 
 export const applyThemeColors = (colors: Record<string, string>): void => {
-  // Aplicar cores às variáveis CSS
-  document.documentElement.style.setProperty('--primary-color', colors.primaryColor);
-  document.documentElement.style.setProperty('--secondary-color', colors.secondaryColor);
-  document.documentElement.style.setProperty('--accent-color', colors.accentColor);
-  document.documentElement.style.setProperty('--background-color', colors.backgroundColor);
-  document.documentElement.style.setProperty('--text-color', colors.textColor);
+  // Aplicar cores às variáveis CSS tanto no :root quanto no body
+  Object.entries(colors).forEach(([key, value]) => {
+    const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+    document.documentElement.style.setProperty(cssVarName, value);
+    document.body.style.setProperty(cssVarName, value);
+  });
+  
+  console.log('Cores aplicadas às variáveis CSS:', colors);
 };

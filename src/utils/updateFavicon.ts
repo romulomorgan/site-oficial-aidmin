@@ -50,7 +50,6 @@ export function useFavicon() {
           // Atualizar Twitter Card
           const twitterSite = document.querySelector('meta[name="twitter:site"]');
           if (twitterSite) twitterSite.setAttribute('content', '@iadmin');
-          
         } else {
           // Fallback para título padrão IAdmin
           document.title = 'IAdmin';
@@ -63,30 +62,39 @@ export function useFavicon() {
           if (ogDesc) ogDesc.setAttribute('content', 'IAdmin - Plataforma de Inteligência Artificial para Empresas');
         }
 
-        // Também aplica as cores do template selecionado
+        // Aplicar as cores do template selecionado
         const selectedTemplate = localStorage.getItem('selectedTemplate');
         
         if (selectedTemplate) {
-          // Buscar templates diretamente do banco de dados
-          const templates = await fetchColorTemplates();
-          const template = templates.find(t => t.id === selectedTemplate);
-          
-          if (template) {
-            document.documentElement.style.setProperty('--primary-color', template.primaryColor);
-            document.documentElement.style.setProperty('--secondary-color', template.secondaryColor);
-            document.documentElement.style.setProperty('--accent-color', template.accentColor);
-            document.documentElement.style.setProperty('--background-color', template.backgroundColor);
-            document.documentElement.style.setProperty('--text-color', template.textColor);
-            document.documentElement.style.setProperty('--button-text-color', template.buttonTextColor || '#FFFFFF');
-            document.documentElement.style.setProperty('--menu-text-color', template.menuTextColor || '#FFFFFF');
+          try {
+            // Buscar templates diretamente do banco de dados
+            const templates = await fetchColorTemplates();
+            const template = templates.find(t => t.id === selectedTemplate);
             
-            document.body.style.setProperty('--primary-color', template.primaryColor);
-            document.body.style.setProperty('--secondary-color', template.secondaryColor);
-            document.body.style.setProperty('--accent-color', template.accentColor);
-            document.body.style.setProperty('--background-color', template.backgroundColor);
-            document.body.style.setProperty('--text-color', template.textColor);
-            document.body.style.setProperty('--button-text-color', template.buttonTextColor || '#FFFFFF');
-            document.body.style.setProperty('--menu-text-color', template.menuTextColor || '#FFFFFF');
+            if (template) {
+              // Aplicar cores às variáveis CSS tanto no :root quanto no body
+              const colorVars = {
+                '--primary-color': template.primaryColor,
+                '--secondary-color': template.secondaryColor,
+                '--accent-color': template.accentColor,
+                '--background-color': template.backgroundColor,
+                '--text-color': template.textColor,
+                '--button-text-color': template.buttonTextColor || '#FFFFFF',
+                '--menu-text-color': template.menuTextColor || '#FFFFFF'
+              };
+              
+              // Aplicar em ambos document.documentElement e document.body
+              Object.entries(colorVars).forEach(([key, value]) => {
+                document.documentElement.style.setProperty(key, value);
+                document.body.style.setProperty(key, value);
+              });
+              
+              console.log('Template aplicado com sucesso:', template.name);
+            } else {
+              console.warn('Template selecionado não encontrado:', selectedTemplate);
+            }
+          } catch (error) {
+            console.error('Erro ao aplicar template de cores:', error);
           }
         }
       } catch (error) {
@@ -104,6 +112,19 @@ export function useFavicon() {
     };
     
     loadFavicon();
+    
+    // Adicionar um listener para mudanças no localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'selectedTemplate') {
+        loadFavicon();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
   
   return null;

@@ -27,6 +27,7 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
 
         // Carregar templates de cores diretamente do banco
         const templates = await fetchColorTemplates();
+        console.log('Templates carregados em useSiteTexts:', templates.length);
         
         // Carregar template selecionado do localStorage
         const selectedTemplate = localStorage.getItem('selectedTemplate');
@@ -34,6 +35,7 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
           const template = templates.find(t => t.id === selectedTemplate);
           
           if (template) {
+            console.log('Aplicando template de useSiteTexts:', template.name);
             const newThemeColors = {
               primaryColor: template.primaryColor,
               secondaryColor: template.secondaryColor,
@@ -46,10 +48,17 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
             
             // Aplicar cores às variáveis CSS
             applyThemeColors(newThemeColors);
+            
+            // Aplicar cores adicionais que podem não estar no tipo ThemeColors
+            document.documentElement.style.setProperty('--button-text-color', template.buttonTextColor || '#FFFFFF');
+            document.documentElement.style.setProperty('--menu-text-color', template.menuTextColor || '#FFFFFF');
+            document.body.style.setProperty('--button-text-color', template.buttonTextColor || '#FFFFFF');
+            document.body.style.setProperty('--menu-text-color', template.menuTextColor || '#FFFFFF');
           } else if (templates.length > 0) {
             // Se o template selecionado não existe, usar um template default ou o primeiro da lista
             const defaultTemplate = templates.find(t => t.is_default) || templates[0];
             localStorage.setItem('selectedTemplate', defaultTemplate.id);
+            console.log('Template não encontrado, usando padrão:', defaultTemplate.name);
             
             const newThemeColors = {
               primaryColor: defaultTemplate.primaryColor,
@@ -63,6 +72,12 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
             
             // Aplicar cores às variáveis CSS
             applyThemeColors(newThemeColors);
+            
+            // Aplicar cores adicionais
+            document.documentElement.style.setProperty('--button-text-color', defaultTemplate.buttonTextColor || '#FFFFFF');
+            document.documentElement.style.setProperty('--menu-text-color', defaultTemplate.menuTextColor || '#FFFFFF');
+            document.body.style.setProperty('--button-text-color', defaultTemplate.buttonTextColor || '#FFFFFF');
+            document.body.style.setProperty('--menu-text-color', defaultTemplate.menuTextColor || '#FFFFFF');
           }
         }
       } catch (error) {
@@ -73,6 +88,23 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
     };
     
     loadSiteData();
+
+    // Adicionar event listener para mudanças de tema
+    const handleThemeChange = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail && customEvent.detail.selectedTemplate) {
+        console.log('Evento de mudança de tema detectado:', customEvent.detail.selectedTemplate);
+        // Recarregar os dados do site para aplicar o novo tema
+        loadSiteData();
+      }
+    };
+
+    window.addEventListener('themeChanged', handleThemeChange);
+
+    // Limpar event listener ao desmontar
+    return () => {
+      window.removeEventListener('themeChanged', handleThemeChange);
+    };
   }, []);
 
   return { siteTexts, themeColors, isLoading };
