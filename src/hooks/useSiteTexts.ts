@@ -25,7 +25,7 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
           setSiteTexts(updatedTexts);
         }
 
-        // Carregar templates de cores
+        // Carregar templates de cores diretamente do banco
         const templates = await fetchColorTemplates();
         
         // Carregar template selecionado do localStorage
@@ -47,7 +47,7 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
             // Aplicar cores às variáveis CSS
             applyThemeColors(newThemeColors);
           } else if (templates.length > 0) {
-            // Se o template selecionado não existe, usar o primeiro da lista
+            // Se o template selecionado não existe, usar um template default ou o primeiro da lista
             const defaultTemplate = templates.find(t => t.is_default) || templates[0];
             localStorage.setItem('selectedTemplate', defaultTemplate.id);
             

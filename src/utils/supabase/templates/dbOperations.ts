@@ -30,7 +30,8 @@ export async function fetchFromDb(): Promise<ColorTemplate[]> {
       backgroundColor: item.background_color,
       textColor: item.text_color,
       buttonTextColor: item.button_text_color || '#FFFFFF',
-      menuTextColor: item.menu_text_color || '#FFFFFF'
+      menuTextColor: item.menu_text_color || '#FFFFFF',
+      is_default: item.is_default
     }));
   } catch (error) {
     console.error('Erro ao buscar templates de cores:', error);
@@ -57,7 +58,7 @@ export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean
       text_color: template.textColor,
       button_text_color: template.buttonTextColor || '#FFFFFF',
       menu_text_color: template.menuTextColor || '#FFFFFF',
-      is_default: false,
+      is_default: template.is_default || false,
       updated_at: new Date().toISOString()
     };
     
