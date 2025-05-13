@@ -52,10 +52,22 @@ export const defaultSiteTexts: SiteTextsState = {
   footerEmail: 'contato@iadmin.com.br',
   footerPhone: '+55 (11) 99999-9999',
   footerAddress: 'São Paulo, SP - Brasil',
+  footerLocation: 'São Paulo, SP - Brasil',
+  footerLogoUrl: '',
+  footerButtonText: 'Assinar Newsletter',
+  footerAbout: 'Transformando empresas através da Inteligência Artificial.',
+  footerPhoneNumber: '+55 (11) 99999-9999',
+  companyName: 'IAdmin',
+  
+  // Links de redes sociais
   facebookUrl: 'https://facebook.com/iadmin',
+  facebookActive: true,
   twitterUrl: 'https://twitter.com/iadmin',
+  twitterActive: true,
   instagramUrl: 'https://instagram.com/iadmin',
+  instagramActive: true,
   linkedinUrl: 'https://linkedin.com/company/iadmin',
+  linkedinActive: true,
   copyrightText: '© 2025 IAdmin. Todos os direitos reservados.'
 };
 

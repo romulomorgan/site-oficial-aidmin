@@ -42,10 +42,22 @@ export interface SiteTextsState {
   footerEmail: string;
   footerPhone: string;
   footerAddress: string;
+  footerLocation: string;
+  footerLogoUrl: string;
+  footerButtonText: string;
+  footerAbout: string;
+  footerPhoneNumber: string;
+  companyName: string;
+  
+  // Social links
   facebookUrl: string;
+  facebookActive: boolean;
   twitterUrl: string;
+  twitterActive: boolean;
   instagramUrl: string;
+  instagramActive: boolean;
   linkedinUrl: string;
+  linkedinActive: boolean;
   copyrightText: string;
 }
 

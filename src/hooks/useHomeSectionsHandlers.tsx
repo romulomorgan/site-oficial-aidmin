@@ -108,9 +108,11 @@ export const useHomeSectionsHandlers = ({
             facebookUrl: sections.facebookUrl,
             instagramUrl: sections.instagramUrl,
             twitterUrl: sections.twitterUrl,
+            linkedinUrl: sections.linkedinUrl,
             facebookActive: sections.facebookActive,
             instagramActive: sections.instagramActive,
             twitterActive: sections.twitterActive,
+            linkedinActive: sections.linkedinActive,
             footerLocation: sections.footerLocation,
             footerLogoUrl: sections.footerLogoUrl,
           };

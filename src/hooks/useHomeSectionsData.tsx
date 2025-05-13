@@ -73,9 +73,11 @@ export interface HomeSectionsState {
   facebookUrl: string;
   instagramUrl: string;
   twitterUrl: string;
+  linkedinUrl: string;
   facebookActive: boolean;
   instagramActive: boolean;
   twitterActive: boolean;
+  linkedinActive: boolean;
   [key: string]: string | boolean;
 }
 
@@ -151,9 +153,11 @@ export const useHomeSectionsData = () => {
     facebookUrl: '',
     instagramUrl: '',
     twitterUrl: '',
+    linkedinUrl: '',
     facebookActive: true,
     instagramActive: true,
-    twitterActive: true
+    twitterActive: true,
+    linkedinActive: true
   });
 
   const loadData = async () => {
@@ -166,7 +170,7 @@ export const useHomeSectionsData = () => {
       Object.keys(sections).forEach(key => {
         const value = siteTexts[key];
         
-        if (key === 'facebookActive' || key === 'instagramActive' || key === 'twitterActive') {
+        if (key === 'facebookActive' || key === 'instagramActive' || key === 'twitterActive' || key === 'linkedinActive') {
           updatedSections[key] = value === false ? false : true;
         } else {
           updatedSections[key] = value?.toString() || '';

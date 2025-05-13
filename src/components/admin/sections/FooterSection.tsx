@@ -173,6 +173,25 @@ const FooterSection: React.FC<SectionProps> = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
+          
+          <div className="border rounded-md p-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
+              <Switch 
+                checked={sections.linkedinActive as boolean}
+                onCheckedChange={(checked) => handleSwitchChange && handleSwitchChange('linkedinActive', checked)}
+                id="linkedin-active"
+              />
+            </div>
+            <input
+              type="url"
+              name="linkedinUrl"
+              value={sections.linkedinUrl as string || ''}
+              onChange={handleInputChange}
+              placeholder="https://linkedin.com/company/suaempresa"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
         </div>
         
         <div className="flex justify-end">
