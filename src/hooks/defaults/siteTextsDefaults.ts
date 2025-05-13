@@ -1,55 +1,65 @@
 
 import { SiteTextsState, ThemeColors } from '../types/siteTextsTypes';
 
+// Estado padrão para textos do site
 export const defaultSiteTexts: SiteTextsState = {
-  robotImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+  // Propriedades gerais do site
+  robotImage: '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png',
   siteTitle: 'IAdmin',
+  
+  // Seção de soluções
   solucoesTitle: 'Nossas Soluções',
-  solucoesSubtitle: '',
-  solucoesDescription: 'Implantamos soluções tecnológicas que envolvem tecnologia da informação e inteligência de software para turbinar processos operacionais de nossos parceiros.',
+  solucoesSubtitle: 'INTELIGÊNCIA ARTIFICIAL PARA SUA EMPRESA',
+  solucoesDescription: 'Descubra como nossas soluções de inteligência artificial podem transformar sua empresa.',
   solucoesCount: '3',
   
   // AI Robot section
   solucoesAITitle: 'Conectamos a nossa AI aos seus processos operacionais',
   solucoesAISubtitle: 'ADOTE A NOSSA AI',
-  solucoesAIImage: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
-  solucoesAIDescription1: 'Na IAdmin, conectamos nossa inteligência artificial diretamente aos seus processos operacionais, transformando a maneira como sua empresa executa tarefas e toma decisões.',
-  solucoesAIDescription2: 'Por meio do BPO-PN (Business Process Optimization - Processos de Negócios), otimizamos fluxos administrativos, financeiros e contratuais, garantindo maior eficiência e redução de custos. Já com o BPO-P&D (Business Process Optimization - Projetos e Desenvolvimento), nossa AI atua na gestão de projetos, aprimorando cronogramas, prevendo gargalos e gerando insights para um planejamento mais assertivo.',
-  solucoesAIDescription3: 'Essa integração possibilita uma automação inteligente que vai além da execução de tarefas, criando um ambiente onde dados são utilizados de forma estratégica para potencializar resultados e ampliar sua competitividade no mercado. Seja na construção civil, condomínios ou outros segmentos, nossa tecnologia trabalha em sintonia com seus processos, garantindo maior produtividade e inovação.',
+  solucoesAIImage: '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png',
+  solucoesAIDescription1: 'Nossa I.A. avançada aprende rapidamente os detalhes e nuances do seu negócio.',
+  solucoesAIDescription2: 'Respostas automáticas precisas para dúvidas frequentes, liberando sua equipe para o que realmente importa.',
+  solucoesAIDescription3: 'Sistema inteligente que melhora continuamente com cada interação.',
   
-  solucao1Title: '',
-  solucao1Description: '',
-  solucao1Image: '',
+  // Soluções individuais
+  solucao1Title: 'Atendimento Automatizado',
+  solucao1Description: 'Nossa I.A. gerencia milhares de conversas simultâneas com respostas precisas e personalizadas.',
+  solucao1Image: '/lovable-uploads/9f855b72-1dc3-430d-a32c-5f078ffca423.png',
   solucao1Layout: 'image-left',
-  solucao2Title: '',
-  solucao2Description: '',
-  solucao2Image: '',
-  solucao2Layout: 'image-left',
-  solucao3Title: '',
-  solucao3Description: '',
-  solucao3Image: '',
+  
+  solucao2Title: 'Análise de Dados',
+  solucao2Description: 'Transforme grandes volumes de dados em insights acionáveis para sua empresa.',
+  solucao2Image: '/lovable-uploads/b8b59193-2526-4f01-bce3-4af38189f726.png',
+  solucao2Layout: 'image-right',
+  
+  solucao3Title: 'Integração Completa',
+  solucao3Description: 'Conecte nossa IA com seus sistemas existentes para uma operação perfeita e sem interrupções.',
+  solucao3Image: '/lovable-uploads/7c1a0429-de82-405f-b7d2-1f9d08e9558e.png',
   solucao3Layout: 'image-left',
-  solucao4Title: '',
-  solucao4Description: '',
-  solucao4Image: '',
-  solucao4Layout: 'image-left',
-  solucao5Title: '',
-  solucao5Description: '',
-  solucao5Image: '',
+  
+  solucao4Title: 'Automação de Processos',
+  solucao4Description: 'Automatize tarefas repetitivas e libere sua equipe para atividades estratégicas.',
+  solucao4Image: '/lovable-uploads/232e98e1-6691-4748-89c8-dd6300343696.png',
+  solucao4Layout: 'image-right',
+  
+  solucao5Title: 'Insights de Mercado',
+  solucao5Description: 'Acompanhe tendências e comportamentos do mercado em tempo real.',
+  solucao5Image: '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png',
   solucao5Layout: 'image-left',
   
-  // Footer properties
-  footerDescription: '',
-  footerEmail: '',
-  footerPhone: '',
-  footerAddress: '',
-  facebookUrl: '',
-  twitterUrl: '',
-  instagramUrl: '',
-  linkedinUrl: '',
-  copyrightText: '',
+  // Propriedades do rodapé (Footer)
+  footerDescription: 'Transformando empresas através da Inteligência Artificial.',
+  footerEmail: 'contato@iadmin.com.br',
+  footerPhone: '+55 (11) 99999-9999',
+  footerAddress: 'São Paulo, SP - Brasil',
+  facebookUrl: 'https://facebook.com/iadmin',
+  twitterUrl: 'https://twitter.com/iadmin',
+  instagramUrl: 'https://instagram.com/iadmin',
+  linkedinUrl: 'https://linkedin.com/company/iadmin',
+  copyrightText: '© 2025 IAdmin. Todos os direitos reservados.'
 };
 
+// Cores padrão para o tema
 export const defaultThemeColors: ThemeColors = {
   primaryColor: '#FF196E',
   secondaryColor: '#2D0A16',

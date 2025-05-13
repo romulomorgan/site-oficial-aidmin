@@ -52,5 +52,9 @@ applyInitialTheme().then(() => {
     throw new Error("Root element not found");
   }
   
+  // Garantir que o tema seja aplicado globalmente
+  document.documentElement.classList.add('theme-enabled');
+  document.body.classList.add('theme-enabled');
+  
   createRoot(rootElement).render(<App />);
 });

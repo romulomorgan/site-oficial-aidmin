@@ -23,6 +23,7 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
         if (texts) {
           const updatedTexts = processSiteTexts(texts);
           setSiteTexts(updatedTexts);
+          console.log('Textos do site carregados com sucesso:', updatedTexts);
         }
 
         // Carregar templates de cores diretamente do banco

@@ -61,42 +61,6 @@ export function useFavicon() {
           const ogDesc = document.querySelector('meta[property="og:description"]');
           if (ogDesc) ogDesc.setAttribute('content', 'IAdmin - Plataforma de Inteligência Artificial para Empresas');
         }
-
-        // Aplicar as cores do template selecionado
-        const selectedTemplate = localStorage.getItem('selectedTemplate');
-        
-        if (selectedTemplate) {
-          try {
-            // Buscar templates diretamente do banco de dados
-            const templates = await fetchColorTemplates();
-            const template = templates.find(t => t.id === selectedTemplate);
-            
-            if (template) {
-              // Aplicar cores às variáveis CSS tanto no :root quanto no body
-              const colorVars = {
-                '--primary-color': template.primaryColor,
-                '--secondary-color': template.secondaryColor,
-                '--accent-color': template.accentColor,
-                '--background-color': template.backgroundColor,
-                '--text-color': template.textColor,
-                '--button-text-color': template.buttonTextColor || '#FFFFFF',
-                '--menu-text-color': template.menuTextColor || '#FFFFFF'
-              };
-              
-              // Aplicar em ambos document.documentElement e document.body
-              Object.entries(colorVars).forEach(([key, value]) => {
-                document.documentElement.style.setProperty(key, value);
-                document.body.style.setProperty(key, value);
-              });
-              
-              console.log('Template aplicado com sucesso:', template.name);
-            } else {
-              console.warn('Template selecionado não encontrado:', selectedTemplate);
-            }
-          } catch (error) {
-            console.error('Erro ao aplicar template de cores:', error);
-          }
-        }
       } catch (error) {
         console.error("Erro ao atualizar favicon e título da página:", error);
         

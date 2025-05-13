@@ -47,35 +47,9 @@ const FooterNewsletter: React.FC = () => {
       
       const webhookUrl = webhookData?.content;
       
-      // 3. Enviar para o webhook diretamente se URL estiver configurada
+      // 3. Enviar para o webhook se URL estiver configurada
       if (webhookUrl && typeof webhookUrl === 'string' && webhookUrl.trim() !== '') {
-        console.log('Enviando email para webhook:', email);
-        
-        // Tentativa forçada de envio usando a API fetch diretamente
-        try {
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              type: 'email_subscription',
-              email: email,
-              source: 'Newsletter Rodapé',
-              date: new Date().toISOString(),
-              subscriptionId: `subscription_${Date.now()}`
-            })
-          });
-          
-          console.log('Resposta do webhook:', response.status, await response.text());
-        } catch (webhookError) {
-          console.error('Erro ao enviar diretamente para webhook:', webhookError);
-        }
-        
-        // Usar também o método do hook
         await sendEmailSubscriptionWebhook(webhookUrl, email, 'Newsletter Rodapé');
-      } else {
-        console.warn('URL de webhook não configurada para envio de email de inscrição');
       }
       
       toast.success('Inscrição realizada com sucesso!');
@@ -89,14 +63,13 @@ const FooterNewsletter: React.FC = () => {
   };
   
   return (
-    <div className="col-span-1">
-      <h3 className="text-xl font-semibold mb-4">Newsletter</h3>
-      <p className="text-gray-400 mb-4">Receba novidades e atualizações diretamente em seu email.</p>
+    <div>
+      <p className="text-white/80 mb-4">Receba novidades e atualizações diretamente em seu email.</p>
       <form onSubmit={handleSubmit} className="flex">
         <input
           type="email"
           placeholder="Seu email"
-          className="bg-gray-800 text-white px-4 py-2 rounded-l-md focus:outline-none w-full"
+          className="bg-white/10 text-white px-4 py-2 rounded-l-md focus:outline-none w-full border border-white/20"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

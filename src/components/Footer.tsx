@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { useSiteTexts } from '@/hooks/useSiteTexts';
+import FooterNewsletter from './footer/FooterNewsletter';
 
 const Footer = () => {
   const { siteTexts } = useSiteTexts();
@@ -40,6 +41,11 @@ const Footer = () => {
                   Contato
                 </Link>
               </li>
+              <li>
+                <Link to="/admin" className="text-white/80 hover:text-white transition-colors">
+                  Área Admin
+                </Link>
+              </li>
             </ul>
           </div>
           
@@ -59,27 +65,30 @@ const Footer = () => {
             </ul>
           </div>
           
-          {/* Coluna Social */}
+          {/* Coluna Newsletter */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">Redes Sociais</h4>
-            <div className="flex space-x-4">
-              <a href={siteTexts.facebookUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
-                <Facebook size={20} />
-              </a>
-              <a href={siteTexts.twitterUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
-                <Twitter size={20} />
-              </a>
-              <a href={siteTexts.instagramUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
-                <Instagram size={20} />
-              </a>
-              <a href={siteTexts.linkedinUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
-                <Linkedin size={20} />
-              </a>
-            </div>
+            <h4 className="text-lg font-semibold mb-4 text-white">Newsletter</h4>
+            <FooterNewsletter />
           </div>
         </div>
         
-        <div className="mt-8 pt-8 border-t border-white/20 text-center text-white/70">
+        {/* Redes Sociais */}
+        <div className="flex justify-center space-x-4 mt-8 pt-6 border-t border-white/20">
+          <a href={siteTexts.facebookUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <Facebook size={20} />
+          </a>
+          <a href={siteTexts.twitterUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <Twitter size={20} />
+          </a>
+          <a href={siteTexts.instagramUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <Instagram size={20} />
+          </a>
+          <a href={siteTexts.linkedinUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <Linkedin size={20} />
+          </a>
+        </div>
+        
+        <div className="mt-6 text-center text-white/70">
           <p>
             {siteTexts.copyrightText || '© 2025 IAdmin. Todos os direitos reservados.'}
           </p>

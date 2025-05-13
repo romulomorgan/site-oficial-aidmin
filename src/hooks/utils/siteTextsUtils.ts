@@ -6,8 +6,11 @@ export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => 
   if (!texts) return { ...defaultSiteTexts };
   
   const updatedTexts: SiteTextsState = {
+    // Propriedades gerais do site
     robotImage: typeof texts.robotImage === 'string' ? texts.robotImage : defaultSiteTexts.robotImage,
     siteTitle: typeof texts.siteTitle === 'string' ? texts.siteTitle : defaultSiteTexts.siteTitle,
+    
+    // Seção de soluções
     solucoesTitle: typeof texts.solucoesTitle === 'string' ? texts.solucoesTitle : defaultSiteTexts.solucoesTitle,
     solucoesSubtitle: typeof texts.solucoesSubtitle === 'string' ? texts.solucoesSubtitle : defaultSiteTexts.solucoesSubtitle,
     solucoesDescription: typeof texts.solucoesDescription === 'string' ? texts.solucoesDescription : defaultSiteTexts.solucoesDescription,
@@ -47,7 +50,7 @@ export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => 
     solucao5Image: typeof texts.solucao5Image === 'string' ? texts.solucao5Image : defaultSiteTexts.solucao5Image,
     solucao5Layout: typeof texts.solucao5Layout === 'string' ? texts.solucao5Layout : defaultSiteTexts.solucao5Layout,
     
-    // Footer properties
+    // Rodapé (Footer)
     footerDescription: typeof texts.footerDescription === 'string' ? texts.footerDescription : defaultSiteTexts.footerDescription,
     footerEmail: typeof texts.footerEmail === 'string' ? texts.footerEmail : defaultSiteTexts.footerEmail,
     footerPhone: typeof texts.footerPhone === 'string' ? texts.footerPhone : defaultSiteTexts.footerPhone,
@@ -62,13 +65,20 @@ export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => 
   return updatedTexts;
 };
 
-export const applyThemeColors = (colors: Record<string, string>): void => {
+export const applyThemeColors = (colors: ThemeColors): void => {
   // Aplicar cores às variáveis CSS tanto no :root quanto no body
   Object.entries(colors).forEach(([key, value]) => {
     const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
     document.documentElement.style.setProperty(cssVarName, value);
     document.body.style.setProperty(cssVarName, value);
   });
+  
+  // Aplicar em variáveis Tailwind também
+  document.documentElement.style.setProperty('--foreground', colors.textColor);
+  document.documentElement.style.setProperty('--background', colors.backgroundColor);
+  document.documentElement.style.setProperty('--primary', colors.primaryColor);
+  document.documentElement.style.setProperty('--secondary', colors.secondaryColor);
+  document.documentElement.style.setProperty('--accent', colors.accentColor);
   
   console.log('Cores aplicadas às variáveis CSS:', colors);
 };
