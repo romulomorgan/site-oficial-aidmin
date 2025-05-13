@@ -126,11 +126,43 @@ export async function deleteFAQ(id: string): Promise<boolean> {
 // Função para reordenar FAQs
 export async function reorderFAQs(orderedIds: string[]): Promise<boolean> {
   try {
-    // Preparar atualizações em lote
-    const updates = orderedIds.map((id, index) => ({
-      id,
-      order_index: index + 1
-    }));
+    // Primeiro buscar os dados completos das FAQs existentes
+    const { data: existingFaqs, error: fetchError } = await supabase
+      .from('site_faqs')
+      .select('*');
+      
+    if (fetchError) {
+      console.error('Erro ao buscar FAQs para reordenação:', fetchError);
+      return false;
+    }
+    
+    // Criar um mapa para acesso rápido às FAQs existentes
+    const faqMap = new Map();
+    existingFaqs.forEach(faq => {
+      faqMap.set(faq.id, faq);
+    });
+    
+    // Preparar atualizações em lote com todos os campos obrigatórios
+    const updates = orderedIds.map((id, index) => {
+      const existingFaq = faqMap.get(id);
+      if (!existingFaq) {
+        console.error(`FAQ com ID ${id} não encontrada`);
+        return null;
+      }
+      
+      return {
+        id,
+        question: existingFaq.question,
+        answer: existingFaq.answer,
+        order_index: index + 1,
+        active: existingFaq.active
+      };
+    }).filter(item => item !== null);
+    
+    if (updates.length === 0) {
+      console.error('Não foi possível preparar as atualizações para reordenação');
+      return false;
+    }
     
     // Executar atualizações em lote
     const { error } = await supabase
