@@ -18,6 +18,10 @@ export async function fetchFromDb(): Promise<ColorTemplate[]> {
     
     if (!data || data.length === 0) {
       console.log('Nenhum template de cores encontrado no banco, usando padrões');
+      
+      // Insira os templates padrão no banco se não houver nenhum
+      await insertDefaultTemplates();
+      
       return defaultTemplates;
     }
     
@@ -40,10 +44,79 @@ export async function fetchFromDb(): Promise<ColorTemplate[]> {
       t => !templates.some(dbTemplate => dbTemplate.id === t.id)
     );
     
+    // Se houver templates padrão ausentes, insira-os no banco
+    if (missingStandardTemplates.length > 0) {
+      await insertSpecificTemplates(missingStandardTemplates);
+    }
+    
     return [...templates, ...missingStandardTemplates];
   } catch (error) {
     console.error('Erro ao buscar templates de cores:', error);
     return defaultTemplates;
+  }
+}
+
+// Função para inserir todos os templates padrão no banco
+async function insertDefaultTemplates(): Promise<void> {
+  try {
+    const templateData = defaultTemplates.map(template => ({
+      id: template.id,
+      name: template.name,
+      primary_color: template.primaryColor,
+      secondary_color: template.secondaryColor,
+      accent_color: template.accentColor,
+      background_color: template.backgroundColor,
+      text_color: template.textColor,
+      button_text_color: template.buttonTextColor || '#FFFFFF',
+      menu_text_color: template.menuTextColor || '#FFFFFF',
+      is_default: template.id === 'default' || template.id.startsWith('modern') || template.id.startsWith('gradient'),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }));
+    
+    const { error } = await supabase
+      .from('site_color_templates')
+      .insert(templateData);
+    
+    if (error) {
+      console.error('Erro ao inserir templates padrão:', error);
+    } else {
+      console.log('Templates padrão inseridos com sucesso');
+    }
+  } catch (error) {
+    console.error('Erro ao inserir templates padrão:', error);
+  }
+}
+
+// Função para inserir templates específicos no banco
+async function insertSpecificTemplates(templates: ColorTemplate[]): Promise<void> {
+  try {
+    const templateData = templates.map(template => ({
+      id: template.id,
+      name: template.name,
+      primary_color: template.primaryColor,
+      secondary_color: template.secondaryColor,
+      accent_color: template.accentColor,
+      background_color: template.backgroundColor,
+      text_color: template.textColor,
+      button_text_color: template.buttonTextColor || '#FFFFFF',
+      menu_text_color: template.menuTextColor || '#FFFFFF',
+      is_default: template.id === 'default' || template.id.startsWith('modern') || template.id.startsWith('gradient'),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }));
+    
+    const { error } = await supabase
+      .from('site_color_templates')
+      .insert(templateData);
+    
+    if (error) {
+      console.error('Erro ao inserir templates específicos:', error);
+    } else {
+      console.log(`${templates.length} templates inseridos com sucesso`);
+    }
+  } catch (error) {
+    console.error('Erro ao inserir templates específicos:', error);
   }
 }
 

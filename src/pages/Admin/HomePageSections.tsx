@@ -35,7 +35,7 @@ export default function HomePageSections() {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in w-full max-w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Seções da Página Inicial</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
