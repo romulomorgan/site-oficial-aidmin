@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
@@ -12,7 +11,9 @@ export default function FAQ() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newFAQ, setNewFAQ] = useState<Omit<FAQItem, 'id'>>({
     question: '',
-    answer: ''
+    answer: '',
+    order: 0,
+    active: true
   });
   
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -83,7 +84,9 @@ export default function FAQ() {
       // Resetar formulário
       setNewFAQ({
         question: '',
-        answer: ''
+        answer: '',
+        order: 0,
+        active: true
       });
     } catch (error) {
       console.error('Erro ao salvar FAQ:', error);
@@ -96,7 +99,9 @@ export default function FAQ() {
   const handleEditFAQ = (faq: FAQItem) => {
     setNewFAQ({
       question: faq.question,
-      answer: faq.answer
+      answer: faq.answer,
+      order: faq.order,
+      active: faq.active !== undefined ? faq.active : true
     });
     setEditingId(faq.id);
   };
@@ -104,7 +109,9 @@ export default function FAQ() {
   const handleCancelEdit = () => {
     setNewFAQ({
       question: '',
-      answer: ''
+      answer: '',
+      order: 0,
+      active: true
     });
     setEditingId(null);
   };

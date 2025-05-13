@@ -37,6 +37,17 @@ export const defaultSiteTexts: SiteTextsState = {
   solucao5Description: '',
   solucao5Image: '',
   solucao5Layout: 'image-left',
+  
+  // Footer properties
+  footerDescription: '',
+  footerEmail: '',
+  footerPhone: '',
+  footerAddress: '',
+  facebookUrl: '',
+  twitterUrl: '',
+  instagramUrl: '',
+  linkedinUrl: '',
+  copyrightText: '',
 };
 
 export const defaultThemeColors: ThemeColors = {

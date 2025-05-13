@@ -46,6 +46,17 @@ export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => 
     solucao5Description: typeof texts.solucao5Description === 'string' ? texts.solucao5Description : defaultSiteTexts.solucao5Description,
     solucao5Image: typeof texts.solucao5Image === 'string' ? texts.solucao5Image : defaultSiteTexts.solucao5Image,
     solucao5Layout: typeof texts.solucao5Layout === 'string' ? texts.solucao5Layout : defaultSiteTexts.solucao5Layout,
+    
+    // Footer properties
+    footerDescription: typeof texts.footerDescription === 'string' ? texts.footerDescription : defaultSiteTexts.footerDescription,
+    footerEmail: typeof texts.footerEmail === 'string' ? texts.footerEmail : defaultSiteTexts.footerEmail,
+    footerPhone: typeof texts.footerPhone === 'string' ? texts.footerPhone : defaultSiteTexts.footerPhone,
+    footerAddress: typeof texts.footerAddress === 'string' ? texts.footerAddress : defaultSiteTexts.footerAddress,
+    facebookUrl: typeof texts.facebookUrl === 'string' ? texts.facebookUrl : defaultSiteTexts.facebookUrl,
+    twitterUrl: typeof texts.twitterUrl === 'string' ? texts.twitterUrl : defaultSiteTexts.twitterUrl,
+    instagramUrl: typeof texts.instagramUrl === 'string' ? texts.instagramUrl : defaultSiteTexts.instagramUrl,
+    linkedinUrl: typeof texts.linkedinUrl === 'string' ? texts.linkedinUrl : defaultSiteTexts.linkedinUrl,
+    copyrightText: typeof texts.copyrightText === 'string' ? texts.copyrightText : defaultSiteTexts.copyrightText
   };
   
   return updatedTexts;
