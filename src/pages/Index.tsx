@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationBar } from '@/components/ui/NavigationBar';
@@ -29,7 +28,7 @@ export default function Index() {
       try {
         // Carregar textos do site
         const texts = await fetchSiteTexts();
-        setSiteTexts(texts || {});
+        setSiteTexts(texts as Record<string, string | boolean | undefined> || {});
         
         // Extrair o ID do vídeo do YouTube se disponível
         if (texts.heroVideoUrl) {
