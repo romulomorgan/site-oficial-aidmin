@@ -55,10 +55,22 @@ export const processSiteTexts = (texts: Record<string, any>): SiteTextsState => 
     footerEmail: typeof texts.footerEmail === 'string' ? texts.footerEmail : defaultSiteTexts.footerEmail,
     footerPhone: typeof texts.footerPhone === 'string' ? texts.footerPhone : defaultSiteTexts.footerPhone,
     footerAddress: typeof texts.footerAddress === 'string' ? texts.footerAddress : defaultSiteTexts.footerAddress,
+    footerLocation: typeof texts.footerLocation === 'string' ? texts.footerLocation : defaultSiteTexts.footerLocation,
+    footerLogoUrl: typeof texts.footerLogoUrl === 'string' ? texts.footerLogoUrl : defaultSiteTexts.footerLogoUrl,
+    footerButtonText: typeof texts.footerButtonText === 'string' ? texts.footerButtonText : defaultSiteTexts.footerButtonText,
+    footerAbout: typeof texts.footerAbout === 'string' ? texts.footerAbout : defaultSiteTexts.footerAbout,
+    footerPhoneNumber: typeof texts.footerPhoneNumber === 'string' ? texts.footerPhoneNumber : defaultSiteTexts.footerPhoneNumber,
+    companyName: typeof texts.companyName === 'string' ? texts.companyName : defaultSiteTexts.companyName,
+    
+    // Social links
     facebookUrl: typeof texts.facebookUrl === 'string' ? texts.facebookUrl : defaultSiteTexts.facebookUrl,
+    facebookActive: typeof texts.facebookActive === 'boolean' ? texts.facebookActive : defaultSiteTexts.facebookActive,
     twitterUrl: typeof texts.twitterUrl === 'string' ? texts.twitterUrl : defaultSiteTexts.twitterUrl,
+    twitterActive: typeof texts.twitterActive === 'boolean' ? texts.twitterActive : defaultSiteTexts.twitterActive,
     instagramUrl: typeof texts.instagramUrl === 'string' ? texts.instagramUrl : defaultSiteTexts.instagramUrl,
+    instagramActive: typeof texts.instagramActive === 'boolean' ? texts.instagramActive : defaultSiteTexts.instagramActive,
     linkedinUrl: typeof texts.linkedinUrl === 'string' ? texts.linkedinUrl : defaultSiteTexts.linkedinUrl,
+    linkedinActive: typeof texts.linkedinActive === 'boolean' ? texts.linkedinActive : defaultSiteTexts.linkedinActive,
     copyrightText: typeof texts.copyrightText === 'string' ? texts.copyrightText : defaultSiteTexts.copyrightText
   };
   
