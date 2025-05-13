@@ -46,6 +46,23 @@ export const useSiteTexts = (): UseSiteTextsReturn => {
             
             // Aplicar cores às variáveis CSS
             applyThemeColors(newThemeColors);
+          } else if (templates.length > 0) {
+            // Se o template selecionado não existe, usar o primeiro da lista
+            const defaultTemplate = templates.find(t => t.is_default) || templates[0];
+            localStorage.setItem('selectedTemplate', defaultTemplate.id);
+            
+            const newThemeColors = {
+              primaryColor: defaultTemplate.primaryColor,
+              secondaryColor: defaultTemplate.secondaryColor,
+              accentColor: defaultTemplate.accentColor,
+              backgroundColor: defaultTemplate.backgroundColor,
+              textColor: defaultTemplate.textColor
+            };
+            
+            setThemeColors(newThemeColors);
+            
+            // Aplicar cores às variáveis CSS
+            applyThemeColors(newThemeColors);
           }
         }
       } catch (error) {

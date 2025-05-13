@@ -1,7 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { ColorTemplate } from "../types";
-import { defaultTemplates } from "../../themes";
 
 // Função para buscar templates de cores do banco de dados
 export async function fetchFromDb(): Promise<ColorTemplate[]> {
@@ -13,16 +12,16 @@ export async function fetchFromDb(): Promise<ColorTemplate[]> {
     
     if (error) {
       console.error('Erro ao buscar templates de cores:', error);
-      return defaultTemplates;
+      return [];
     }
     
     if (!data || data.length === 0) {
-      console.log('Nenhum template de cores encontrado no banco, usando padrões');
-      return defaultTemplates;
+      console.log('Nenhum template de cores encontrado no banco');
+      return [];
     }
     
     // Mapear para o formato esperado pela aplicação
-    const templates = data.map(item => ({
+    return data.map(item => ({
       id: item.id,
       name: item.name,
       primaryColor: item.primary_color,
@@ -33,17 +32,9 @@ export async function fetchFromDb(): Promise<ColorTemplate[]> {
       buttonTextColor: item.button_text_color || '#FFFFFF',
       menuTextColor: item.menu_text_color || '#FFFFFF'
     }));
-    
-    // Adicionar templates padrão caso não existam no banco
-    const standardTemplateIds = defaultTemplates.map(t => t.id);
-    const missingStandardTemplates = defaultTemplates.filter(
-      t => !templates.some(dbTemplate => dbTemplate.id === t.id)
-    );
-    
-    return [...templates, ...missingStandardTemplates];
   } catch (error) {
     console.error('Erro ao buscar templates de cores:', error);
-    return defaultTemplates;
+    return [];
   }
 }
 
@@ -66,7 +57,7 @@ export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean
       text_color: template.textColor,
       button_text_color: template.buttonTextColor || '#FFFFFF',
       menu_text_color: template.menuTextColor || '#FFFFFF',
-      is_default: template.id === 'default',
+      is_default: false,
       updated_at: new Date().toISOString()
     };
     
@@ -86,7 +77,7 @@ export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean
       const { error } = await supabase
         .from('site_color_templates')
         .insert([{
-          id: template.id,
+          id: template.id.startsWith('custom-') ? undefined : template.id, // Deixar o Supabase gerar ID se for personalizado
           ...templateData,
           created_at: new Date().toISOString()
         }]);

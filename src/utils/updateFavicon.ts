@@ -1,5 +1,6 @@
+
 import { useEffect } from 'react';
-import { fetchSiteTexts } from './supabaseClient';
+import { fetchSiteTexts, fetchColorTemplates } from './supabaseClient';
 
 export function useFavicon() {
   useEffect(() => {
@@ -66,15 +67,9 @@ export function useFavicon() {
         const selectedTemplate = localStorage.getItem('selectedTemplate');
         
         if (selectedTemplate) {
-          const savedTemplates = localStorage.getItem('siteTemplates');
-          const defaultTemplates = JSON.parse(localStorage.getItem('defaultTemplates') || '[]');
-          let allTemplates = defaultTemplates;
-          
-          if (savedTemplates) {
-            allTemplates = [...defaultTemplates, ...JSON.parse(savedTemplates)];
-          }
-          
-          const template = allTemplates.find((t: any) => t.id === selectedTemplate);
+          // Buscar templates diretamente do banco de dados
+          const templates = await fetchColorTemplates();
+          const template = templates.find(t => t.id === selectedTemplate);
           
           if (template) {
             document.documentElement.style.setProperty('--primary-color', template.primaryColor);

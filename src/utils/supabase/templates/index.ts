@@ -10,11 +10,28 @@ import {
   deleteTemplateFromLocalStorage,
   getColorTemplatesFromLocalStorage
 } from "./localStorage";
-import { defaultTemplates } from "../../themes";
 
 // Função para obter templates de cores
 export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
-  return await fetchColorTemplatesFromDb();
+  try {
+    // Buscar templates do banco de dados
+    const dbTemplates = await fetchColorTemplatesFromDb();
+    
+    // Se tiver templates no banco, retorna eles
+    if (dbTemplates.length > 0) {
+      // Salvar no localStorage para acesso offline
+      const localTemplates = dbTemplates.filter(t => !t.id.toString().includes('default'));
+      localStorage.setItem('siteTemplates', JSON.stringify(localTemplates));
+      return dbTemplates;
+    }
+    
+    // Caso contrário, usar localStorage como fallback
+    return getColorTemplatesFromLocalStorage();
+  } catch (error) {
+    console.error('Erro ao buscar templates de cores:', error);
+    // Em caso de erro, tentar usar localStorage como fallback
+    return getColorTemplatesFromLocalStorage();
+  }
 }
 
 // Função para salvar template de cores (banco e localStorage)
@@ -22,8 +39,8 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
   console.log('Salvando template de cores:', template);
   
   try {
-    // Gerar um ID único se não existir ou se for 'custom'
-    if (!template.id || template.id === 'custom') {
+    // Verificar se template tem ID, se não tiver, gerar um
+    if (!template.id) {
       template.id = `custom-${Date.now()}`;
     }
     
@@ -43,12 +60,6 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
 // Função para excluir um template de cores
 export async function deleteColorTemplate(templateId: string): Promise<boolean> {
   console.log('Excluindo template de cores:', templateId);
-  
-  // Verificar se é um template padrão
-  if (templateId === 'default' || defaultTemplates.some(t => t.id === templateId)) {
-    console.error('Não é possível excluir templates padrão');
-    return false;
-  }
   
   try {
     // Excluir do banco de dados
