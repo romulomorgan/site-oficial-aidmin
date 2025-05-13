@@ -1,184 +1,228 @@
 
 import React from 'react';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { CustomButton } from '@/components/ui/CustomButton';
-import { ColorTemplate } from '@/utils/supabase/types';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
+  DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import { CustomButton } from '@/components/ui/CustomButton';
+import { ColorTemplate } from '@/utils/supabase/types';
 
 interface TemplateCreateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   customTemplate: ColorTemplate;
-  setCustomTemplate: (template: ColorTemplate) => void;
+  setCustomTemplate: React.Dispatch<React.SetStateAction<ColorTemplate>>;
   onAddTemplate: () => void;
 }
 
-export const TemplateCreateDialog: React.FC<TemplateCreateDialogProps> = ({
+export function TemplateCreateDialog({
   open,
   onOpenChange,
   customTemplate,
   setCustomTemplate,
   onAddTemplate
-}) => {
+}: TemplateCreateDialogProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCustomTemplate(prev => ({ ...prev, [name]: value }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-md bg-white">
         <DialogHeader>
-          <DialogTitle>Criar Template Personalizado</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Criar Novo Template</DialogTitle>
+          <DialogDescription>
+            Configure as cores do seu novo template personalizado
+          </DialogDescription>
         </DialogHeader>
+
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="templateName">Nome</Label>
-            <Input
-              id="templateName"
+            <label htmlFor="name" className="text-right font-medium">
+              Nome
+            </label>
+            <input
+              id="name"
+              name="name"
               value={customTemplate.name}
-              onChange={(e) => setCustomTemplate({...customTemplate, name: e.target.value})}
-              className="col-span-3"
+              onChange={handleChange}
+              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             />
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="primaryColor">Cor Primária</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="primaryColor" className="text-right font-medium">
+              Cor primária
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="primaryColor"
+                name="primaryColor"
                 value={customTemplate.primaryColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, primaryColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
+              <input
+                type="color"
                 value={customTemplate.primaryColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, primaryColor: e.target.value})}
-                className="flex-1"
+                onChange={(e) => handleChange({ target: { name: 'primaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="secondaryColor">Cor Secundária</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="secondaryColor" className="text-right font-medium">
+              Cor secundária
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="secondaryColor"
+                name="secondaryColor"
                 value={customTemplate.secondaryColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, secondaryColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
+              <input
+                type="color"
                 value={customTemplate.secondaryColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, secondaryColor: e.target.value})}
-                className="flex-1"
+                onChange={(e) => handleChange({ target: { name: 'secondaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="accentColor">Cor de Destaque</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="accentColor" className="text-right font-medium">
+              Cor de destaque
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="accentColor"
+                name="accentColor"
                 value={customTemplate.accentColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, accentColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
+              <input
+                type="color"
                 value={customTemplate.accentColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, accentColor: e.target.value})}
-                className="flex-1"
+                onChange={(e) => handleChange({ target: { name: 'accentColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="backgroundColor">Cor de Fundo</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="backgroundColor" className="text-right font-medium">
+              Cor de fundo
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="backgroundColor"
+                name="backgroundColor"
                 value={customTemplate.backgroundColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, backgroundColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
+              <input
+                type="color"
                 value={customTemplate.backgroundColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, backgroundColor: e.target.value})}
-                className="flex-1"
+                onChange={(e) => handleChange({ target: { name: 'backgroundColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="textColor">Cor de Texto</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="textColor" className="text-right font-medium">
+              Cor de texto
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="textColor"
+                name="textColor"
                 value={customTemplate.textColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, textColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
+              <input
+                type="color"
                 value={customTemplate.textColor}
-                onChange={(e) => setCustomTemplate({...customTemplate, textColor: e.target.value})}
-                className="flex-1"
+                onChange={(e) => handleChange({ target: { name: 'textColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="buttonTextColor">Cor do Texto de Botão</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="buttonTextColor" className="text-right font-medium">
+              Cor texto botão
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="buttonTextColor"
-                value={customTemplate.buttonTextColor || "#FFFFFF"}
-                onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                name="buttonTextColor"
+                value={customTemplate.buttonTextColor || '#FFFFFF'}
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
-                value={customTemplate.buttonTextColor || "#FFFFFF"}
-                onChange={(e) => setCustomTemplate({...customTemplate, buttonTextColor: e.target.value})}
-                className="flex-1"
+              <input
+                type="color"
+                value={customTemplate.buttonTextColor || '#FFFFFF'}
+                onChange={(e) => handleChange({ target: { name: 'buttonTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="menuTextColor">Cor do Texto do Menu</Label>
-            <div className="flex col-span-3 gap-2 items-center">
-              <Input
-                type="color"
+            <label htmlFor="menuTextColor" className="text-right font-medium">
+              Cor texto menu
+            </label>
+            <div className="col-span-3 flex items-center gap-2">
+              <input
                 id="menuTextColor"
-                value={customTemplate.menuTextColor || "#FFFFFF"}
-                onChange={(e) => setCustomTemplate({...customTemplate, menuTextColor: e.target.value})}
-                className="w-12 h-10 p-1"
+                name="menuTextColor"
+                value={customTemplate.menuTextColor || '#FFFFFF'}
+                onChange={handleChange}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <Input
-                type="text"
-                value={customTemplate.menuTextColor || "#FFFFFF"}
-                onChange={(e) => setCustomTemplate({...customTemplate, menuTextColor: e.target.value})}
-                className="flex-1"
+              <input
+                type="color"
+                value={customTemplate.menuTextColor || '#FFFFFF'}
+                onChange={(e) => handleChange({ target: { name: 'menuTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                className="w-10 h-10 rounded cursor-pointer"
               />
             </div>
           </div>
         </div>
-        <DialogFooter>
-          <CustomButton type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </CustomButton>
-          <CustomButton type="button" variant="primary" onClick={onAddTemplate}>
-            Adicionar Template
-          </CustomButton>
-        </DialogFooter>
+        
+        <div className="bg-gray-50 -m-6 mt-2 p-6 rounded-b-lg">
+          <DialogFooter>
+            <CustomButton 
+              type="button" 
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="mr-2"
+            >
+              Cancelar
+            </CustomButton>
+            <CustomButton 
+              type="button" 
+              variant="primary"
+              onClick={onAddTemplate}
+            >
+              Criar Template
+            </CustomButton>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
-};
+}

@@ -14,11 +14,14 @@ import {
 // Função para obter templates de cores
 export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
   try {
+    console.log('Buscando templates de cores do banco de dados...');
     // Buscar templates do banco de dados
     const dbTemplates = await fetchColorTemplatesFromDb();
     
     // Se tiver templates no banco, retorna eles
     if (dbTemplates.length > 0) {
+      console.log(`Encontrados ${dbTemplates.length} templates no banco de dados`);
+      
       // Salvar no localStorage para acesso offline
       const localTemplates = dbTemplates.filter(t => !t.id.toString().includes('default'));
       localStorage.setItem('siteTemplates', JSON.stringify(localTemplates));
@@ -26,6 +29,7 @@ export async function fetchColorTemplates(): Promise<ColorTemplate[]> {
     }
     
     // Caso contrário, usar localStorage como fallback
+    console.log('Nenhum template encontrado no banco, usando localStorage como fallback');
     return getColorTemplatesFromLocalStorage();
   } catch (error) {
     console.error('Erro ao buscar templates de cores:', error);
@@ -44,8 +48,24 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
       template.id = `custom-${Date.now()}`;
     }
     
+    // Assegurando que todos os campos necessários existam
+    template = {
+      ...template,
+      button_text_color: template.buttonTextColor || template.button_text_color || '#FFFFFF',
+      menu_text_color: template.menuTextColor || template.menu_text_color || '#FFFFFF',
+      buttonTextColor: template.buttonTextColor || template.button_text_color || '#FFFFFF',
+      menuTextColor: template.menuTextColor || template.menu_text_color || '#FFFFFF'
+    };
+    
     // Salvar no banco de dados
+    console.log('Enviando template para o banco de dados:', template);
     const dbSuccess = await saveTemplateToDb(template);
+    
+    if (dbSuccess) {
+      console.log('Template salvo com sucesso no banco de dados');
+    } else {
+      console.warn('Falha ao salvar no banco de dados, tentando localStorage');
+    }
     
     // Salvar também no localStorage para fallback
     const localSuccess = saveTemplateToLocalStorage(template);

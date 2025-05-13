@@ -22,9 +22,11 @@ const Footer = () => {
     facebookUrl: '#',
     instagramUrl: '#',
     twitterUrl: '#',
+    linkedinUrl: '#',
     facebookActive: true,
     instagramActive: true,
-    twitterActive: true
+    twitterActive: true,
+    linkedinActive: true
   });
   
   useEffect(() => {
@@ -32,6 +34,7 @@ const Footer = () => {
     const loadFooterData = async () => {
       try {
         const siteTexts = await fetchSiteTexts();
+        console.log('Footer dados carregados:', siteTexts);
         
         // Atualizar dados do footer
         setFooterData({
@@ -50,9 +53,11 @@ const Footer = () => {
           facebookUrl: siteTexts.facebookUrl?.toString() || '#',
           instagramUrl: siteTexts.instagramUrl?.toString() || '#',
           twitterUrl: siteTexts.twitterUrl?.toString() || '#',
+          linkedinUrl: siteTexts.linkedinUrl?.toString() || '#',
           facebookActive: siteTexts.facebookActive === false ? false : true,
           instagramActive: siteTexts.instagramActive === false ? false : true,
-          twitterActive: siteTexts.twitterActive === false ? false : true
+          twitterActive: siteTexts.twitterActive === false ? false : true,
+          linkedinActive: siteTexts.linkedinActive === false ? false : true
         });
       } catch (error) {
         console.error('Erro ao carregar dados do rodapé:', error);
@@ -63,7 +68,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-gray-900 text-white pt-12 pb-6">
+    <footer className="bg-gray-900 text-white pt-12 pb-6 animate-fade-in">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Logo e Sobre */}
@@ -95,9 +100,11 @@ const Footer = () => {
               facebookUrl={socialLinks.facebookUrl}
               instagramUrl={socialLinks.instagramUrl}
               twitterUrl={socialLinks.twitterUrl}
+              linkedinUrl={socialLinks.linkedinUrl}
               facebookActive={socialLinks.facebookActive}
               instagramActive={socialLinks.instagramActive}
               twitterActive={socialLinks.twitterActive}
+              linkedinActive={socialLinks.linkedinActive}
             />
           </div>
         </div>

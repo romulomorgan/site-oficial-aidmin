@@ -196,6 +196,7 @@ export default function SiteSettings() {
     };
     
     try {
+      console.log('Tentando salvar novo template:', newTemplate);
       const success = await saveColorTemplate(newTemplate);
       
       if (success) {
@@ -275,16 +276,16 @@ export default function SiteSettings() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[1200px] mx-auto">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Configurações do Site</h1>
       
       <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} className="bg-white rounded-lg shadow-sm w-full">
         <Tabs defaultValue="appearance" className="w-full">
-          <TabsList className="border-b w-full rounded-t-lg">
-            <TabsTrigger value="appearance">Aparência</TabsTrigger>
-            <TabsTrigger value="favicon">Favicon</TabsTrigger>
-            <TabsTrigger value="integration">Integração</TabsTrigger>
-            <TabsTrigger value="embed">Embed</TabsTrigger>
+          <TabsList className="border-b w-full rounded-t-lg bg-gray-50">
+            <TabsTrigger value="appearance" className="font-medium">Aparência</TabsTrigger>
+            <TabsTrigger value="favicon" className="font-medium">Favicon</TabsTrigger>
+            <TabsTrigger value="integration" className="font-medium">Integração</TabsTrigger>
+            <TabsTrigger value="embed" className="font-medium">Embed</TabsTrigger>
           </TabsList>
           
           <TabsContent value="appearance" className="p-6 space-y-6">
@@ -339,6 +340,7 @@ export default function SiteSettings() {
             type="submit" 
             variant="primary"
             disabled={isLoading}
+            className="px-6"
           >
             {isLoading ? 'Salvando...' : 'Salvar Alterações'}
           </CustomButton>

@@ -12,8 +12,8 @@ const FooterSection: React.FC<SectionProps> = ({
   handleSaveSection 
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Rodapé"</h2>
+    <div className="bg-white rounded-lg shadow-sm p-6 w-full">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Seção "Rodapé"</h2>
       
       <div className="space-y-4">
         <div>
@@ -23,7 +23,7 @@ const FooterSection: React.FC<SectionProps> = ({
             name="companyName"
             value={sections.companyName as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
           />
         </div>
         
@@ -34,7 +34,7 @@ const FooterSection: React.FC<SectionProps> = ({
             value={sections.footerAbout as string}
             onChange={handleInputChange}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
           />
         </div>
         
@@ -45,7 +45,7 @@ const FooterSection: React.FC<SectionProps> = ({
             name="footerPhoneNumber"
             value={sections.footerPhoneNumber as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
           />
         </div>
         
@@ -56,7 +56,7 @@ const FooterSection: React.FC<SectionProps> = ({
             name="footerEmail"
             value={sections.footerEmail as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
           />
         </div>
         
@@ -67,7 +67,7 @@ const FooterSection: React.FC<SectionProps> = ({
             name="footerLocation"
             value={sections.footerLocation as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             placeholder="Ex: São Paulo, SP - Brasil"
           />
           <p className="text-xs text-gray-500 mt-1">Informe a localização que aparecerá no rodapé (ex: São Paulo, SP - Brasil)</p>
@@ -80,7 +80,7 @@ const FooterSection: React.FC<SectionProps> = ({
             name="footerButtonText"
             value={sections.footerButtonText as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
           />
         </div>
         
@@ -91,7 +91,7 @@ const FooterSection: React.FC<SectionProps> = ({
             name="copyrightText"
             value={sections.copyrightText as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
           />
         </div>
 
@@ -102,11 +102,11 @@ const FooterSection: React.FC<SectionProps> = ({
             name="footerLogoUrl"
             value={sections.footerLogoUrl as string}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             placeholder="URL do logo para o rodapé"
           />
           {sections.footerLogoUrl && (
-            <div className="mt-2 flex justify-center">
+            <div className="mt-2 flex justify-center border rounded p-2 bg-gray-50">
               <img src={sections.footerLogoUrl as string} alt="Logo do Rodapé" className="h-12 object-contain" />
             </div>
           )}
@@ -114,10 +114,10 @@ const FooterSection: React.FC<SectionProps> = ({
 
         <hr className="my-4" />
         
-        <h3 className="text-md font-medium text-gray-800 mb-2">Redes Sociais</h3>
+        <h3 className="text-md font-medium text-gray-800 mb-2 border-b pb-1">Redes Sociais</h3>
         
         <div className="space-y-4">
-          <div className="border rounded-md p-4">
+          <div className="border rounded-md p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">Facebook</label>
               <Switch 
@@ -132,11 +132,11 @@ const FooterSection: React.FC<SectionProps> = ({
               value={sections.facebookUrl as string || ''}
               onChange={handleInputChange}
               placeholder="https://facebook.com/suapagina"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             />
           </div>
           
-          <div className="border rounded-md p-4">
+          <div className="border rounded-md p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">Instagram</label>
               <Switch 
@@ -151,11 +151,11 @@ const FooterSection: React.FC<SectionProps> = ({
               value={sections.instagramUrl as string || ''}
               onChange={handleInputChange}
               placeholder="https://instagram.com/suapagina"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             />
           </div>
           
-          <div className="border rounded-md p-4">
+          <div className="border rounded-md p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">Twitter</label>
               <Switch 
@@ -170,11 +170,11 @@ const FooterSection: React.FC<SectionProps> = ({
               value={sections.twitterUrl as string || ''}
               onChange={handleInputChange}
               placeholder="https://twitter.com/suapagina"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             />
           </div>
           
-          <div className="border rounded-md p-4">
+          <div className="border rounded-md p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
               <Switch 
@@ -189,16 +189,17 @@ const FooterSection: React.FC<SectionProps> = ({
               value={sections.linkedinUrl as string || ''}
               onChange={handleInputChange}
               placeholder="https://linkedin.com/company/suaempresa"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
             />
           </div>
         </div>
         
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-6 pt-4 border-t">
           <CustomButton 
             onClick={() => handleSaveSection('footer')}
             variant="primary"
             disabled={isLoading}
+            className="relative px-6"
           >
             {isLoading ? 'Salvando...' : 'Salvar Alterações'}
           </CustomButton>
