@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { Trash, Edit } from 'lucide-react';
-import { fetchFAQs, addFAQ, deleteFAQ, updateFAQ, FAQItem } from '@/utils/supabaseClient';
+import { fetchFAQs, addFAQ, deleteFAQ, updateFAQ } from '@/utils/supabaseClient';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { FAQItem } from '@/utils/supabase/types';
 
 export default function FAQ() {
   const [faqItems, setFAQItems] = useState<FAQItem[]>([]);
