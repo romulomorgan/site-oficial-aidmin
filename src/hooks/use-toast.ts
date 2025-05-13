@@ -33,8 +33,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
   );
 };
 
-export { Toaster };
-
 // Define window.toast for TypeScript
 declare global {
   interface Window {
@@ -102,4 +100,5 @@ export const useToast = () => {
   };
 };
 
+export { Toaster };
 export default useToast;
