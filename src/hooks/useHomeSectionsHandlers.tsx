@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { updateSiteText } from '@/utils/supabaseClient';
-import { HomeSectionsState } from './useHomeSectionsData';
+import { HomeSectionsState } from './homeSections';
 
 interface HomeSectionsHandlersProps {
   sections: HomeSectionsState;

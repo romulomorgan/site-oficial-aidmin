@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Importar os hooks criados
-import { useHomeSectionsData } from "@/hooks/useHomeSectionsData";
+import { useHomeSectionsData } from "@/hooks/homeSections";
 import { useHomeSectionsHandlers } from "@/hooks/useHomeSectionsHandlers";
 
 // Importar os componentes de seção
