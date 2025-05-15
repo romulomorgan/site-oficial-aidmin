@@ -1,154 +1,117 @@
 
-import * as React from "react"
-import { Toaster as Sonner } from "sonner"
+import * as React from "react";
+import { toast as sonnerToast, Toaster as SonnerToaster, ToastT } from "sonner";
 
-import { useMediaQuery } from "./use-media-query"
-import { cn } from "@/lib/utils"
-
-type ToasterProps = React.ComponentProps<typeof Sonner>
-
-const ToastProvider = ({ ...props }: ToasterProps) => {
-  const { theme = "system", ...rest } = props
-  const desktop = useMediaQuery("(min-width: 768px)")
-
+export function Toaster() {
   return (
-    <Sonner
-      theme={theme as ToasterProps["theme"]}
-      className={cn("toaster group", desktop ? "md:toaster-desktop" : "")}
+    <SonnerToaster
+      className="toaster group"
+      toastOptions={{
+        classNames: {
+          toast:
+            "group toast group-[.toaster]:bg-white group-[.toaster]:text-gray-950 group-[.toaster]:border-gray-200 group-[.toaster]:shadow-lg",
+          description: "group-[.toast]:text-gray-500",
+          actionButton:
+            "group-[.toast]:bg-gray-900 group-[.toast]:text-gray-50 hover:group-[.toast]:bg-gray-900/90",
+          cancelButton:
+            "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-500 hover:group-[.toast]:bg-gray-100/80",
+          error:
+            "group-[.toaster]:bg-red-50 group-[.toaster]:text-red-900 group-[.toaster]:border-red-200",
+          success:
+            "group-[.toaster]:bg-green-50 group-[.toaster]:text-green-900 group-[.toaster]:border-green-200",
+          warning:
+            "group-[.toaster]:bg-yellow-50 group-[.toaster]:text-yellow-900 group-[.toaster]:border-yellow-200"
+        }
+      }}
+      expand={false}
+      duration={3000}
       richColors
-      position="top-right"
-      closeButton
-      expand={!desktop}
-      {...rest}
     />
-  )
-}
-
-export { ToastProvider as Toaster }
-
-export type ToastProps = React.ComponentProps<typeof Toast>
-
-// Define a toast type for our internal usage
-type ToastType = {
-  id: string
-  title?: string
-  description?: string
-  action?: React.ReactNode
-  variant?: "default" | "destructive"
-}
-
-// Hack to forward the toast function type
-export const { toast } = (() => {
-  // Declare a type that represents the properties of the toast function
-  type ToastFunction = {
-    (message: string, options?: { duration?: number }): void;
-    error: (message: string, options?: { duration?: number }) => void;
-    success: (message: string, options?: { duration?: number }) => void;
-    loading: (message: string, options?: { duration?: number }) => void;
-    warning: (message: string, options?: { duration?: number }) => void;
-    info: (message: string, options?: { duration?: number }) => void;
-  };
-
-  const toast = ((message, options) => {
-    // Implementation here would call the actual toast function
-    const importedToast = require("sonner").toast;
-    importedToast(message, options);
-  }) as ToastFunction;
-
-  // Add additional methods
-  toast.error = (message, options) => {
-    const importedToast = require("sonner").toast;
-    importedToast.error(message, options);
-  };
-
-  toast.success = (message, options) => {
-    const importedToast = require("sonner").toast;
-    importedToast.success(message, options);
-  };
-
-  toast.loading = (message, options) => {
-    const importedToast = require("sonner").toast;
-    importedToast.loading(message, options);
-  };
-
-  toast.warning = (message, options) => {
-    const importedToast = require("sonner").toast;
-    importedToast.warning(message, options);
-  };
-
-  toast.info = (message, options) => {
-    const importedToast = require("sonner").toast;
-    importedToast.info(message, options);
-  };
-
-  return { toast };
-})();
-
-// Create a React context to store and provide toast state
-type ToastContextType = {
-  toasts: ToastType[]
-  toast: typeof toast
-  dismiss: (toastId?: string) => void
-}
-
-const ToastContext = React.createContext<ToastContextType | undefined>(undefined);
-
-// Provider component
-export function ToastContextProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = React.useState<ToastType[]>([]);
-  
-  const addToast = React.useCallback((toast: Omit<ToastType, "id">) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prevToasts) => [...prevToasts, { id, ...toast }]);
-    return id;
-  }, []);
-
-  const dismissToast = React.useCallback((toastId?: string) => {
-    require("sonner").toast.dismiss(toastId);
-    
-    if (toastId) {
-      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== toastId));
-    } else {
-      setToasts([]);
-    }
-  }, []);
-
-  const value = React.useMemo(
-    () => ({
-      toasts,
-      toast,
-      dismiss: dismissToast,
-    }),
-    [toasts, dismissToast]
-  );
-
-  return (
-    <ToastContext.Provider value={value}>
-      {children}
-    </ToastContext.Provider>
   );
 }
 
-function useToast() {
-  const context = React.useContext(ToastContext);
-  
-  if (!context) {
-    // For backward compatibility, if not in context, return minimal interface
-    return {
-      toast,
-      dismiss: (toastId?: string) => {
-        require("sonner").toast.dismiss(toastId);
-      },
-      toasts: [] // Add empty toasts array for compatibility
+export type ToastProps = React.ComponentPropsWithoutRef<typeof SonnerToaster>;
+
+// Define as propriedades do toast
+export interface ToastActionElement {
+  altText?: string;
+  action: React.ReactNode;
+}
+
+export interface ToastProps {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  variant?: "default" | "destructive" | "success" | "warning";
+  action?: ToastActionElement;
+}
+
+// Define o hook useToast
+export const useToast = () => {
+  const showToast = ({
+    title,
+    description,
+    variant = "default",
+    action,
+    ...props
+  }: ToastProps) => {
+    const toastOptions = {
+      ...props,
     };
-  }
-  
-  return context;
-}
 
-export { useToast };
+    if (action) {
+      toastOptions.action = action.action;
+      toastOptions.actionAltText = action.altText;
+    }
 
-// Forward the original component directly
-export const Toast = ({ ...props }: any) => {
-  return props.children;
+    switch (variant) {
+      case "destructive":
+        return sonnerToast.error(title, {
+          ...toastOptions,
+          description,
+        });
+      case "success":
+        return sonnerToast.success(title, {
+          ...toastOptions,
+          description,
+        });
+      case "warning":
+        return sonnerToast.warning(title, {
+          ...toastOptions,
+          description,
+        });
+      default:
+        return sonnerToast(title, {
+          ...toastOptions,
+          description,
+        });
+    }
+  };
+
+  const showError = (props: Omit<ToastProps, "variant">) =>
+    showToast({ ...props, variant: "destructive" });
+
+  const showSuccess = (props: Omit<ToastProps, "variant">) =>
+    showToast({ ...props, variant: "success" });
+
+  const showWarning = (props: Omit<ToastProps, "variant">) =>
+    showToast({ ...props, variant: "warning" });
+
+  const showInfo = (props: Omit<ToastProps, "variant">) =>
+    showToast({ ...props, variant: "default" });
+
+  return {
+    toast: showToast,
+    error: showError,
+    success: showSuccess,
+    warning: showWarning,
+    info: showInfo
+  };
+};
+
+export const toast = {
+  ...sonnerToast,
+  error: (title: string, description?: string) => sonnerToast.error(title, { description }),
+  success: (title: string, description?: string) => sonnerToast.success(title, { description }),
+  warning: (title: string, description?: string) => sonnerToast.warning(title, { description }),
+  info: (title: string, description?: string) => sonnerToast(title, { description })
 };
