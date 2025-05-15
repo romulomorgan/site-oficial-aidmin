@@ -1,11 +1,15 @@
 
 import * as React from "react";
-import { toast as sonnerToast, Toaster as SonnerToaster, ToastT } from "sonner";
+import { toast as sonnerToast, Toaster as SonnerToaster, type ToastT } from "sonner";
 
-export function Toaster() {
+export function Toaster({
+  position = "bottom-right",
+  ...props
+}: React.ComponentProps<typeof SonnerToaster>) {
   return (
     <SonnerToaster
       className="toaster group"
+      position={position}
       toastOptions={{
         classNames: {
           toast:
@@ -26,27 +30,30 @@ export function Toaster() {
       expand={false}
       duration={3000}
       richColors
+      {...props}
     />
   );
 }
 
-export type ToastProps = React.ComponentPropsWithoutRef<typeof SonnerToaster>;
-
-// Define as propriedades do toast
+// Define os tipos para ações de toast
 export interface ToastActionElement {
   altText?: string;
   action: React.ReactNode;
 }
 
+// Define os tipos para propriedades do toast
 export interface ToastProps {
   title?: React.ReactNode;
   description?: React.ReactNode;
   variant?: "default" | "destructive" | "success" | "warning";
   action?: ToastActionElement;
+  [key: string]: any;
 }
 
-// Define o hook useToast
+// Hook useToast
 export const useToast = () => {
+  const toasts = React.useState<ToastT[]>([]);
+
   const showToast = ({
     title,
     description,
@@ -56,34 +63,23 @@ export const useToast = () => {
   }: ToastProps) => {
     const toastOptions = {
       ...props,
+      description,
     };
 
     if (action) {
       toastOptions.action = action.action;
-      toastOptions.actionAltText = action.altText;
+      toastOptions.altText = action.altText;
     }
 
     switch (variant) {
       case "destructive":
-        return sonnerToast.error(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast.error(title as string, toastOptions);
       case "success":
-        return sonnerToast.success(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast.success(title as string, toastOptions);
       case "warning":
-        return sonnerToast.warning(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast.warning(title as string, toastOptions);
       default:
-        return sonnerToast(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast(title as string, toastOptions);
     }
   };
 
@@ -104,7 +100,8 @@ export const useToast = () => {
     error: showError,
     success: showSuccess,
     warning: showWarning,
-    info: showInfo
+    info: showInfo,
+    toasts
   };
 };
 

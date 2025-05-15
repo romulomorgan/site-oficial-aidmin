@@ -1,84 +1,75 @@
+import React, { useEffect } from 'react';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Toaster } from '@/components/ui/use-toast';
-import { useFavicon } from '@/utils/updateFavicon';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { useEffect } from 'react';
-import Index from '@/pages/Index';
-import Solucoes from '@/pages/Solucoes';
-import Contato from '@/pages/Contato';
+import i18n from './i18n'; // Importe a configuração do i18next
+import { routes } from './routes';
+
+// Layouts
+import MainLayout from '@/layouts/MainLayout';
+import AdminLayout from '@/layouts/AdminLayout';
+
+// Pages
+import Home from '@/pages/Home';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
+import Solutions from '@/pages/Solutions';
 import NotFound from '@/pages/NotFound';
-import AdminLayout from '@/components/admin/AdminLayout';
-import Dashboard from '@/pages/Admin/Dashboard';
-import EditTexts from '@/pages/Admin/EditTexts';
-import Testimonials from '@/pages/Admin/Testimonials';
-import FAQ from '@/pages/Admin/FAQ';
-import Messages from '@/pages/Admin/Messages';
 import Login from '@/pages/Admin/Login';
+import Dashboard from '@/pages/Admin/Dashboard';
 import SiteSettings from '@/pages/Admin/SiteSettings';
-import HomePageSections from '@/pages/Admin/HomePageSections';
-import PageSections from '@/pages/Admin/PageSections';
-import EmbedComponent from '@/components/EmbedComponent';
-import Footer from '@/components/Footer';
-import AnimationProvider from '@/components/AnimationProvider';
-import AnimationsLoader from '@/utils/animationsLoader';
+import Messages from '@/pages/Admin/Messages';
+import Templates from '@/pages/Admin/Templates';
+import Testimonials from '@/pages/Admin/Testimonials';
+import Faqs from '@/pages/Admin/Faqs';
+import Embed from '@/pages/Embed';
 
-// Componente para rolar para o topo em mudanças de rota
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-};
+// Atualize a importação do Toaster
+import { Toaster } from "@/hooks/use-toast";
 
 function App() {
-  // Use the custom favicon hook
-  useFavicon();
-  
+  useEffect(() => {
+    // Defina o idioma inicial com base no i18n
+    document.documentElement.lang = i18n.language;
+  }, []);
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <MainLayout />,
+      children: [
+        { index: true, element: <Home /> },
+        { path: "about", element: <About /> },
+        { path: "contact", element: <Contact /> },
+        { path: "solutions", element: <Solutions /> },
+        { path: "embed", element: <Embed /> },
+        { path: "*", element: <NotFound /> },
+      ],
+    },
+    {
+      path: "/admin",
+      element: <AdminLayout />,
+      children: [
+        { index: true, element: <Dashboard /> },
+        { path: "login", element: <Login /> },
+        { path: "site-settings", element: <SiteSettings /> },
+        { path: "messages", element: <Messages /> },
+        { path: "templates", element: <Templates /> },
+        { path: "testimonials", element: <Testimonials /> },
+        { path: "faqs", element: <Faqs /> },
+      ],
+    },
+  ]);
+
+  // Na função App onde o Toaster é renderizado:
   return (
-    <Router>
-      <ScrollToTop /> {/* Adiciona comportamento de scroll para o topo ao navegar */}
-      <AnimationsLoader />
-      <AnimationProvider>
-        <div className="flex flex-col min-h-screen">
-          <div className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/solucoes" element={<Solucoes />} />
-              <Route path="/contato" element={<Contato />} />
-              <Route path="/admin/login" element={<Login />} />
-              <Route path="/admin" element={
-                <SidebarProvider defaultOpen={true}>
-                  <AdminLayout />
-                </SidebarProvider>
-              }>
-                <Route index element={<Dashboard />} />
-                <Route path="secoes" element={<HomePageSections />} />
-                <Route path="paginas" element={<PageSections />} />
-                <Route path="textos" element={<EditTexts />} />
-                <Route path="depoimentos" element={<Testimonials />} />
-                <Route path="faq" element={<FAQ />} />
-                <Route path="mensagens" element={<Messages />} />
-                <Route path="configuracoes/*" element={<SiteSettings />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-          
-          {/* Rodapé apenas para páginas públicas */}
-          <Routes>
-            <Route path="/admin/*" element={null} />
-            <Route path="/admin/login" element={null} />
-            <Route path="*" element={<Footer />} />
-          </Routes>
-        </div>
-        <Toaster position="bottom-right" />
-        <EmbedComponent />
-      </AnimationProvider>
-    </Router>
+    <>
+      <RouterProvider router={router} />
+      <Toaster />
+    </>
   );
 }
 
