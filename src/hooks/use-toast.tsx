@@ -18,7 +18,8 @@ export type ToastOptions = {
   title?: string;
   description?: React.ReactNode;
   action?: ToastActionElement;
-  variant?: "default" | "destructive" | "success";
+  // Remover a variante "success" para alinhar com as variantes suportadas pelo componente Radix UI Toast
+  variant?: "default" | "destructive";
 };
 
 export const ToastAction = React.forwardRef<
@@ -47,6 +48,7 @@ type ToasterToast = ToastProps & {
   title?: string;
   description?: React.ReactNode;
   action?: React.ReactNode;
+  // Aqui também removemos a variante "success"
 };
 
 const TOAST_LIMIT = 5;
