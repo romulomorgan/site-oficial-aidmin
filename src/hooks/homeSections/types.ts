@@ -95,6 +95,17 @@ export interface HomeSectionsState {
   [key: string]: string | boolean;
 }
 
+// Adding SectionData interface to fix import errors
+export interface SectionData {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  visible: boolean;
+  order?: number;
+  [key: string]: string | boolean | number | undefined;
+}
+
 export interface UseHomeSectionsDataReturn {
   isLoading: boolean;
   sections: HomeSectionsState;

@@ -30,6 +30,7 @@ export default function SiteSettings() {
     embedButtonColor,
     embedButtonIcon,
     setCustomTemplate,
+    setEditingTemplate, // Corrigido o problema aqui
     setOpenTemplateDialog,
     setFaviconUrl,
     setWebhookUrl,
@@ -139,7 +140,7 @@ export default function SiteSettings() {
           open={!!editingTemplate}
           onOpenChange={(open) => !open && setEditingTemplate(null)}
           template={editingTemplate}
-          setTemplate={handleEditTemplate}
+          setTemplate={setEditingTemplate} // Corrigido o problema aqui
           onUpdateTemplate={handleUpdateTemplate}
         />
       )}
