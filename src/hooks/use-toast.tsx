@@ -28,6 +28,15 @@ export { ToastProvider as Toaster }
 
 export type ToastProps = React.ComponentProps<typeof Toast>
 
+// Define a toast type for our internal usage
+type ToastType = {
+  id: string
+  title?: string
+  description?: string
+  action?: React.ReactNode
+  variant?: "default" | "destructive"
+}
+
 // Hack to forward the toast function type
 export const { toast } = (() => {
   // Declare a type that represents the properties of the toast function
@@ -75,13 +84,66 @@ export const { toast } = (() => {
   return { toast };
 })();
 
+// Create a React context to store and provide toast state
+type ToastContextType = {
+  toasts: ToastType[]
+  toast: typeof toast
+  dismiss: (toastId?: string) => void
+}
+
+const ToastContext = React.createContext<ToastContextType | undefined>(undefined);
+
+// Provider component
+export function ToastContextProvider({ children }: { children: React.ReactNode }) {
+  const [toasts, setToasts] = React.useState<ToastType[]>([]);
+  
+  const addToast = React.useCallback((toast: Omit<ToastType, "id">) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prevToasts) => [...prevToasts, { id, ...toast }]);
+    return id;
+  }, []);
+
+  const dismissToast = React.useCallback((toastId?: string) => {
+    require("sonner").toast.dismiss(toastId);
+    
+    if (toastId) {
+      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== toastId));
+    } else {
+      setToasts([]);
+    }
+  }, []);
+
+  const value = React.useMemo(
+    () => ({
+      toasts,
+      toast,
+      dismiss: dismissToast,
+    }),
+    [toasts, dismissToast]
+  );
+
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+    </ToastContext.Provider>
+  );
+}
+
 function useToast() {
-  return {
-    toast,
-    dismiss: (toastId?: string) => {
-      require("sonner").toast.dismiss(toastId);
-    },
-  };
+  const context = React.useContext(ToastContext);
+  
+  if (!context) {
+    // For backward compatibility, if not in context, return minimal interface
+    return {
+      toast,
+      dismiss: (toastId?: string) => {
+        require("sonner").toast.dismiss(toastId);
+      },
+      toasts: [] // Add empty toasts array for compatibility
+    };
+  }
+  
+  return context;
 }
 
 export { useToast };

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Toaster } from "@/components/ui/use-toast";
+import { Toaster, ToastContextProvider } from "@/components/ui/use-toast";
 import AdminLayout from '@/components/admin/AdminLayout';
 import Login from '@/pages/Admin/Login';
 import NotFound from '@/pages/NotFound';
@@ -42,8 +42,10 @@ function App() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <RouterProvider router={router} />
-      <Toaster />
+      <ToastContextProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </ToastContextProvider>
     </SidebarProvider>
   );
 }
