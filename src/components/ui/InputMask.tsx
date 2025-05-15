@@ -7,6 +7,7 @@ interface InputMaskProps extends Omit<React.ComponentProps<typeof Input>, 'onCha
   onChange: (value: string) => void;
   mask?: 'phone' | 'custom';
   className?: string;
+  isDark?: boolean;
 }
 
 export const InputMask: React.FC<InputMaskProps> = ({
@@ -14,6 +15,7 @@ export const InputMask: React.FC<InputMaskProps> = ({
   onChange,
   mask = 'phone',
   className,
+  isDark = false,
   ...props
 }) => {
   const [displayValue, setDisplayValue] = useState<string>('');
