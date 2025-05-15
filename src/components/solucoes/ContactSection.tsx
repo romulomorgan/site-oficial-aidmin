@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { toast } from 'sonner';
-import { saveEmailSubscription } from '@/utils/supabaseClient';
 import { supabase } from '@/integrations/supabase/client';
 import { useWebhook } from '@/hooks/useWebhook';
 

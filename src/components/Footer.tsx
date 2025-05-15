@@ -5,7 +5,7 @@ import { useSiteTexts } from '@/hooks/useSiteTexts';
 import FooterNewsletter from './footer/FooterNewsletter';
 import { applyCascadeAnimation } from '@/utils/animations';
 import { fetchSiteTexts } from '@/utils/supabase/siteTexts';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 const Footer: React.FC = () => {
@@ -37,10 +37,7 @@ const Footer: React.FC = () => {
         });
       } catch (error) {
         console.error('Erro ao carregar dados do rodapé:', error);
-        toast.error(
-          "Erro", 
-          "Não foi possível carregar os dados do rodapé"
-        );
+        toast.error("Não foi possível carregar os dados do rodapé");
       }
     };
     
@@ -58,11 +55,7 @@ const Footer: React.FC = () => {
   }
 
   if (!siteTexts) {
-    toast({
-      title: "Erro",
-      description: "Não foi possível carregar os dados do rodapé",
-      variant: "destructive"
-    });
+    toast.error("Não foi possível carregar os dados do rodapé");
     return <div>Erro ao carregar dados do rodapé</div>;
   }
 
