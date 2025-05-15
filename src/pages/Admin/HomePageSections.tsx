@@ -28,50 +28,48 @@ const HomePageSections = () => {
   };
   
   return (
-    <AdminLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Seções da Página Inicial</h1>
-        <Tabs defaultValue="header">
-          <TabsList className="mb-4">
-            <TabsTrigger value="header">Cabeçalho</TabsTrigger>
-            <TabsTrigger value="hero">Hero</TabsTrigger>
-            <TabsTrigger value="whatWeDo">O Que Fazemos</TabsTrigger>
-            <TabsTrigger value="expansion">Em Expansão</TabsTrigger>
-            <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
-            <TabsTrigger value="footer">Rodapé</TabsTrigger>
-            <TabsTrigger value="contact">Contato</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="header">
-            <HeaderSection {...sectionProps} />
-          </TabsContent>
-          
-          <TabsContent value="hero">
-            <HeroSection {...sectionProps} />
-          </TabsContent>
-          
-          <TabsContent value="whatWeDo">
-            <WhatWeDoSection {...sectionProps} />
-          </TabsContent>
-          
-          <TabsContent value="expansion">
-            <ExpansionSection {...sectionProps} />
-          </TabsContent>
-          
-          <TabsContent value="whatsapp">
-            <WhatsappSection {...sectionProps} />
-          </TabsContent>
-          
-          <TabsContent value="footer">
-            <FooterSection {...sectionProps} />
-          </TabsContent>
-          
-          <TabsContent value="contact">
-            <ContactSection {...sectionProps} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AdminLayout>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Seções da Página Inicial</h1>
+      <Tabs defaultValue="header">
+        <TabsList className="mb-4">
+          <TabsTrigger value="header">Cabeçalho</TabsTrigger>
+          <TabsTrigger value="hero">Hero</TabsTrigger>
+          <TabsTrigger value="whatWeDo">O Que Fazemos</TabsTrigger>
+          <TabsTrigger value="expansion">Em Expansão</TabsTrigger>
+          <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
+          <TabsTrigger value="footer">Rodapé</TabsTrigger>
+          <TabsTrigger value="contact">Contato</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="header">
+          <HeaderSection {...sectionProps} />
+        </TabsContent>
+        
+        <TabsContent value="hero">
+          <HeroSection {...sectionProps} />
+        </TabsContent>
+        
+        <TabsContent value="whatWeDo">
+          <WhatWeDoSection {...sectionProps} />
+        </TabsContent>
+        
+        <TabsContent value="expansion">
+          <ExpansionSection {...sectionProps} />
+        </TabsContent>
+        
+        <TabsContent value="whatsapp">
+          <WhatsappSection {...sectionProps} />
+        </TabsContent>
+        
+        <TabsContent value="footer">
+          <FooterSection {...sectionProps} />
+        </TabsContent>
+        
+        <TabsContent value="contact">
+          <ContactSection {...sectionProps} />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
