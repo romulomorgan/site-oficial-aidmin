@@ -6,9 +6,12 @@ import FooterNewsletter from './footer/FooterNewsletter';
 import { applyCascadeAnimation } from '@/utils/animations';
 import { fetchSiteTexts } from '@/utils/supabase/siteTexts';
 import { toast } from '@/components/ui/use-toast';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
-const Footer = () => {
-  const { siteTexts } = useSiteTexts();
+const Footer: React.FC = () => {
+  const { siteTexts, isLoading } = useSiteTexts();
+  const isMobile = useIsMobile();
+
   const [localTexts, setLocalTexts] = useState({
     footerEmail: '',
     footerPhone: '',
@@ -50,6 +53,19 @@ const Footer = () => {
   const hasInstagram = siteTexts.instagramActive !== false && siteTexts.instagramUrl;
   const hasLinkedin = siteTexts.linkedinActive !== false && siteTexts.linkedinUrl;
   
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (!siteTexts) {
+    toast({
+      title: "Erro",
+      description: "Não foi possível carregar os dados do rodapé",
+      variant: "destructive"
+    });
+    return <div>Erro ao carregar dados do rodapé</div>;
+  }
+
   return (
     <footer className="w-full py-10 px-5 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] animate-on-scroll">
       <div className="max-w-[1140px] mx-auto">
