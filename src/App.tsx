@@ -1,7 +1,10 @@
 
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Toaster } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/use-toast";
+import AdminLayout from '@/components/admin/AdminLayout';
+import Login from '@/pages/Admin/Login';
+import NotFound from '@/pages/NotFound';
 
 function App() {
   const router = createBrowserRouter([
@@ -14,15 +17,15 @@ function App() {
         { path: "contact", element: <div>Contact Page</div> },
         { path: "solutions", element: <div>Solutions Page</div> },
         { path: "embed", element: <div>Embed Page</div> },
-        { path: "*", element: <div>Not Found Page</div> },
+        { path: "*", element: <NotFound /> },
       ],
     },
     {
       path: "/admin",
-      element: <div>Admin Layout</div>,
+      element: <AdminLayout />,
       children: [
         { index: true, element: <div>Dashboard Page</div> },
-        { path: "login", element: <div>Login Page</div> },
+        { path: "login", element: <Login /> },
         { path: "site-settings", element: <div>Site Settings Page</div> },
         { path: "messages", element: <div>Messages Page</div> },
         { path: "templates", element: <div>Templates Page</div> },
