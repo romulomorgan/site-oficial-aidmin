@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { InputMask } from '@/components/ui/InputMask';
 
 interface FormFieldProps {
   id: string;
@@ -46,6 +47,27 @@ export function FormField({
           className={`w-full px-4 py-2 rounded-md ${inputClass}`}
           placeholder={placeholder}
           required={required}
+        />
+      ) : type === 'tel' ? (
+        <InputMask
+          id={id}
+          type="tel"
+          value={value}
+          onChange={(maskedValue) => {
+            // Simulando o evento para manter compatibilidade com a interface existente
+            const syntheticEvent = {
+              target: {
+                value: maskedValue,
+                id: id,
+                name: id
+              }
+            } as React.ChangeEvent<HTMLInputElement>;
+            onChange(syntheticEvent);
+          }}
+          placeholder={placeholder}
+          className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+          required={required}
+          mask="phone"
         />
       ) : (
         <input
