@@ -11,7 +11,14 @@ export function getColorTemplatesFromLocalStorage(): ColorTemplate[] {
     
     if (savedTemplates) {
       try {
-        allTemplates = JSON.parse(savedTemplates);
+        // Garantir que todos os templates tenham as propriedades necessárias
+        const parsedTemplates = JSON.parse(savedTemplates).map((template: any) => ({
+          ...template,
+          buttonTextColor: template.buttonTextColor || '#FFFFFF',
+          menuTextColor: template.menuTextColor || '#FFFFFF'
+        })) as ColorTemplate[];
+        
+        allTemplates = parsedTemplates;
       } catch (e) {
         console.error('Erro ao fazer parse dos templates padrão do localStorage:', e);
       }
@@ -19,7 +26,13 @@ export function getColorTemplatesFromLocalStorage(): ColorTemplate[] {
     
     if (customTemplates) {
       try {
-        const parsedCustomTemplates = JSON.parse(customTemplates);
+        // Garantir que todos os templates tenham as propriedades necessárias
+        const parsedCustomTemplates = JSON.parse(customTemplates).map((template: any) => ({
+          ...template,
+          buttonTextColor: template.buttonTextColor || '#FFFFFF',
+          menuTextColor: template.menuTextColor || '#FFFFFF'
+        })) as ColorTemplate[];
+        
         allTemplates = [...allTemplates, ...parsedCustomTemplates];
       } catch (e) {
         console.error('Erro ao fazer parse dos templates personalizados do localStorage:', e);
@@ -27,13 +40,22 @@ export function getColorTemplatesFromLocalStorage(): ColorTemplate[] {
     }
     
     if (allTemplates.length === 0) {
-      return defaultTemplates;
+      // Garantir que defaultTemplates também tem as propriedades necessárias
+      return defaultTemplates.map(template => ({
+        ...template,
+        buttonTextColor: template.buttonTextColor || '#FFFFFF',
+        menuTextColor: template.menuTextColor || '#FFFFFF'
+      })) as ColorTemplate[];
     }
     
     return allTemplates;
   } catch (error) {
     console.error('Erro ao ler templates do localStorage:', error);
-    return defaultTemplates;
+    return defaultTemplates.map(template => ({
+      ...template,
+      buttonTextColor: template.buttonTextColor || '#FFFFFF',
+      menuTextColor: template.menuTextColor || '#FFFFFF'
+    })) as ColorTemplate[];
   }
 }
 

@@ -8,8 +8,8 @@ export interface ThemeTemplate {
   accentColor: string;
   backgroundColor: string;
   textColor: string;
-  buttonTextColor?: string;
-  menuTextColor?: string;
+  buttonTextColor: string;  // Alterado para ser obrigatório, consistente com ColorTemplate
+  menuTextColor: string;    // Alterado para ser obrigatório, consistente com ColorTemplate
 }
 
 // Definição para CSS Variables
