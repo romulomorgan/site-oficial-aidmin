@@ -1,6 +1,7 @@
 
 import * as React from "react";
-import { toast as sonnerToast, Toaster as SonnerToaster, type Toast as ToastT } from "sonner";
+import { toast as sonnerToast, Toaster as SonnerToaster } from "sonner";
+import type { ToastT } from "sonner";
 
 export function Toaster({
   position = "bottom-right",
