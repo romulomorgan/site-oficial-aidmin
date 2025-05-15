@@ -1,18 +1,56 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { useSiteTexts } from '@/hooks/useSiteTexts';
 import FooterNewsletter from './footer/FooterNewsletter';
 import { applyCascadeAnimation } from '@/utils/animations';
+import { fetchSiteTexts } from '@/utils/supabase/siteTexts';
+import { toast } from '@/components/ui/use-toast';
 
 const Footer = () => {
   const { siteTexts } = useSiteTexts();
+  const [localTexts, setLocalTexts] = useState({
+    footerEmail: '',
+    footerPhone: '',
+    footerLocation: '',
+    companyName: 'IAdmin',
+    footerAbout: 'Transformando empresas através da Inteligência Artificial.'
+  });
   
   useEffect(() => {
     // Aplicar animações em cascata aos elementos do rodapé
     applyCascadeAnimation('.footer-animate', 0.1);
+    
+    // Garantir que os dados de contato sejam carregados diretamente do banco
+    const loadFooterData = async () => {
+      try {
+        const texts = await fetchSiteTexts();
+        setLocalTexts({
+          footerEmail: texts.footerEmail as string || 'contato@iadmin.com.br',
+          footerPhone: texts.footerPhoneNumber as string || '+55 (11) 99999-9999',
+          footerLocation: texts.footerLocation as string || 'São Paulo, SP - Brasil',
+          companyName: texts.companyName as string || 'IAdmin',
+          footerAbout: texts.footerAbout as string || 'Transformando empresas através da Inteligência Artificial.'
+        });
+      } catch (error) {
+        console.error('Erro ao carregar dados do rodapé:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar os dados do rodapé",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    loadFooterData();
   }, []);
+  
+  // Funções para verificar se links de redes sociais estão configurados
+  const hasFacebook = siteTexts.facebookActive !== false && siteTexts.facebookUrl;
+  const hasTwitter = siteTexts.twitterActive !== false && siteTexts.twitterUrl;
+  const hasInstagram = siteTexts.instagramActive !== false && siteTexts.instagramUrl;
+  const hasLinkedin = siteTexts.linkedinActive !== false && siteTexts.linkedinUrl;
   
   return (
     <footer className="w-full py-10 px-5 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] animate-on-scroll">
@@ -21,10 +59,10 @@ const Footer = () => {
           {/* Coluna Logo */}
           <div className="flex flex-col footer-animate fade-in">
             <Link to="/" className="text-2xl font-bold mb-4 text-white">
-              {siteTexts.siteTitle || 'IAdmin'}
+              {siteTexts.siteTitle || localTexts.companyName}
             </Link>
             <p className="text-white/80 text-sm mb-6">
-              {siteTexts.footerDescription || 'Transformando empresas através da Inteligência Artificial.'}
+              {siteTexts.footerDescription || localTexts.footerAbout}
             </p>
           </div>
           
@@ -60,13 +98,13 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4 text-white">Contato</h4>
             <ul className="space-y-2">
               <li className="text-white/80">
-                {siteTexts.footerEmail || 'contato@iadmin.com.br'}
+                {siteTexts.footerEmail || localTexts.footerEmail}
               </li>
               <li className="text-white/80">
-                {siteTexts.footerPhone || '+55 (11) 99999-9999'}
+                {siteTexts.footerPhoneNumber || localTexts.footerPhone}
               </li>
               <li className="text-white/80">
-                {siteTexts.footerAddress || 'São Paulo, SP - Brasil'}
+                {siteTexts.footerLocation || localTexts.footerLocation}
               </li>
             </ul>
           </div>
@@ -80,23 +118,23 @@ const Footer = () => {
         
         {/* Redes Sociais */}
         <div className="flex justify-center space-x-4 mt-8 pt-6 border-t border-white/20 footer-animate fade-in">
-          {siteTexts.facebookActive !== false && (
-            <a href={siteTexts.facebookUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+          {hasFacebook && (
+            <a href={siteTexts.facebookUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
               <Facebook size={20} />
             </a>
           )}
-          {siteTexts.twitterActive !== false && (
-            <a href={siteTexts.twitterUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+          {hasTwitter && (
+            <a href={siteTexts.twitterUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
               <Twitter size={20} />
             </a>
           )}
-          {siteTexts.instagramActive !== false && (
-            <a href={siteTexts.instagramUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+          {hasInstagram && (
+            <a href={siteTexts.instagramUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
               <Instagram size={20} />
             </a>
           )}
-          {siteTexts.linkedinActive !== false && (
-            <a href={siteTexts.linkedinUrl || '#'} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+          {hasLinkedin && (
+            <a href={siteTexts.linkedinUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
               <Linkedin size={20} />
             </a>
           )}

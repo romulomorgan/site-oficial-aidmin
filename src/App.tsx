@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/use-toast';
 import { useFavicon } from '@/utils/updateFavicon';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { useEffect } from 'react';
