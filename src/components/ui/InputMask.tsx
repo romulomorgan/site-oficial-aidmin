@@ -72,7 +72,7 @@ export const InputMask: React.FC<InputMaskProps> = ({
     }
   };
 
-  // Aplicar estilos condicionais com base no tema escuro/claro
+  // Aplicar estilos condicionais com base no tema escuro/claro - usando exatamente o mesmo estilo dos outros campos
   const inputClass = isDark
     ? "bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
     : "bg-white border border-gray-300 text-gray-900 focus:border-gray-400";
