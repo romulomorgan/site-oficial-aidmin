@@ -1,8 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { saveColorTemplate, fetchColorTemplates } from '@/utils/supabaseClient';
-import { ColorTemplate, TemplateState } from './types';
+import { fetchColorTemplates, saveColorTemplate, deleteColorTemplate } from '@/utils/supabase/templates';
+import { ColorTemplate } from './types';
 
 export function useTemplates() {
   const [templates, setTemplates] = useState<ColorTemplate[]>([]);
@@ -20,8 +20,10 @@ export function useTemplates() {
   });
   const [editingTemplate, setEditingTemplate] = useState<ColorTemplate | null>(null);
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadTemplates = async () => {
+    setIsLoading(true);
     try {
       const colorTemplates = await fetchColorTemplates();
       if (colorTemplates.length > 0) {
@@ -38,10 +40,13 @@ export function useTemplates() {
     } catch (error) {
       console.error('Erro ao carregar templates:', error);
       toast.error('Erro ao carregar templates do site');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleAddTemplate = async () => {
+    setIsLoading(true);
     const newTemplate = {
       ...customTemplate,
       id: `custom-${Date.now()}`,
@@ -54,7 +59,7 @@ export function useTemplates() {
       
       if (success) {
         // Atualizar estado local
-        setTemplates([...templates, newTemplate]);
+        setTemplates(prev => [...prev, newTemplate]);
         setSelectedTemplate(newTemplate.id);
         setOpenTemplateDialog(false); // Fechar o diálogo após adicionar
         toast.success('Template de cores criado com sucesso!');
@@ -64,17 +69,20 @@ export function useTemplates() {
     } catch (error) {
       console.error('Erro ao adicionar template:', error);
       toast.error('Ocorreu um erro ao criar o template de cores');
+    } finally {
+      setIsLoading(false);
     }
   };
   
   const handleUpdateTemplate = async () => {
     if (editingTemplate) {
+      setIsLoading(true);
       try {
         const success = await saveColorTemplate(editingTemplate);
         
         if (success) {
           // Atualizar estado local
-          setTemplates(templates.map(t => t.id === editingTemplate.id ? editingTemplate : t));
+          setTemplates(prev => prev.map(t => t.id === editingTemplate.id ? editingTemplate : t));
           setEditingTemplate(null);
           toast.success('Template atualizado com sucesso!');
         } else {
@@ -83,39 +91,53 @@ export function useTemplates() {
       } catch (error) {
         console.error('Erro ao atualizar template:', error);
         toast.error('Ocorreu um erro ao atualizar o template');
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
-  const handleDeleteTemplate = (templateId: string) => {
+  const handleDeleteTemplate = async (templateId: string) => {
     // Impedir exclusão de templates padrão
-    if (templateId === 'default') {
+    if (templateId === 'default' || templateId.includes('modern-')) {
       toast.error("Modelos padrão não podem ser excluídos.");
       return;
     }
     
-    const updatedTemplates = templates.filter(t => t.id !== templateId);
-    setTemplates(updatedTemplates);
-    
-    // Se o template excluído estava selecionado, selecionar o padrão
-    if (selectedTemplate === templateId) {
-      setSelectedTemplate("default");
+    setIsLoading(true);
+    try {
+      const success = await deleteColorTemplate(templateId);
+      
+      if (success) {
+        // Atualizar estado local
+        setTemplates(prev => prev.filter(t => t.id !== templateId));
+        
+        // Se o template excluído estava selecionado, selecionar o padrão
+        if (selectedTemplate === templateId) {
+          setSelectedTemplate("default");
+          localStorage.setItem('selectedTemplate', 'default');
+        }
+        
+        toast.success('Template removido com sucesso!');
+      } else {
+        toast.error('Erro ao remover template');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir template:', error);
+      toast.error('Ocorreu um erro ao remover o template');
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Atualizar localStorage
-    const customTemplates = updatedTemplates.filter(t => t.id !== 'default');
-    localStorage.setItem('siteTemplates', JSON.stringify(customTemplates));
-    
-    toast.success('Template removido com sucesso!');
   };
   
   const handleSelectTemplate = (templateId: string) => {
     setSelectedTemplate(templateId);
+    localStorage.setItem('selectedTemplate', templateId);
   };
   
   const handleEditTemplate = (template: ColorTemplate) => {
     // Impedir edição de templates padrão
-    if (template.id === 'default') {
+    if (template.id === 'default' || template.id.includes('modern-')) {
       toast.error("Modelos padrão não podem ser editados.");
       return;
     }
@@ -143,8 +165,12 @@ export function useTemplates() {
           document.documentElement.style.setProperty(key, value);
           document.body.style.setProperty(key, value);
         });
+        
+        console.log('Template aplicado:', selectedTemplateObj.name);
+        return true;
       }
     }
+    return false;
   };
   
   return {
@@ -153,6 +179,7 @@ export function useTemplates() {
     customTemplate,
     editingTemplate,
     openTemplateDialog,
+    isLoading,
     setTemplates,
     setSelectedTemplate,
     setCustomTemplate,
