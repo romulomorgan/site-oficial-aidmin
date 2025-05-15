@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { toast as sonnerToast, Toaster as SonnerToaster, type ToastT } from "sonner";
+import { toast as sonnerToast, Toaster as SonnerToaster, type ToastT, type ToastToDismiss } from "sonner";
 
 export function Toaster({
   position = "bottom-right",
@@ -105,10 +105,17 @@ export const useToast = () => {
   };
 };
 
+// Exportar funções de toast para uso direto
 export const toast = {
-  ...sonnerToast,
+  // Função principal de toast
+  show: (title: string, description?: string) => sonnerToast(title, { description }),
+  
+  // Funções específicas por tipo
   error: (title: string, description?: string) => sonnerToast.error(title, { description }),
   success: (title: string, description?: string) => sonnerToast.success(title, { description }),
   warning: (title: string, description?: string) => sonnerToast.warning(title, { description }),
-  info: (title: string, description?: string) => sonnerToast(title, { description })
+  info: (title: string, description?: string) => sonnerToast(title, { description }),
+  
+  // Reexportar outras funções do sonner
+  ...sonnerToast
 };

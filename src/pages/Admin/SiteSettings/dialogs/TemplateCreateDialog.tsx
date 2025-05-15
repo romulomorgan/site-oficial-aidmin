@@ -207,7 +207,7 @@ export function TemplateCreateDialog({
           <DialogFooter>
             <CustomButton 
               type="button" 
-              variant="outline"
+              variant="secondary"
               onClick={() => onOpenChange(false)}
               className="mr-2"
             >

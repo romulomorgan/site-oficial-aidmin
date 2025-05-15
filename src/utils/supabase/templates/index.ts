@@ -51,15 +51,20 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
     // Assegurando que todos os campos necessários existam
     template = {
       ...template,
-      button_text_color: template.buttonTextColor || template.button_text_color || '#FFFFFF',
-      menu_text_color: template.menuTextColor || template.menu_text_color || '#FFFFFF',
       buttonTextColor: template.buttonTextColor || template.button_text_color || '#FFFFFF',
       menuTextColor: template.menuTextColor || template.menu_text_color || '#FFFFFF'
     };
     
+    // Garantir compatibilidade com banco de dados que usa snake_case
+    const templateToSave = {
+      ...template,
+      button_text_color: template.buttonTextColor || '#FFFFFF',
+      menu_text_color: template.menuTextColor || '#FFFFFF'
+    };
+    
     // Salvar no banco de dados
-    console.log('Enviando template para o banco de dados:', template);
-    const dbSuccess = await saveTemplateToDb(template);
+    console.log('Enviando template para o banco de dados:', templateToSave);
+    const dbSuccess = await saveTemplateToDb(templateToSave);
     
     if (dbSuccess) {
       console.log('Template salvo com sucesso no banco de dados');

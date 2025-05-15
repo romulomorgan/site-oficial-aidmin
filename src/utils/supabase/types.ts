@@ -1,4 +1,3 @@
-
 export interface ColorTemplate {
   id: string;
   name: string;
@@ -10,6 +9,9 @@ export interface ColorTemplate {
   buttonTextColor?: string;
   menuTextColor?: string;
   is_default?: boolean;
+  // Manter compatibilidade com dados do banco que usam snake_case
+  button_text_color?: string;
+  menu_text_color?: string;
 }
 
 export interface EmailSubscription {

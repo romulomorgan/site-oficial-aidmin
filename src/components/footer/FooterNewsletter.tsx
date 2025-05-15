@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/use-toast';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { supabase } from '@/integrations/supabase/client';
 import { useWebhook } from '@/hooks/useWebhook';

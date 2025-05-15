@@ -35,11 +35,7 @@ const Footer = () => {
         });
       } catch (error) {
         console.error('Erro ao carregar dados do rodapé:', error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível carregar os dados do rodapé",
-          variant: "destructive"
-        });
+        toast.error("Erro", "Não foi possível carregar os dados do rodapé");
       }
     };
     
