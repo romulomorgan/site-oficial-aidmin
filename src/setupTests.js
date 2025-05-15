@@ -1,5 +1,5 @@
 
-// import '@testing-library/jest-dom';
+import '@testing-library/jest-dom';
 
 // Mock para o localStorage
 const localStorageMock = (function() {
