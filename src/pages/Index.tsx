@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationBar } from '@/components/ui/NavigationBar';
@@ -128,7 +129,7 @@ export default function Index() {
       <section
         className="relative w-full pt-28 pb-20"
         style={{
-          background: "linear-gradient(to bottom right, #2D0A16, #FF196E)",
+          background: "linear-gradient(to bottom right, var(--secondary-color), var(--primary-color))",
         }}
       >
         {/* Navegação */}
@@ -184,14 +185,14 @@ export default function Index() {
       <section className="w-full py-16 px-5">
         <div className="max-w-[1140px] mx-auto">
           <div className="text-center mb-12 animate-on-scroll fade-on-scroll">
-            <p className="text-[#FF196E] mb-2 font-medium">{siteTexts.whatWeDoSubtitle?.toString() || 'O QUE FAZEMOS DE MELHOR'}</p>
-            <h2 className="text-[36px] font-semibold text-[#222]">
+            <p className="text-[var(--primary-color)] mb-2 font-medium">{siteTexts.whatWeDoSubtitle?.toString() || 'O QUE FAZEMOS DE MELHOR'}</p>
+            <h2 className="text-[36px] font-semibold text-[var(--text-color)]">
               {siteTexts.whatWeDoTitle?.toString() || 'Criamos e treinamos a sua AI'}
             </h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden card-hover-effect animate-on-scroll slide-up cascade-item">
+            <div className="bg-[var(--background-color)] rounded-lg overflow-hidden card-hover-effect animate-on-scroll slide-up cascade-item">
               <div className="h-48 overflow-hidden">
                 <img
                   src={siteTexts.assistantCardImage?.toString() || '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png'}
@@ -200,14 +201,14 @@ export default function Index() {
                 />
               </div>
               <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold mb-2 text-[#222]">{siteTexts.assistantCardTitle?.toString() || 'ASSISTENTE DE IA'}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-[var(--text-color)]">{siteTexts.assistantCardTitle?.toString() || 'ASSISTENTE DE IA'}</h3>
                 {siteTexts.assistantCardDescription && (
-                  <p className="text-[#222]/80">{siteTexts.assistantCardDescription.toString()}</p>
+                  <p className="text-[var(--text-color)]/80">{siteTexts.assistantCardDescription.toString()}</p>
                 )}
               </div>
             </div>
             
-            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden card-hover-effect animate-on-scroll slide-up cascade-item">
+            <div className="bg-[var(--background-color)] rounded-lg overflow-hidden card-hover-effect animate-on-scroll slide-up cascade-item">
               <div className="h-48 overflow-hidden">
                 <img
                   src={siteTexts.bpoProcessosCardImage?.toString() || '/lovable-uploads/232e98e1-6691-4748-89c8-dd6300343696.png'}
@@ -216,14 +217,14 @@ export default function Index() {
                 />
               </div>
               <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold mb-2 text-[#222]">{siteTexts.bpoProcessosCardTitle?.toString() || 'BPO COM PROCESSOS DE NEGÓCIOS'}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-[var(--text-color)]">{siteTexts.bpoProcessosCardTitle?.toString() || 'BPO COM PROCESSOS DE NEGÓCIOS'}</h3>
                 {siteTexts.bpoProcessosCardDescription && (
-                  <p className="text-[#222]/80">{siteTexts.bpoProcessosCardDescription.toString()}</p>
+                  <p className="text-[var(--text-color)]/80">{siteTexts.bpoProcessosCardDescription.toString()}</p>
                 )}
               </div>
             </div>
             
-            <div className="bg-[#f8f9fa] rounded-lg overflow-hidden card-hover-effect animate-on-scroll slide-up cascade-item">
+            <div className="bg-[var(--background-color)] rounded-lg overflow-hidden card-hover-effect animate-on-scroll slide-up cascade-item">
               <div className="h-48 overflow-hidden">
                 <img
                   src={siteTexts.bpoProjetosCardImage?.toString() || '/lovable-uploads/99171a6e-2e02-4673-943e-1b8e633e61c4.png'}
@@ -232,9 +233,9 @@ export default function Index() {
                 />
               </div>
               <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold mb-2 text-[#222]">{siteTexts.bpoProjetosCardTitle?.toString() || 'BPO COM PROJETOS E DESENVOLVIMENTO'}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-[var(--text-color)]">{siteTexts.bpoProjetosCardTitle?.toString() || 'BPO COM PROJETOS E DESENVOLVIMENTO'}</h3>
                 {siteTexts.bpoProjetosCardDescription && (
-                  <p className="text-[#222]/80">{siteTexts.bpoProjetosCardDescription.toString()}</p>
+                  <p className="text-[var(--text-color)]/80">{siteTexts.bpoProjetosCardDescription.toString()}</p>
                 )}
               </div>
             </div>
@@ -243,11 +244,11 @@ export default function Index() {
       </section>
 
       {/* Seção "Em expansão" */}
-      <section className="w-full py-16 px-5 bg-[#f8f9fa]">
+      <section className="w-full py-16 px-5 bg-[var(--background-color)]">
         <div className="max-w-[1140px] mx-auto">
           <div className="mb-6 animate-on-scroll fade-on-scroll">
-            <p className="text-[#FF196E] mb-2 font-medium">{siteTexts.expansionSubtitle?.toString() || 'A QUEM ATENDEMOS'}</p>
-            <h2 className="text-[36px] font-semibold text-[#222] max-w-[500px]">
+            <p className="text-[var(--primary-color)] mb-2 font-medium">{siteTexts.expansionSubtitle?.toString() || 'A QUEM ATENDEMOS'}</p>
+            <h2 className="text-[36px] font-semibold text-[var(--text-color)] max-w-[500px]">
               {siteTexts.expansionTitle?.toString() || 'Em expansão para o segmento da construção civil e condomínios.'}
             </h2>
           </div>
@@ -262,26 +263,26 @@ export default function Index() {
             </div>
             
             <div className="flex-1 animate-on-scroll slide-right-on-scroll">
-              <p className="text-[#222]/80 mb-6">
+              <p className="text-[var(--text-color)]/80 mb-6">
                 {siteTexts.expansionDescription?.toString() || 'Integração de IA com sistemas existentes de construtoras. A <strong>AI Generativa</strong> transforma seus processos corporativos e operacionais. Na Virtia, trabalhamos com processos de compras e gerenciamento de contratos, análise de dados para melhor tomada de decisões, automação de relatórios e integração com sistemas de gestão de condomínio.'}
               </p>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                 <div className="text-center animate-on-scroll fade-on-scroll cascade-item">
-                  <h3 className="text-[#FF196E] text-3xl font-bold highlight-pulse">{siteTexts.statsYears?.toString() || '3+'}</h3>
-                  <p className="text-[#222]/70 text-sm">Anos de experiência</p>
+                  <h3 className="text-[var(--primary-color)] text-3xl font-bold highlight-pulse">{siteTexts.statsYears?.toString() || '3+'}</h3>
+                  <p className="text-[var(--text-color)]/70 text-sm">Anos de experiência</p>
                 </div>
                 <div className="text-center animate-on-scroll fade-on-scroll cascade-item">
-                  <h3 className="text-[#FF196E] text-3xl font-bold highlight-pulse">{siteTexts.statsProjects?.toString() || '600+'}</h3>
-                  <p className="text-[#222]/70 text-sm">Projetos executados</p>
+                  <h3 className="text-[var(--primary-color)] text-3xl font-bold highlight-pulse">{siteTexts.statsProjects?.toString() || '600+'}</h3>
+                  <p className="text-[var(--text-color)]/70 text-sm">Projetos executados</p>
                 </div>
                 <div className="text-center animate-on-scroll fade-on-scroll cascade-item">
-                  <h3 className="text-[#FF196E] text-3xl font-bold highlight-pulse">{siteTexts.statsCompanies?.toString() || '40+'}</h3>
-                  <p className="text-[#222]/70 text-sm">Empresas atendidas</p>
+                  <h3 className="text-[var(--primary-color)] text-3xl font-bold highlight-pulse">{siteTexts.statsCompanies?.toString() || '40+'}</h3>
+                  <p className="text-[var(--text-color)]/70 text-sm">Empresas atendidas</p>
                 </div>
                 <div className="text-center animate-on-scroll fade-on-scroll cascade-item">
-                  <h3 className="text-[#FF196E] text-3xl font-bold highlight-pulse">{siteTexts.statsAutomations?.toString() || '47k+'}</h3>
-                  <p className="text-[#222]/70 text-sm">Automatizações por mês</p>
+                  <h3 className="text-[var(--primary-color)] text-3xl font-bold highlight-pulse">{siteTexts.statsAutomations?.toString() || '47k+'}</h3>
+                  <p className="text-[var(--text-color)]/70 text-sm">Automatizações por mês</p>
                 </div>
               </div>
             </div>
@@ -291,7 +292,7 @@ export default function Index() {
       
       {/* Seção Depoimentos */}
       <section className="w-full py-20 px-5" style={{
-        background: "linear-gradient(to bottom right, #2D0A16, #FF196E)",
+        background: "linear-gradient(to bottom right, var(--secondary-color), var(--primary-color))",
       }}>
         <div className="max-w-[1140px] mx-auto">
           <div className="text-center mb-16 animate-on-scroll fade-on-scroll">
@@ -319,25 +320,25 @@ export default function Index() {
       <section className="w-full py-16 px-5">
         <div className="max-w-[1140px] mx-auto">
           <div className="text-center mb-6 animate-on-scroll fade-on-scroll">
-            <p className="text-[#FF196E] font-medium">{siteTexts.whatsappSubtitle?.toString() || 'INTEGRAÇÃO'}</p>
+            <p className="text-[var(--primary-color)] font-medium">{siteTexts.whatsappSubtitle?.toString() || 'INTEGRAÇÃO'}</p>
           </div>
           
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="flex-1 animate-on-scroll slide-left-on-scroll">
-              <h2 className="text-[36px] font-semibold mb-4 text-[#222] flex items-center">
+              <h2 className="text-[36px] font-semibold mb-4 text-[var(--text-color)] flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#25D366">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
                 <span className="ml-2">{siteTexts.whatsappTitle?.toString() || 'WhatsApp Business'}</span>
               </h2>
-              <p className="text-[#222]/80 mb-6">
+              <p className="text-[var(--text-color)]/80 mb-6">
                 {siteTexts.whatsappDescription?.toString() || 'A Virtia faz a ponte perfeita entre sua IA e o WhatsApp. A integração permite que sua assistente de IA converse diretamente com seus clientes, proporcionando atendimento personalizado e respostas instantâneas. Ganhe eficiência e escala sem perder o toque humano na comunicação.'}
               </p>
               <div className="flex flex-wrap gap-4">
                 <CustomButton variant="primary" className="button-animate pulse-btn">
                   {siteTexts.whatsappButtonText?.toString() || 'Contrate a Virtia'}
                 </CustomButton>
-                <a href="#" className="inline-flex items-center text-gray-800 hover:text-[#FF196E] transition-colors nav-link-animated">
+                <a href="#" className="inline-flex items-center text-gray-800 hover:text-[var(--primary-color)] transition-colors nav-link-animated">
                   <span className="mr-2">Contrate uma AI Poderosa!</span>
                   <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
                     <Play size={12} className="text-gray-700 ml-0.5" />
@@ -358,11 +359,11 @@ export default function Index() {
       </section>
       
       {/* Seção FAQ */}
-      <section className="w-full py-16 px-5 bg-[#f8f9fa]">
+      <section className="w-full py-16 px-5 bg-[var(--background-color)]">
         <div className="max-w-[1140px] mx-auto">
           <div className="text-center mb-12 animate-on-scroll fade-on-scroll">
-            <p className="text-[#FF196E] font-medium">FAQ</p>
-            <h2 className="text-[36px] font-semibold text-[#222]">
+            <p className="text-[var(--primary-color)] font-medium">FAQ</p>
+            <h2 className="text-[36px] font-semibold text-[var(--text-color)]">
               {siteTexts.faqTitle?.toString() || 'Perguntas Frequentes'}
             </h2>
           </div>
@@ -375,7 +376,7 @@ export default function Index() {
       
       {/* Seção Contato */}
       <section className="w-full py-16 px-5" style={{
-        background: "linear-gradient(to bottom right, #2D0A16, #FF196E)",
+        background: "linear-gradient(to bottom right, var(--secondary-color), var(--primary-color))",
       }}>
         <div className="max-w-[1140px] mx-auto">
           <div className="text-center mb-8 animate-on-scroll fade-on-scroll">
@@ -398,7 +399,7 @@ export default function Index() {
               />
               <button
                 type="submit"
-                className="w-full h-12 bg-white text-[#FF196E] font-medium rounded-lg hover:bg-white/90 transition-colors button-animate"
+                className="w-full h-12 bg-white text-[var(--primary-color)] font-medium rounded-lg hover:bg-white/90 transition-colors button-animate"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Enviando..." : (siteTexts.contactButtonText?.toString() || "Enviar")}
@@ -410,3 +411,4 @@ export default function Index() {
     </main>
   );
 }
+

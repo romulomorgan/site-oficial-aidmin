@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
@@ -42,6 +43,27 @@ const Footer: React.FC = () => {
     };
     
     loadFooterData();
+
+    // Adicionar classes de animação aos elementos do rodapé após carregar a página
+    const footerElements = document.querySelectorAll('.footer-animate');
+    footerElements.forEach((el, index) => {
+      if (el instanceof HTMLElement) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
+        el.style.transitionDelay = `${index * 0.1}s`;
+      }
+    });
+
+    // Ativar animações após um breve delay
+    setTimeout(() => {
+      footerElements.forEach((el) => {
+        if (el instanceof HTMLElement) {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }
+      });
+    }, 300);
   }, []);
   
   // Funções para verificar se links de redes sociais estão configurados
@@ -60,12 +82,12 @@ const Footer: React.FC = () => {
   }
 
   return (
-    <footer className="w-full py-10 px-5 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] animate-on-scroll">
+    <footer className="w-full py-10 px-5 bg-gradient-to-br from-[var(--secondary-color)] to-[var(--primary-color)] animate-on-scroll">
       <div className="max-w-[1140px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-white">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Coluna Logo */}
           <div className="flex flex-col footer-animate fade-in">
-            <Link to="/" className="text-2xl font-bold mb-4 text-white">
+            <Link to="/" className="text-2xl font-bold mb-4 text-white hover-scale">
               {siteTexts.siteTitle || localTexts.companyName}
             </Link>
             <p className="text-white/80 text-sm mb-6">
@@ -77,23 +99,23 @@ const Footer: React.FC = () => {
           <div className="footer-animate fade-in">
             <h4 className="text-lg font-semibold mb-4 text-white">Links Rápidos</h4>
             <ul className="space-y-2">
-              <li>
-                <Link to="/" className="text-white/80 hover:text-white transition-colors">
+              <li className="slide-up-on-scroll cascade-item">
+                <Link to="/" className="text-white/80 hover:text-white transition-colors nav-link-animated">
                   Home
                 </Link>
               </li>
-              <li>
-                <Link to="/solucoes" className="text-white/80 hover:text-white transition-colors">
+              <li className="slide-up-on-scroll cascade-item">
+                <Link to="/solucoes" className="text-white/80 hover:text-white transition-colors nav-link-animated">
                   Soluções
                 </Link>
               </li>
-              <li>
-                <Link to="/contato" className="text-white/80 hover:text-white transition-colors">
+              <li className="slide-up-on-scroll cascade-item">
+                <Link to="/contato" className="text-white/80 hover:text-white transition-colors nav-link-animated">
                   Contato
                 </Link>
               </li>
-              <li>
-                <Link to="/admin" className="text-white/80 hover:text-white transition-colors">
+              <li className="slide-up-on-scroll cascade-item">
+                <Link to="/admin" className="text-white/80 hover:text-white transition-colors nav-link-animated">
                   Área Admin
                 </Link>
               </li>
@@ -104,13 +126,13 @@ const Footer: React.FC = () => {
           <div className="footer-animate fade-in">
             <h4 className="text-lg font-semibold mb-4 text-white">Contato</h4>
             <ul className="space-y-2">
-              <li className="text-white/80">
+              <li className="text-white/80 slide-up-on-scroll cascade-item hover-scale">
                 {siteTexts.footerEmail || localTexts.footerEmail}
               </li>
-              <li className="text-white/80">
+              <li className="text-white/80 slide-up-on-scroll cascade-item hover-scale">
                 {siteTexts.footerPhoneNumber || localTexts.footerPhone}
               </li>
-              <li className="text-white/80">
+              <li className="text-white/80 slide-up-on-scroll cascade-item hover-scale">
                 {siteTexts.footerLocation || localTexts.footerLocation}
               </li>
             </ul>
@@ -126,29 +148,29 @@ const Footer: React.FC = () => {
         {/* Redes Sociais */}
         <div className="flex justify-center space-x-4 mt-8 pt-6 border-t border-white/20 footer-animate fade-in">
           {hasFacebook && (
-            <a href={siteTexts.facebookUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <a href={siteTexts.facebookUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
               <Facebook size={20} />
             </a>
           )}
           {hasTwitter && (
-            <a href={siteTexts.twitterUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <a href={siteTexts.twitterUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
               <Twitter size={20} />
             </a>
           )}
           {hasInstagram && (
-            <a href={siteTexts.instagramUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <a href={siteTexts.instagramUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
               <Instagram size={20} />
             </a>
           )}
           {hasLinkedin && (
-            <a href={siteTexts.linkedinUrl as string} className="text-white/80 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+            <a href={siteTexts.linkedinUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
               <Linkedin size={20} />
             </a>
           )}
         </div>
         
         <div className="mt-6 text-center text-white/70 footer-animate fade-in">
-          <p>
+          <p className="animate-on-scroll fade-on-scroll">
             {siteTexts.copyrightText || '© 2025 IAdmin. Todos os direitos reservados.'}
           </p>
         </div>
@@ -158,3 +180,4 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
+

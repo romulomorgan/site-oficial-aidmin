@@ -37,11 +37,47 @@ const applyInitialTheme = async () => {
           console.log('Tema inicial aplicado do cache local');
         } catch (e) {
           console.error('Erro ao aplicar tema inicial do cache:', e);
+          
+          // Se houver erro ao aplicar do localStorage, tentar aplicar cores padrão
+          document.documentElement.style.setProperty('--primary-color', '#FF196E');
+          document.documentElement.style.setProperty('--secondary-color', '#2D0A16');
+          document.documentElement.style.setProperty('--accent-color', '#FF4F8E');
+          document.documentElement.style.setProperty('--background-color', '#FFFFFF');
+          document.documentElement.style.setProperty('--text-color', '#222222');
+          document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
+          document.documentElement.style.setProperty('--menu-text-color', '#FFFFFF');
         }
+      } else {
+        // Aplicar cores padrão se não houver template salvo no localStorage
+        document.documentElement.style.setProperty('--primary-color', '#FF196E');
+        document.documentElement.style.setProperty('--secondary-color', '#2D0A16');
+        document.documentElement.style.setProperty('--accent-color', '#FF4F8E');
+        document.documentElement.style.setProperty('--background-color', '#FFFFFF');
+        document.documentElement.style.setProperty('--text-color', '#222222');
+        document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
+        document.documentElement.style.setProperty('--menu-text-color', '#FFFFFF');
       }
+    } else {
+      // Aplicar cores padrão se não houver template selecionado
+      document.documentElement.style.setProperty('--primary-color', '#FF196E');
+      document.documentElement.style.setProperty('--secondary-color', '#2D0A16');
+      document.documentElement.style.setProperty('--accent-color', '#FF4F8E');
+      document.documentElement.style.setProperty('--background-color', '#FFFFFF');
+      document.documentElement.style.setProperty('--text-color', '#222222');
+      document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
+      document.documentElement.style.setProperty('--menu-text-color', '#FFFFFF');
     }
   } catch (error) {
     console.error('Erro ao aplicar tema inicial:', error);
+    
+    // Em caso de erro, aplicar cores padrão
+    document.documentElement.style.setProperty('--primary-color', '#FF196E');
+    document.documentElement.style.setProperty('--secondary-color', '#2D0A16');
+    document.documentElement.style.setProperty('--accent-color', '#FF4F8E');
+    document.documentElement.style.setProperty('--background-color', '#FFFFFF');
+    document.documentElement.style.setProperty('--text-color', '#222222');
+    document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
+    document.documentElement.style.setProperty('--menu-text-color', '#FFFFFF');
   }
 };
 
@@ -58,3 +94,4 @@ applyInitialTheme().then(() => {
   
   createRoot(rootElement).render(<App />);
 });
+
