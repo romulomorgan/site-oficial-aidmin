@@ -9,6 +9,8 @@ export const Header: React.FC = () => {
   const [siteTitle, setSiteTitle] = useState('IAdmin');
   const [logoUrl, setLogoUrl] = useState('');
   const [homeLogoIconUrl, setHomeLogoIconUrl] = useState('');
+  const [heroSecondaryButtonText, setHeroSecondaryButtonText] = useState('Contrate a IAdmin!');
+  const [heroSecondaryButtonLink, setHeroSecondaryButtonLink] = useState('/contato');
 
   useEffect(() => {
     // Carrega o título do site e a URL do logo do localStorage
@@ -23,6 +25,12 @@ export const Header: React.FC = () => {
     }
     if (siteTexts.homeLogoIconUrl && typeof siteTexts.homeLogoIconUrl === 'string') {
       setHomeLogoIconUrl(siteTexts.homeLogoIconUrl);
+    }
+    if (siteTexts.heroSecondaryButtonText && typeof siteTexts.heroSecondaryButtonText === 'string') {
+      setHeroSecondaryButtonText(siteTexts.heroSecondaryButtonText);
+    }
+    if (siteTexts.heroSecondaryButtonLink && typeof siteTexts.heroSecondaryButtonLink === 'string') {
+      setHeroSecondaryButtonLink(siteTexts.heroSecondaryButtonLink);
     }
   }, []);
 
@@ -50,9 +58,9 @@ export const Header: React.FC = () => {
               Fale Conosco
             </CustomButton>
           </Link>
-          <Link to="/contato">
+          <Link to={heroSecondaryButtonLink}>
             <CustomButton variant="secondary">
-              Contrate a IAdmin!
+              {heroSecondaryButtonText}
             </CustomButton>
           </Link>
         </div>

@@ -17,6 +17,8 @@ export interface HomeSectionsState {
   heroButtonText: string;
   heroButtonLink: string;
   heroVideoUrl: string;
+  heroSecondaryButtonText: string;
+  heroSecondaryButtonLink: string;
   
   // O que fazemos Section
   whatWeDoTitle: string;
@@ -97,6 +99,8 @@ export const useHomeSectionsData = () => {
     heroButtonText: '',
     heroButtonLink: '',
     heroVideoUrl: '',
+    heroSecondaryButtonText: '',
+    heroSecondaryButtonLink: '',
     
     // O que fazemos Section
     whatWeDoTitle: '',
@@ -183,6 +187,8 @@ export const useHomeSectionsData = () => {
       if (!updatedSections.heroSubtitle) updatedSections.heroSubtitle = 'Exploramos os limites da AI Generativa para criar novos produtos, avenidas de receitas e gerar eficiência operacional.';
       if (!updatedSections.heroButtonText) updatedSections.heroButtonText = 'Fale Conosco';
       if (!updatedSections.heroButtonLink) updatedSections.heroButtonLink = '/solucoes';
+      if (!updatedSections.heroSecondaryButtonText) updatedSections.heroSecondaryButtonText = 'Contrate uma AI Poderosa!';
+      if (!updatedSections.heroSecondaryButtonLink) updatedSections.heroSecondaryButtonLink = '/contato';
       if (!updatedSections.footerLocation) updatedSections.footerLocation = 'São Paulo, SP - Brasil';
       
       // Valores padrão para seção WhatsApp

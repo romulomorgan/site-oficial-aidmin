@@ -17,6 +17,8 @@ interface HeroSectionProps {
   whatsappButtonText?: string;
   whatsappSecondaryButtonLink?: string;
   whatsappSecondaryButtonText?: string;
+  heroSecondaryButtonLink?: string;
+  heroSecondaryButtonText?: string;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ 
@@ -28,7 +30,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   whatsappButtonLink = "/contato",
   whatsappButtonText = "Fale Conosco",
   whatsappSecondaryButtonLink = "/contato",
-  whatsappSecondaryButtonText = "Contrate a iAdmin"
+  whatsappSecondaryButtonText = "Contrate a iAdmin",
+  heroSecondaryButtonLink = "/contato",
+  heroSecondaryButtonText = "Contrate uma AI Poderosa!"
 }) => {
   return (
     <div className="relative overflow-hidden bg-cover bg-center py-28 md:py-36 w-full" style={{ backgroundImage: `url(${bgImage})` }}>
@@ -55,9 +59,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 {whatsappButtonText} <ArrowRight className="ml-2 h-5 w-5" />
               </CustomButton>
             </Link>
-            <Link to={whatsappSecondaryButtonLink || "/contato"}>
+            <Link to={heroSecondaryButtonLink || "/contato"}>
               <CustomButton size="lg" variant="secondary" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white hover-float">
-                {whatsappSecondaryButtonText}
+                {heroSecondaryButtonText}
               </CustomButton>
             </Link>
           </div>

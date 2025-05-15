@@ -56,6 +56,8 @@ export const useHomeSectionsHandlers = ({
             heroButtonText: sections.heroButtonText,
             heroButtonLink: sections.heroButtonLink,
             heroVideoUrl: sections.heroVideoUrl,
+            heroSecondaryButtonText: sections.heroSecondaryButtonText,
+            heroSecondaryButtonLink: sections.heroSecondaryButtonLink,
           };
           break;
         case 'whatWeDo':

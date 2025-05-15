@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationBar } from '@/components/ui/NavigationBar';
@@ -150,12 +149,12 @@ export default function Index() {
                   {siteTexts.heroButtonText?.toString() || 'Fale Conosco'}
                 </CustomButton>
               </Link>
-              <a href="#" className="inline-flex items-center text-white hover:text-white/80 transition-colors nav-link-animated">
-                <span className="mr-2">{siteTexts.footerButtonText?.toString() || 'Contrate uma AI Poderosa!'}</span>
+              <Link to={siteTexts.heroSecondaryButtonLink?.toString() || '/contato'} className="inline-flex items-center text-white hover:text-white/80 transition-colors nav-link-animated">
+                <span className="mr-2">{siteTexts.heroSecondaryButtonText?.toString() || 'Contrate uma AI Poderosa!'}</span>
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
                   <Play size={12} className="text-white ml-0.5" />
                 </div>
-              </a>
+              </Link>
             </div>
           </div>
           <div className="flex-1 flex justify-center slide-right animate-on-scroll">

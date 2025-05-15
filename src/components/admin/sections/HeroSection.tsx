@@ -36,26 +36,52 @@ const HeroSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
-          <input
-            type="text"
-            name="heroButtonText"
-            value={sections.heroButtonText as string}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão Principal</label>
+            <input
+              type="text"
+              name="heroButtonText"
+              value={sections.heroButtonText as string}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão Principal</label>
+            <input
+              type="text"
+              name="heroButtonLink"
+              value={sections.heroButtonLink as string}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão</label>
-          <input
-            type="text"
-            name="heroButtonLink"
-            value={sections.heroButtonLink as string}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão Secundário</label>
+            <input
+              type="text"
+              name="heroSecondaryButtonText"
+              value={sections.heroSecondaryButtonText as string || 'Contrate uma AI Poderosa!'}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão Secundário</label>
+            <input
+              type="text"
+              name="heroSecondaryButtonLink"
+              value={sections.heroSecondaryButtonLink as string || '/contato'}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
         </div>
         
         <div>
