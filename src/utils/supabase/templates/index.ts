@@ -51,10 +51,8 @@ export async function saveColorTemplate(template: ColorTemplate): Promise<boolea
     // Assegurando que todos os campos necessários existam
     template = {
       ...template,
-      button_text_color: template.buttonTextColor || template.button_text_color || '#FFFFFF',
-      menu_text_color: template.menuTextColor || template.menu_text_color || '#FFFFFF',
-      buttonTextColor: template.buttonTextColor || template.button_text_color || '#FFFFFF',
-      menuTextColor: template.menuTextColor || template.menu_text_color || '#FFFFFF'
+      buttonTextColor: template.buttonTextColor || '#FFFFFF',
+      menuTextColor: template.menuTextColor || '#FFFFFF'
     };
     
     // Salvar no banco de dados

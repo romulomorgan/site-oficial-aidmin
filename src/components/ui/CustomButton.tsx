@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'destructive';
+  variant?: 'primary' | 'secondary' | 'destructive' | 'outline';
   icon?: string;
   children: React.ReactNode;
   size?: 'default' | 'sm' | 'lg';
@@ -24,6 +24,7 @@ export const CustomButton: React.FC<ButtonProps> = ({
         variant === 'primary' && "bg-[#FF196E] text-white hover:bg-[#ff3582] hover:shadow-md",
         variant === 'secondary' && "border border-white text-white hover:bg-white/10 hover:shadow-md",
         variant === 'destructive' && "bg-red-600 text-white hover:bg-red-700 hover:shadow-md",
+        variant === 'outline' && "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md",
         size === 'default' && "min-h-[52px] px-6 py-3",
         size === 'sm' && "min-h-[36px] px-3 py-2 text-sm",
         size === 'lg' && "min-h-[60px] px-8 py-4",

@@ -7,8 +7,8 @@ export interface ColorTemplate {
   accentColor: string;
   backgroundColor: string;
   textColor: string;
-  buttonTextColor?: string;
-  menuTextColor?: string;
+  buttonTextColor: string;
+  menuTextColor: string;
   is_default?: boolean;
 }
 

@@ -4,7 +4,7 @@ import { HomeSectionsState } from './types';
 /**
  * Default values for the home sections
  */
-export const homeSectionsDefaults: HomeSectionsState = {
+export const defaultSections: HomeSectionsState = {
   // Header Section
   logoUrl: '/lovable-uploads/3a83de09-ec2f-4458-96fa-750a22731ea4.png',
   siteTitle: 'IAdmin - Inteligência Artificial',

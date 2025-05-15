@@ -171,13 +171,13 @@ export function TemplateEditDialog({
               <input
                 id="buttonTextColor"
                 name="buttonTextColor"
-                value={template.buttonTextColor || template.button_text_color || '#FFFFFF'}
+                value={template.buttonTextColor || '#FFFFFF'}
                 onChange={handleChange}
                 className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
               <input
                 type="color"
-                value={template.buttonTextColor || template.button_text_color || '#FFFFFF'}
+                value={template.buttonTextColor || '#FFFFFF'}
                 onChange={(e) => handleChange({ target: { name: 'buttonTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
                 className="w-10 h-10 rounded cursor-pointer"
               />
@@ -192,13 +192,13 @@ export function TemplateEditDialog({
               <input
                 id="menuTextColor"
                 name="menuTextColor"
-                value={template.menuTextColor || template.menu_text_color || '#FFFFFF'}
+                value={template.menuTextColor || '#FFFFFF'}
                 onChange={handleChange}
                 className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
               <input
                 type="color"
-                value={template.menuTextColor || template.menu_text_color || '#FFFFFF'}
+                value={template.menuTextColor || '#FFFFFF'}
                 onChange={(e) => handleChange({ target: { name: 'menuTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
                 className="w-10 h-10 rounded cursor-pointer"
               />
