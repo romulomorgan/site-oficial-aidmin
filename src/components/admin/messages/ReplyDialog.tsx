@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useWebhook } from '@/hooks/useWebhook';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 
 interface ReplyDialogProps {
   message: ContactMessage | null;

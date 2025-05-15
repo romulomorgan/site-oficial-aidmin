@@ -1,70 +1,37 @@
-import React, { useEffect } from 'react';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { useTranslation } from 'react-i18next';
 
-import i18n from './i18n'; // Importe a configuração do i18next
-import { routes } from './routes';
-
-// Layouts
-import MainLayout from '@/layouts/MainLayout';
-import AdminLayout from '@/layouts/AdminLayout';
-
-// Pages
-import Home from '@/pages/Home';
-import About from '@/pages/About';
-import Contact from '@/pages/Contact';
-import Solutions from '@/pages/Solutions';
-import NotFound from '@/pages/NotFound';
-import Login from '@/pages/Admin/Login';
-import Dashboard from '@/pages/Admin/Dashboard';
-import SiteSettings from '@/pages/Admin/SiteSettings';
-import Messages from '@/pages/Admin/Messages';
-import Templates from '@/pages/Admin/Templates';
-import Testimonials from '@/pages/Admin/Testimonials';
-import Faqs from '@/pages/Admin/Faqs';
-import Embed from '@/pages/Embed';
-
-// Atualize a importação do Toaster
+import React from 'react';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "@/hooks/use-toast";
 
 function App() {
-  useEffect(() => {
-    // Defina o idioma inicial com base no i18n
-    document.documentElement.lang = i18n.language;
-  }, []);
-
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <MainLayout />,
+      element: <div>Main Layout</div>,
       children: [
-        { index: true, element: <Home /> },
-        { path: "about", element: <About /> },
-        { path: "contact", element: <Contact /> },
-        { path: "solutions", element: <Solutions /> },
-        { path: "embed", element: <Embed /> },
-        { path: "*", element: <NotFound /> },
+        { index: true, element: <div>Home Page</div> },
+        { path: "about", element: <div>About Page</div> },
+        { path: "contact", element: <div>Contact Page</div> },
+        { path: "solutions", element: <div>Solutions Page</div> },
+        { path: "embed", element: <div>Embed Page</div> },
+        { path: "*", element: <div>Not Found Page</div> },
       ],
     },
     {
       path: "/admin",
-      element: <AdminLayout />,
+      element: <div>Admin Layout</div>,
       children: [
-        { index: true, element: <Dashboard /> },
-        { path: "login", element: <Login /> },
-        { path: "site-settings", element: <SiteSettings /> },
-        { path: "messages", element: <Messages /> },
-        { path: "templates", element: <Templates /> },
-        { path: "testimonials", element: <Testimonials /> },
-        { path: "faqs", element: <Faqs /> },
+        { index: true, element: <div>Dashboard Page</div> },
+        { path: "login", element: <div>Login Page</div> },
+        { path: "site-settings", element: <div>Site Settings Page</div> },
+        { path: "messages", element: <div>Messages Page</div> },
+        { path: "templates", element: <div>Templates Page</div> },
+        { path: "testimonials", element: <div>Testimonials Page</div> },
+        { path: "faqs", element: <div>FAQs Page</div> },
       ],
     },
   ]);
 
-  // Na função App onde o Toaster é renderizado:
   return (
     <>
       <RouterProvider router={router} />

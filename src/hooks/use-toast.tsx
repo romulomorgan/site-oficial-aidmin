@@ -67,8 +67,8 @@ export const useToast = () => {
     };
 
     if (action) {
-      toastOptions.action = action.action;
-      toastOptions.altText = action.altText;
+      (toastOptions as any).action = action.action;
+      (toastOptions as any).altText = action.altText;
     }
 
     switch (variant) {

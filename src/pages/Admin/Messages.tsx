@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { ContactMessage, EmailSubscription } from '@/utils/supabase/types';
