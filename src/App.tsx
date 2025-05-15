@@ -41,10 +41,10 @@ function App() {
   ]);
 
   return (
-    <>
+    <SidebarProvider defaultOpen={true}>
       <RouterProvider router={router} />
       <Toaster />
-    </>
+    </SidebarProvider>
   );
 }
 
