@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { ColorTemplate } from '@/utils/supabase/types';
+import { ColorInput } from '@/components/ui/ColorInput';
 
 interface TemplateEditDialogProps {
   open: boolean;
@@ -58,152 +59,61 @@ export function TemplateEditDialog({
             />
           </div>
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="primaryColor" className="text-right font-medium">
-              Cor primária
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="primaryColor"
-                name="primaryColor"
-                value={template.primaryColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.primaryColor}
-                onChange={(e) => handleChange({ target: { name: 'primaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="primaryColor"
+            name="primaryColor"
+            label="Cor primária"
+            value={template.primaryColor}
+            onChange={handleChange}
+          />
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="secondaryColor" className="text-right font-medium">
-              Cor secundária
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="secondaryColor"
-                name="secondaryColor"
-                value={template.secondaryColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.secondaryColor}
-                onChange={(e) => handleChange({ target: { name: 'secondaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="secondaryColor"
+            name="secondaryColor"
+            label="Cor secundária"
+            value={template.secondaryColor}
+            onChange={handleChange}
+          />
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="accentColor" className="text-right font-medium">
-              Cor de destaque
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="accentColor"
-                name="accentColor"
-                value={template.accentColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.accentColor}
-                onChange={(e) => handleChange({ target: { name: 'accentColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="accentColor"
+            name="accentColor"
+            label="Cor de destaque"
+            value={template.accentColor}
+            onChange={handleChange}
+          />
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="backgroundColor" className="text-right font-medium">
-              Cor de fundo
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="backgroundColor"
-                name="backgroundColor"
-                value={template.backgroundColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.backgroundColor}
-                onChange={(e) => handleChange({ target: { name: 'backgroundColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="backgroundColor"
+            name="backgroundColor"
+            label="Cor de fundo"
+            value={template.backgroundColor}
+            onChange={handleChange}
+          />
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="textColor" className="text-right font-medium">
-              Cor de texto
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="textColor"
-                name="textColor"
-                value={template.textColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.textColor}
-                onChange={(e) => handleChange({ target: { name: 'textColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="textColor"
+            name="textColor"
+            label="Cor de texto"
+            value={template.textColor}
+            onChange={handleChange}
+          />
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="buttonTextColor" className="text-right font-medium">
-              Cor texto botão
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="buttonTextColor"
-                name="buttonTextColor"
-                value={template.buttonTextColor || '#FFFFFF'}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.buttonTextColor || '#FFFFFF'}
-                onChange={(e) => handleChange({ target: { name: 'buttonTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="buttonTextColor"
+            name="buttonTextColor"
+            label="Cor texto botão"
+            value={template.buttonTextColor || '#FFFFFF'}
+            onChange={handleChange}
+          />
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="menuTextColor" className="text-right font-medium">
-              Cor texto menu
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="menuTextColor"
-                name="menuTextColor"
-                value={template.menuTextColor || '#FFFFFF'}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.menuTextColor || '#FFFFFF'}
-                onChange={(e) => handleChange({ target: { name: 'menuTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
+          <ColorInput
+            id="menuTextColor"
+            name="menuTextColor"
+            label="Cor texto menu"
+            value={template.menuTextColor || '#FFFFFF'}
+            onChange={handleChange}
+          />
         </div>
         
         <div className="bg-gray-50 -m-6 mt-2 p-6 rounded-b-lg">

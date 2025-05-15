@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { toast as sonnerToast, Toaster as SonnerToaster, type ToastT, type ToastToDismiss } from "sonner";
+import { toast as sonnerToast, Toaster as SonnerToaster, type Toast as ToastT } from "sonner";
 
 export function Toaster({
   position = "bottom-right",
@@ -117,5 +117,8 @@ export const toast = {
   info: (title: string, description?: string) => sonnerToast(title, { description }),
   
   // Reexportar outras funções do sonner
-  ...sonnerToast
+  custom: sonnerToast,
+  dismiss: sonnerToast.dismiss,
+  promise: sonnerToast.promise,
+  loading: sonnerToast.loading
 };
