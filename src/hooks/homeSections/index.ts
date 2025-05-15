@@ -6,3 +6,6 @@ export * from './useHomeSectionsData';
 export * from './types';
 export * from './defaults';
 export * from './utils';
+export * from './useHomeSectionsHandlers';
+export * from './handlers';
+

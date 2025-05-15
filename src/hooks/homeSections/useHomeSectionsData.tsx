@@ -38,5 +38,3 @@ export const useHomeSectionsData = (): UseHomeSectionsDataReturn => {
     loadData
   };
 };
-
-export * from './types';

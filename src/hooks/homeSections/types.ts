@@ -80,6 +80,18 @@ export interface HomeSectionsState {
   instagramActive: boolean;
   twitterActive: boolean;
   linkedinActive: boolean;
+  
+  // Contact Section
+  contactTitle: string;
+  contactSubtitle: string;
+  
+  // Contato Page Section
+  contatoTitle: string;
+  contatoSubtitle: string;
+  contatoDescription: string;
+  contatoImageUrl: string;
+  
+  // Dynamic key access
   [key: string]: string | boolean;
 }
 
@@ -88,4 +100,12 @@ export interface UseHomeSectionsDataReturn {
   sections: HomeSectionsState;
   setSections: React.Dispatch<React.SetStateAction<HomeSectionsState>>;
   loadData: () => Promise<void>;
+}
+
+export interface SectionHandlerProps {
+  sections: HomeSectionsState;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSwitchChange: (name: string, checked: boolean) => void;
+  isLoading: boolean;
+  handleSaveSection: (section: string) => Promise<void>;
 }
