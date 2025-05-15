@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/use-toast";
 import AdminLayout from '@/components/admin/AdminLayout';
 import Login from '@/pages/Admin/Login';
 import NotFound from '@/pages/NotFound';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 function App() {
   const router = createBrowserRouter([
@@ -22,7 +23,11 @@ function App() {
     },
     {
       path: "/admin",
-      element: <AdminLayout />,
+      element: (
+        <SidebarProvider defaultOpen={true}>
+          <AdminLayout />
+        </SidebarProvider>
+      ),
       children: [
         { index: true, element: <div>Dashboard Page</div> },
         { path: "login", element: <Login /> },
