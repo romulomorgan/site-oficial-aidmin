@@ -36,6 +36,7 @@ describe('useSiteSettingsState', () => {
       customTemplate: { id: 'custom', name: 'Personalizado', primaryColor: '', secondaryColor: '', accentColor: '', backgroundColor: '', textColor: '', buttonTextColor: '', menuTextColor: '' },
       editingTemplate: null,
       openTemplateDialog: false,
+      isLoading: false, // Adicionado a propriedade isLoading que estava faltando
       setTemplates: jest.fn(),
       setSelectedTemplate: jest.fn(),
       setCustomTemplate: jest.fn(),
