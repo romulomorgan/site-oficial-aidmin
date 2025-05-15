@@ -64,8 +64,8 @@ export function FormField({
             } as React.ChangeEvent<HTMLInputElement>;
             onChange(syntheticEvent);
           }}
-          placeholder={placeholder || '(00) 00000-0000'}
-          className={`w-full px-4 py-2 rounded-md ${inputClass}`}
+          placeholder="(00) 00000-0000"
+          className={`w-full px-4 py-2 rounded-md`}
           required={required}
           mask="phone"
           isDark={isDark}

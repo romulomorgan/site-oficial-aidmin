@@ -72,11 +72,16 @@ export const InputMask: React.FC<InputMaskProps> = ({
     }
   };
 
+  // Aplicar estilos condicionais com base no tema escuro/claro
+  const inputClass = isDark
+    ? "bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+    : "bg-white border border-gray-300 text-gray-900 focus:border-gray-400";
+
   return (
     <Input
       value={displayValue}
       onChange={handleInputChange}
-      className={className}
+      className={`${inputClass} ${className}`}
       {...props}
     />
   );
