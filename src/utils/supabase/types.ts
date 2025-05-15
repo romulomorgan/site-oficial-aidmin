@@ -1,4 +1,3 @@
-
 export interface ColorTemplate {
   id: string;
   name: string;
@@ -55,6 +54,8 @@ export interface EmbedConfig {
   code: string;
   position: 'left' | 'right';
   isActive: boolean;
+  buttonColor?: string;
+  buttonIcon?: string;
 }
 
 export interface WebhookLog {
