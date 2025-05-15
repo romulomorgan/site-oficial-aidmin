@@ -75,7 +75,7 @@ function App() {
             <Route path="*" element={<Footer />} />
           </Routes>
         </div>
-        <Toaster position="bottom-right" />
+        <Toaster />
         <EmbedComponent />
       </AnimationProvider>
     </Router>

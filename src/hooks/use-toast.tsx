@@ -30,32 +30,33 @@ export function Toaster() {
   );
 }
 
-export type ToastProps = React.ComponentPropsWithoutRef<typeof SonnerToaster>;
-
-// Define as propriedades do toast
+// Tipos para o toast
 export interface ToastActionElement {
   altText?: string;
   action: React.ReactNode;
 }
 
-export interface ToastProps {
+export interface ToastOptions {
   title?: React.ReactNode;
   description?: React.ReactNode;
   variant?: "default" | "destructive" | "success" | "warning";
   action?: ToastActionElement;
+  [key: string]: any;
 }
 
-// Define o hook useToast
+// Definição do hook useToast
 export const useToast = () => {
+  // Esta função permite usar o toast de forma padronizada
   const showToast = ({
     title,
     description,
     variant = "default",
     action,
     ...props
-  }: ToastProps) => {
-    const toastOptions = {
+  }: ToastOptions) => {
+    const toastOptions: any = {
       ...props,
+      description
     };
 
     if (action) {
@@ -65,38 +66,27 @@ export const useToast = () => {
 
     switch (variant) {
       case "destructive":
-        return sonnerToast.error(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast.error(title as string, toastOptions);
       case "success":
-        return sonnerToast.success(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast.success(title as string, toastOptions);
       case "warning":
-        return sonnerToast.warning(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast.warning(title as string, toastOptions);
       default:
-        return sonnerToast(title, {
-          ...toastOptions,
-          description,
-        });
+        return sonnerToast(title as string, toastOptions);
     }
   };
 
-  const showError = (props: Omit<ToastProps, "variant">) =>
+  // Métodos auxiliares para diferentes tipos de toast
+  const showError = (props: Omit<ToastOptions, "variant">) =>
     showToast({ ...props, variant: "destructive" });
 
-  const showSuccess = (props: Omit<ToastProps, "variant">) =>
+  const showSuccess = (props: Omit<ToastOptions, "variant">) =>
     showToast({ ...props, variant: "success" });
 
-  const showWarning = (props: Omit<ToastProps, "variant">) =>
+  const showWarning = (props: Omit<ToastOptions, "variant">) =>
     showToast({ ...props, variant: "warning" });
 
-  const showInfo = (props: Omit<ToastProps, "variant">) =>
+  const showInfo = (props: Omit<ToastOptions, "variant">) =>
     showToast({ ...props, variant: "default" });
 
   return {
@@ -108,6 +98,7 @@ export const useToast = () => {
   };
 };
 
+// Função simplificada para uso direto do toast
 export const toast = {
   ...sonnerToast,
   error: (title: string, description?: string) => sonnerToast.error(title, { description }),
@@ -115,3 +106,4 @@ export const toast = {
   warning: (title: string, description?: string) => sonnerToast.warning(title, { description }),
   info: (title: string, description?: string) => sonnerToast(title, { description })
 };
+
