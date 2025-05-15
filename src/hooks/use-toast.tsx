@@ -1,125 +1,92 @@
 
-import * as React from "react";
-import { toast as sonnerToast, Toaster as SonnerToaster } from "sonner";
-import type { ToastT } from "sonner";
+import * as React from "react"
+import { Toaster as Sonner } from "sonner"
 
-export function Toaster({
-  position = "bottom-right",
-  ...props
-}: React.ComponentProps<typeof SonnerToaster>) {
+import { useMediaQuery } from "./use-media-query"
+import { cn } from "@/lib/utils"
+
+type ToasterProps = React.ComponentProps<typeof Sonner>
+
+const ToastProvider = ({ ...props }: ToasterProps) => {
+  const { theme = "system", ...rest } = props
+  const desktop = useMediaQuery("(min-width: 768px)")
+
   return (
-    <SonnerToaster
-      className="toaster group"
-      position={position}
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-white group-[.toaster]:text-gray-950 group-[.toaster]:border-gray-200 group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-gray-500",
-          actionButton:
-            "group-[.toast]:bg-gray-900 group-[.toast]:text-gray-50 hover:group-[.toast]:bg-gray-900/90",
-          cancelButton:
-            "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-500 hover:group-[.toast]:bg-gray-100/80",
-          error:
-            "group-[.toaster]:bg-red-50 group-[.toaster]:text-red-900 group-[.toaster]:border-red-200",
-          success:
-            "group-[.toaster]:bg-green-50 group-[.toaster]:text-green-900 group-[.toaster]:border-green-200",
-          warning:
-            "group-[.toaster]:bg-yellow-50 group-[.toaster]:text-yellow-900 group-[.toaster]:border-yellow-200"
-        }
-      }}
-      expand={false}
-      duration={3000}
+    <Sonner
+      theme={theme as ToasterProps["theme"]}
+      className={cn("toaster group", desktop ? "md:toaster-desktop" : "")}
       richColors
-      {...props}
+      position="top-right"
+      closeButton
+      expand={!desktop}
+      {...rest}
     />
-  );
+  )
 }
 
-// Define os tipos para ações de toast
-export interface ToastActionElement {
-  altText?: string;
-  action: React.ReactNode;
-}
+export { ToastProvider as Toaster }
 
-// Define os tipos para propriedades do toast
-export interface ToastProps {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  variant?: "default" | "destructive" | "success" | "warning";
-  action?: ToastActionElement;
-  [key: string]: any;
-}
+export type ToastProps = React.ComponentProps<typeof Toast>
 
-// Hook useToast
-export const useToast = () => {
-  const toasts = React.useState<ToastT[]>([]);
-
-  const showToast = ({
-    title,
-    description,
-    variant = "default",
-    action,
-    ...props
-  }: ToastProps) => {
-    const toastOptions = {
-      ...props,
-      description,
-    };
-
-    if (action) {
-      (toastOptions as any).action = action.action;
-      (toastOptions as any).altText = action.altText;
-    }
-
-    switch (variant) {
-      case "destructive":
-        return sonnerToast.error(title as string, toastOptions);
-      case "success":
-        return sonnerToast.success(title as string, toastOptions);
-      case "warning":
-        return sonnerToast.warning(title as string, toastOptions);
-      default:
-        return sonnerToast(title as string, toastOptions);
-    }
+// Hack to forward the toast function type
+export const { toast } = (() => {
+  // Declare a type that represents the properties of the toast function
+  type ToastFunction = {
+    (message: string, options?: { duration?: number }): void;
+    error: (message: string, options?: { duration?: number }) => void;
+    success: (message: string, options?: { duration?: number }) => void;
+    loading: (message: string, options?: { duration?: number }) => void;
+    warning: (message: string, options?: { duration?: number }) => void;
+    info: (message: string, options?: { duration?: number }) => void;
   };
 
-  const showError = (props: Omit<ToastProps, "variant">) =>
-    showToast({ ...props, variant: "destructive" });
+  const toast = ((message, options) => {
+    // Implementation here would call the actual toast function
+    const importedToast = require("sonner").toast;
+    importedToast(message, options);
+  }) as ToastFunction;
 
-  const showSuccess = (props: Omit<ToastProps, "variant">) =>
-    showToast({ ...props, variant: "success" });
+  // Add additional methods
+  toast.error = (message, options) => {
+    const importedToast = require("sonner").toast;
+    importedToast.error(message, options);
+  };
 
-  const showWarning = (props: Omit<ToastProps, "variant">) =>
-    showToast({ ...props, variant: "warning" });
+  toast.success = (message, options) => {
+    const importedToast = require("sonner").toast;
+    importedToast.success(message, options);
+  };
 
-  const showInfo = (props: Omit<ToastProps, "variant">) =>
-    showToast({ ...props, variant: "default" });
+  toast.loading = (message, options) => {
+    const importedToast = require("sonner").toast;
+    importedToast.loading(message, options);
+  };
 
+  toast.warning = (message, options) => {
+    const importedToast = require("sonner").toast;
+    importedToast.warning(message, options);
+  };
+
+  toast.info = (message, options) => {
+    const importedToast = require("sonner").toast;
+    importedToast.info(message, options);
+  };
+
+  return { toast };
+})();
+
+function useToast() {
   return {
-    toast: showToast,
-    error: showError,
-    success: showSuccess,
-    warning: showWarning,
-    info: showInfo,
-    toasts
+    toast,
+    dismiss: (toastId?: string) => {
+      require("sonner").toast.dismiss(toastId);
+    },
   };
-};
+}
 
-// Exportar funções de toast para uso direto
-export const toast = {
-  // Função principal de toast
-  show: (title: string, description?: string) => sonnerToast(title, { description }),
-  
-  // Funções específicas por tipo
-  error: (title: string, description?: string) => sonnerToast.error(title, { description }),
-  success: (title: string, description?: string) => sonnerToast.success(title, { description }),
-  warning: (title: string, description?: string) => sonnerToast.warning(title, { description }),
-  info: (title: string, description?: string) => sonnerToast(title, { description }),
-  
-  // Reexportar outras funções do sonner
-  custom: sonnerToast,
-  dismiss: sonnerToast.dismiss,
-  promise: sonnerToast.promise,
-  loading: sonnerToast.loading
+export { useToast };
+
+// Forward the original component directly
+export const Toast = ({ ...props }: any) => {
+  return props.children;
 };
