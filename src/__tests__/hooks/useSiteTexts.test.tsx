@@ -2,7 +2,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { toast } from 'sonner';
 import { useSiteTexts } from '@/hooks/siteSettings/useSiteTexts';
-import { fetchSiteTexts, saveSiteTexts } from '@/utils/supabaseClient';
+import { fetchSiteTexts, updateSiteText } from '@/utils/supabaseClient';
 
 // Mock das dependências externas
 jest.mock('sonner', () => ({
@@ -14,7 +14,7 @@ jest.mock('sonner', () => ({
 
 jest.mock('@/utils/supabaseClient', () => ({
   fetchSiteTexts: jest.fn(),
-  saveSiteTexts: jest.fn()
+  updateSiteText: jest.fn()
 }));
 
 describe('useSiteTexts', () => {
@@ -64,7 +64,7 @@ describe('useSiteTexts', () => {
   it('deve salvar textos do site corretamente', async () => {
     const { result, waitForNextUpdate } = renderHook(() => useSiteTexts());
     
-    (saveSiteTexts as jest.Mock).mockResolvedValue(true);
+    (updateSiteText as jest.Mock).mockResolvedValue(true);
     
     // Configurar o estado inicial
     act(() => {
@@ -82,16 +82,10 @@ describe('useSiteTexts', () => {
     
     await waitForNextUpdate();
     
-    expect(saveSiteTexts).toHaveBeenCalledWith({
-      faviconUrl: 'https://example.com/favicon.ico',
-      webhookUrl: 'https://example.com/webhook',
-      siteTitle: 'Título do Site',
-      copyrightText: '© 2023 Empresa',
-      robotImage: '',
-      contactImage: '',
-      embedButtonColor: '',
-      embedButtonIcon: ''
-    });
+    expect(updateSiteText).toHaveBeenCalledWith('faviconUrl', 'https://example.com/favicon.ico');
+    expect(updateSiteText).toHaveBeenCalledWith('webhookUrl', 'https://example.com/webhook');
+    expect(updateSiteText).toHaveBeenCalledWith('siteTitle', 'Título do Site');
+    expect(updateSiteText).toHaveBeenCalledWith('copyrightText', '© 2023 Empresa');
     
     expect(await saveResult).toBe(true);
   });

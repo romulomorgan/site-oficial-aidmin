@@ -15,7 +15,7 @@ export type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 export type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 export type ToastOptions = {
-  title?: React.ReactNode;
+  title?: string;
   description?: React.ReactNode;
   action?: ToastActionElement;
   variant?: "default" | "destructive" | "success";
@@ -44,7 +44,7 @@ function cn(...classes: (string | undefined)[]) {
 
 type ToasterToast = ToastProps & {
   id: string;
-  title?: React.ReactNode;
+  title?: string;
   description?: React.ReactNode;
   action?: React.ReactNode;
 };
@@ -199,24 +199,28 @@ export function useToast() {
   return {
     toast: (props: ToastOptions) => {
       const id = genId();
+      
+      // Criar o objeto toast adequado tipado conforme ToasterToast
+      const toast: ToasterToast = {
+        id,
+        ...props,
+        open: true,
+        onOpenChange: (open: boolean) => {
+          if (!open) dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id });
+        },
+      };
 
       const update = (props: ToastOptions) =>
         dispatch({
           type: actionTypes.UPDATE_TOAST,
-          toast: { ...props, id },
+          toast: { id, ...props } as Partial<ToasterToast>,
         });
+        
       const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id });
 
       dispatch({
         type: actionTypes.ADD_TOAST,
-        toast: {
-          ...props,
-          id,
-          open: true,
-          onOpenChange: (open: boolean) => {
-            if (!open) dismiss();
-          },
-        },
+        toast,
       });
 
       return {
@@ -232,29 +236,21 @@ export function useToast() {
 // Função de toast com açúcares sintáticos
 export const toast = {
   success: (message: string) => {
-    return useToast().toast({
-      title: "Sucesso",
+    return sonnerToast.success("Sucesso", {
       description: message,
-      variant: "default",
     });
   },
   error: (message: string) => {
-    return useToast().toast({
-      title: "Erro",
+    return sonnerToast.error("Erro", {
       description: message,
-      variant: "destructive",
     });
   },
   info: (message: string) => {
-    return useToast().toast({
-      description: message,
-    });
+    return sonnerToast(message);
   },
   warning: (message: string) => {
-    return useToast().toast({
-      title: "Aviso",
+    return sonnerToast.warning("Aviso", {
       description: message,
-      variant: "destructive",
     });
   },
   // Alternativa usando Sonner para compatibilidade
