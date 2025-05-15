@@ -1,40 +1,17 @@
-
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { fetchSiteTexts } from '@/utils/supabaseClient';
-import { HomeSectionsState, UseHomeSectionsDataReturn } from './types';
+import { useState, useEffect } from 'react';
+import { SectionData } from './types';
 import { defaultSections } from './defaults';
-import { processSectionData } from './utils';
 
-/**
- * Hook to manage home sections data
- */
-export const useHomeSectionsData = (): UseHomeSectionsDataReturn => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [sections, setSections] = useState<HomeSectionsState>(defaultSections);
-
-  /**
-   * Load data from backend
-   */
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const siteTexts = await fetchSiteTexts();
-      const processedSections = processSectionData(siteTexts);
-      
-      setSections(processedSections);
-    } catch (error) {
-      console.error('Erro ao carregar textos:', error);
-      toast.error('Erro ao carregar conteúdo das seções');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export const useHomeSectionsData = () => {
+  const [sections, setSections] = useState<SectionData[]>(defaultSections);
+  
+  // Aqui estaria a lógica para carregar e gerenciar seções
+  
   return {
-    isLoading,
     sections,
-    setSections,
-    loadData
+    setSections
   };
 };
+
+// Re-export from this module
+export * from './defaults';

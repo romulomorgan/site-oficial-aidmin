@@ -1,109 +1,104 @@
 
 import * as React from "react";
-import { toast as sonnerToast, Toaster as SonnerToaster, ToastT } from "sonner";
+import {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from "@/components/ui/toast";
+import { useToast as useToastBase } from "@/components/ui/use-toast";
 
+export type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
+
+export type ToastActionElement = React.ReactElement<typeof ToastAction>;
+
+export type ToastOptions = {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  action?: ToastActionElement;
+  variant?: "default" | "destructive" | "success";
+};
+
+export const ToastAction = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    className={cn(
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      className
+    )}
+    {...props}
+  />
+));
+
+ToastAction.displayName = "ToastAction";
+
+// Função de utilidade cn
+function cn(...classes: (string | undefined)[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+// Toaster component
 export function Toaster() {
+  const { toasts } = useToastBase();
+
   return (
-    <SonnerToaster
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-white group-[.toaster]:text-gray-950 group-[.toaster]:border-gray-200 group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-gray-500",
-          actionButton:
-            "group-[.toast]:bg-gray-900 group-[.toast]:text-gray-50 hover:group-[.toast]:bg-gray-900/90",
-          cancelButton:
-            "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-500 hover:group-[.toast]:bg-gray-100/80",
-          error:
-            "group-[.toaster]:bg-red-50 group-[.toaster]:text-red-900 group-[.toaster]:border-red-200",
-          success:
-            "group-[.toaster]:bg-green-50 group-[.toaster]:text-green-900 group-[.toaster]:border-green-200",
-          warning:
-            "group-[.toaster]:bg-yellow-50 group-[.toaster]:text-yellow-900 group-[.toaster]:border-yellow-200"
-        }
-      }}
-      expand={false}
-      duration={3000}
-      richColors
-    />
+    <ToastProvider>
+      {toasts.map(function ({ id, title, description, action, ...props }) {
+        return (
+          <Toast key={id} {...props}>
+            <div className="grid gap-1">
+              {title && <ToastTitle>{title}</ToastTitle>}
+              {description && (
+                <ToastDescription>{description}</ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose />
+          </Toast>
+        );
+      })}
+      <ToastViewport />
+    </ToastProvider>
   );
 }
 
-// Tipos para o toast
-export interface ToastActionElement {
-  altText?: string;
-  action: React.ReactNode;
-}
+// Re-export do useToast
+export const useToast = useToastBase;
 
-export interface ToastOptions {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  variant?: "default" | "destructive" | "success" | "warning";
-  action?: ToastActionElement;
-  [key: string]: any;
-}
-
-// Definição do hook useToast
-export const useToast = () => {
-  // Esta função permite usar o toast de forma padronizada
-  const showToast = ({
-    title,
-    description,
-    variant = "default",
-    action,
-    ...props
-  }: ToastOptions) => {
-    const toastOptions: any = {
-      ...props,
-      description
-    };
-
-    if (action) {
-      toastOptions.action = action.action;
-      toastOptions.actionAltText = action.altText;
-    }
-
-    switch (variant) {
-      case "destructive":
-        return sonnerToast.error(title as string, toastOptions);
-      case "success":
-        return sonnerToast.success(title as string, toastOptions);
-      case "warning":
-        return sonnerToast.warning(title as string, toastOptions);
-      default:
-        return sonnerToast(title as string, toastOptions);
-    }
-  };
-
-  // Métodos auxiliares para diferentes tipos de toast
-  const showError = (props: Omit<ToastOptions, "variant">) =>
-    showToast({ ...props, variant: "destructive" });
-
-  const showSuccess = (props: Omit<ToastOptions, "variant">) =>
-    showToast({ ...props, variant: "success" });
-
-  const showWarning = (props: Omit<ToastOptions, "variant">) =>
-    showToast({ ...props, variant: "warning" });
-
-  const showInfo = (props: Omit<ToastOptions, "variant">) =>
-    showToast({ ...props, variant: "default" });
-
-  return {
-    toast: showToast,
-    error: showError,
-    success: showSuccess,
-    warning: showWarning,
-    info: showInfo
-  };
-};
-
-// Função simplificada para uso direto do toast
+// Função de toast
 export const toast = {
-  ...sonnerToast,
-  error: (title: string, description?: string) => sonnerToast.error(title, { description }),
-  success: (title: string, description?: string) => sonnerToast.success(title, { description }),
-  warning: (title: string, description?: string) => sonnerToast.warning(title, { description }),
-  info: (title: string, description?: string) => sonnerToast(title, { description })
+  success: (message: string) => {
+    return useToastBase().toast({
+      title: "Sucesso",
+      description: message,
+      variant: "default",
+    });
+  },
+  error: (message: string) => {
+    return useToastBase().toast({
+      title: "Erro",
+      description: message,
+      variant: "destructive",
+    });
+  },
+  info: (message: string) => {
+    return useToastBase().toast({
+      description: message,
+    });
+  },
+  warning: (message: string) => {
+    return useToastBase().toast({
+      title: "Aviso",
+      description: message,
+      variant: "destructive",
+    });
+  },
+  // Tipo genérico para compatibilidade com o toast padrão
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ...useToastBase().toast,
 };
-
