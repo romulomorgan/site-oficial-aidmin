@@ -2,10 +2,13 @@
 import React from 'react';
 import { ContactMessage } from '@/utils/supabase/types';
 import MessageItem from './MessageItem';
+import MessageSearch from './MessageSearch';
 import { EmptyState } from '@/components/admin/messages/subscription';
 
 interface MessageListProps {
   messages: ContactMessage[];
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
   onReply: (message: ContactMessage) => void;
   onMarkAsRead: (messageId: string | number) => void;
   onDelete: (messageId: string | number) => void;
@@ -13,6 +16,8 @@ interface MessageListProps {
 
 const MessageList: React.FC<MessageListProps> = ({ 
   messages, 
+  searchQuery,
+  onSearchChange,
   onReply, 
   onMarkAsRead, 
   onDelete 
@@ -29,22 +34,30 @@ const MessageList: React.FC<MessageListProps> = ({
     }).format(date);
   };
 
-  if (messages.length === 0) {
-    return <EmptyState message="Nenhuma mensagem encontrada." />;
-  }
-
   return (
-    <div className="space-y-6">
-      {messages.map((message) => (
-        <MessageItem
-          key={message.id}
-          message={message}
-          onReply={onReply}
-          onMarkAsRead={onMarkAsRead}
-          onDelete={onDelete}
-          formatDate={formatDate}
-        />
-      ))}
+    <div>
+      <MessageSearch searchQuery={searchQuery} onSearchChange={onSearchChange} />
+      
+      {messages.length === 0 ? (
+        searchQuery ? (
+          <EmptyState message="Nenhuma mensagem encontrada para esta busca." />
+        ) : (
+          <EmptyState message="Nenhuma mensagem encontrada." />
+        )
+      ) : (
+        <div className="space-y-6">
+          {messages.map((message) => (
+            <MessageItem
+              key={message.id}
+              message={message}
+              onReply={onReply}
+              onMarkAsRead={onMarkAsRead}
+              onDelete={onDelete}
+              formatDate={formatDate}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

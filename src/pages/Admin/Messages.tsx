@@ -16,12 +16,14 @@ export default function Messages() {
     emailSubscriptions,
     webhookUrl, 
     isLoading, 
+    searchQuery,
     loadData, 
     setWebhookUrl,
     handleDeleteMessage,
     handleDeleteEmailSubscription,
     handleMarkAsRead,
-    handleReply
+    handleReply,
+    handleSearch
   } = useMessagesData();
   
   const [replyTo, setReplyTo] = useState<ContactMessage | null>(null);
@@ -84,6 +86,8 @@ export default function Messages() {
           <TabsContent value="messages">
             <MessageList 
               messages={messages}
+              searchQuery={searchQuery}
+              onSearchChange={handleSearch}
               onReply={setReplyTo}
               onMarkAsRead={handleMarkAsRead}
               onDelete={setShowDeleteConfirm}

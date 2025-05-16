@@ -7,7 +7,16 @@ import { useMessageActions } from './useMessageActions';
 import { ContactMessage } from '@/utils/supabase/types';
 
 export function useMessagesData() {
-  const { messages, loadMessages, handleDeleteMessage, handleMarkAsRead, isLoading: messagesLoading } = useContactMessages();
+  const { 
+    messages, 
+    loadMessages, 
+    handleDeleteMessage, 
+    handleMarkAsRead, 
+    isLoading: messagesLoading,
+    searchQuery,
+    handleSearch 
+  } = useContactMessages();
+  
   const { emailSubscriptions, loadEmailSubscriptions, handleDeleteEmailSubscription, isLoading: subscriptionsLoading } = useEmailSubscriptions();
   const { webhookUrl, setWebhookUrl, loadWebhookUrl, isLoading: webhookLoading } = useWebhookSettings();
   const { handleReply, isLoading: actionLoading } = useMessageActions();
@@ -49,11 +58,13 @@ export function useMessagesData() {
     emailSubscriptions,
     webhookUrl,
     isLoading,
+    searchQuery,
     loadData,
     setWebhookUrl,
     handleDeleteMessage,
     handleDeleteEmailSubscription,
     handleMarkAsRead,
-    handleReply: handleReplyWithUpdate
+    handleReply: handleReplyWithUpdate,
+    handleSearch
   };
 }

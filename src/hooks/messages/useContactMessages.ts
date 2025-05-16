@@ -1,12 +1,14 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { ContactMessage } from '@/utils/supabase/types';
 
 export function useContactMessages() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [filteredMessages, setFilteredMessages] = useState<ContactMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadMessages = async () => {
     setIsLoading(true);
@@ -26,9 +28,11 @@ export function useContactMessages() {
         if (savedMessages) {
           const parsedMessages = JSON.parse(savedMessages);
           setMessages(parsedMessages);
+          setFilteredMessages(parsedMessages);
         }
       } else if (messagesData) {
         setMessages(messagesData);
+        setFilteredMessages(messagesData);
       }
     } catch (error) {
       console.error('Erro ao carregar mensagens:', error);
@@ -47,6 +51,7 @@ export function useContactMessages() {
         // Local storage ID format
         const updatedMessages = messages.filter(message => message.id !== id);
         setMessages(updatedMessages);
+        applySearchFilter(updatedMessages, searchQuery);
         localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
       }
       
@@ -74,6 +79,7 @@ export function useContactMessages() {
           message.id === id ? { ...message, read: true } : message
         );
         setMessages(updatedMessages);
+        applySearchFilter(updatedMessages, searchQuery);
         localStorage.setItem('contactMessages', JSON.stringify(updatedMessages));
       }
       
@@ -87,11 +93,39 @@ export function useContactMessages() {
     }
   };
 
+  // Função para aplicar o filtro de busca
+  const applySearchFilter = useCallback((messagesList: ContactMessage[], query: string) => {
+    if (!query.trim()) {
+      setFilteredMessages(messagesList);
+      return;
+    }
+    
+    const lowerCaseQuery = query.toLowerCase();
+    const filtered = messagesList.filter(message => 
+      (message.firstname && message.firstname.toLowerCase().includes(lowerCaseQuery)) || 
+      (message.lastname && message.lastname.toLowerCase().includes(lowerCaseQuery)) ||
+      (message.name && message.name.toLowerCase().includes(lowerCaseQuery)) ||
+      message.email.toLowerCase().includes(lowerCaseQuery) ||
+      message.message.toLowerCase().includes(lowerCaseQuery)
+    );
+    
+    setFilteredMessages(filtered);
+  }, []);
+
+  // Handler para atualizar a busca
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    applySearchFilter(messages, query);
+  }, [messages, applySearchFilter]);
+
   return {
-    messages,
+    messages: filteredMessages, // Agora retornamos as mensagens filtradas
+    allMessages: messages, // Mantemos acesso às mensagens originais se necessário
     isLoading,
+    searchQuery,
     loadMessages,
     handleDeleteMessage,
-    handleMarkAsRead
+    handleMarkAsRead,
+    handleSearch
   };
 }
