@@ -55,15 +55,38 @@ const Footer: React.FC = () => {
       }
     });
 
-    // Ativar animações após um breve delay
-    setTimeout(() => {
-      footerElements.forEach((el) => {
-        if (el instanceof HTMLElement) {
-          el.style.opacity = '1';
-          el.style.transform = 'translateY(0)';
+    // Configurar observador de interseção para animações baseadas em scroll
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          if (el instanceof HTMLElement) {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+            
+            // Adicionar classes de hover apenas após a animação
+            setTimeout(() => {
+              if (el.classList.contains('hover-scale')) {
+                el.classList.add('hover-scale-active');
+              }
+            }, 500);
+          }
         }
       });
-    }, 300);
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+    footerElements.forEach(el => observer.observe(el));
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
   
   // Funções para verificar se links de redes sociais estão configurados
@@ -90,7 +113,7 @@ const Footer: React.FC = () => {
             <Link to="/" className="text-2xl font-bold mb-4 text-white hover-scale">
               {siteTexts.siteTitle || localTexts.companyName}
             </Link>
-            <p className="text-white/80 text-sm mb-6">
+            <p className="text-white/80 text-sm mb-6 animate-on-scroll fade-in">
               {siteTexts.footerDescription || localTexts.footerAbout}
             </p>
           </div>
@@ -149,22 +172,22 @@ const Footer: React.FC = () => {
         <div className="flex justify-center space-x-4 mt-8 pt-6 border-t border-white/20 footer-animate fade-in">
           {hasFacebook && (
             <a href={siteTexts.facebookUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
-              <Facebook size={20} />
+              <Facebook size={20} className="animate-on-scroll zoom-in" />
             </a>
           )}
           {hasTwitter && (
             <a href={siteTexts.twitterUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
-              <Twitter size={20} />
+              <Twitter size={20} className="animate-on-scroll zoom-in" />
             </a>
           )}
           {hasInstagram && (
             <a href={siteTexts.instagramUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
-              <Instagram size={20} />
+              <Instagram size={20} className="animate-on-scroll zoom-in" />
             </a>
           )}
           {hasLinkedin && (
             <a href={siteTexts.linkedinUrl as string} className="text-white/80 hover:text-white transition-colors hover-scale" target="_blank" rel="noopener noreferrer">
-              <Linkedin size={20} />
+              <Linkedin size={20} className="animate-on-scroll zoom-in" />
             </a>
           )}
         </div>
@@ -180,4 +203,3 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
-

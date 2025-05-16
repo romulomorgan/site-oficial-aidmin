@@ -189,9 +189,9 @@ const AdminLayout: React.FC = () => {
         </div>
       )}
 
-      {/* Conteúdo principal */}
+      {/* Conteúdo principal - Removido o padding lateralmente para ocupar todo espaço */}
       <div className="flex-1 overflow-y-auto bg-gray-50">
-        <div className="py-6 px-4 sm:px-6 lg:px-8 min-h-full">
+        <div className="py-6 px-2 sm:px-4 w-full max-w-full">
           <Outlet />
         </div>
       </div>

@@ -42,14 +42,13 @@ export async function fetchFromDb(): Promise<ColorTemplate[]> {
 // Função para salvar template de cores no banco de dados
 export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean> {
   try {
-    // Verificar se o template já existe
-    const { data: existingTemplate } = await supabase
-      .from('site_color_templates')
-      .select('id')
-      .eq('id', template.id)
-      .maybeSingle();
+    console.log('Tentando salvar template no banco:', template);
+    
+    // Para novos templates personalizados, vamos deixar o Supabase gerar um UUID
+    const isCustomTemplate = template.id.startsWith('custom-');
     
     const templateData = {
+      id: isCustomTemplate ? undefined : template.id, // Deixar undefined para que o Supabase gere um ID para templates personalizados
       name: template.name,
       primary_color: template.primaryColor,
       secondary_color: template.secondaryColor,
@@ -59,36 +58,57 @@ export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean
       button_text_color: template.buttonTextColor || '#FFFFFF',
       menu_text_color: template.menuTextColor || '#FFFFFF',
       is_default: template.is_default || false,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      created_at: new Date().toISOString()
     };
     
-    if (existingTemplate) {
-      // Atualizar template existente
-      const { error } = await supabase
+    // Verificar se o template já existe
+    if (!isCustomTemplate) {
+      const { data: existingTemplate } = await supabase
         .from('site_color_templates')
-        .update(templateData)
-        .eq('id', template.id);
+        .select('id')
+        .eq('id', template.id)
+        .maybeSingle();
       
-      if (error) {
-        console.error('Erro ao atualizar template:', error);
-        return false;
-      }
-    } else {
-      // Criar novo template
-      const { error } = await supabase
-        .from('site_color_templates')
-        .insert([{
-          id: template.id.startsWith('custom-') ? undefined : template.id, // Deixar o Supabase gerar ID se for personalizado
-          ...templateData,
-          created_at: new Date().toISOString()
-        }]);
-      
-      if (error) {
-        console.error('Erro ao criar template:', error);
-        return false;
+      if (existingTemplate) {
+        // Atualizar template existente
+        const { error } = await supabase
+          .from('site_color_templates')
+          .update({
+            name: templateData.name,
+            primary_color: templateData.primary_color,
+            secondary_color: templateData.secondary_color,
+            accent_color: templateData.accent_color,
+            background_color: templateData.background_color,
+            text_color: templateData.text_color,
+            button_text_color: templateData.button_text_color,
+            menu_text_color: templateData.menu_text_color,
+            is_default: templateData.is_default,
+            updated_at: templateData.updated_at
+          })
+          .eq('id', template.id);
+        
+        if (error) {
+          console.error('Erro ao atualizar template:', error);
+          return false;
+        }
+        console.log('Template atualizado com sucesso no banco');
+        return true;
       }
     }
     
+    // Criar novo template
+    console.log('Criando novo template no banco:', templateData);
+    const { error, data } = await supabase
+      .from('site_color_templates')
+      .insert([templateData]);
+    
+    if (error) {
+      console.error('Erro ao criar template:', error);
+      return false;
+    }
+    
+    console.log('Template criado com sucesso no banco:', data);
     return true;
   } catch (error) {
     console.error('Erro ao salvar template no banco:', error);

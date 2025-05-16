@@ -4,6 +4,16 @@ import { toast } from 'sonner';
 import { fetchColorTemplates, saveColorTemplate, deleteColorTemplate } from '@/utils/supabase/templates';
 import { ColorTemplate } from './types';
 
+// Evento personalizado para notificar mudanças de tema
+const createThemeChangeEvent = (template: ColorTemplate) => {
+  const event = new CustomEvent('templateSelected', { 
+    detail: {
+      template: template
+    }
+  });
+  document.dispatchEvent(event);
+};
+
 export function useTemplates() {
   const [templates, setTemplates] = useState<ColorTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("default");
@@ -47,9 +57,10 @@ export function useTemplates() {
 
   const handleAddTemplate = async () => {
     setIsLoading(true);
+    const timestamp = Date.now();
     const newTemplate = {
       ...customTemplate,
-      id: `custom-${Date.now()}`,
+      id: `custom-${timestamp}`,
       name: `Personalizado ${templates.filter(t => t.id.startsWith('custom')).length + 1}`
     };
     
@@ -62,6 +73,14 @@ export function useTemplates() {
         setTemplates(prev => [...prev, newTemplate]);
         setSelectedTemplate(newTemplate.id);
         setOpenTemplateDialog(false); // Fechar o diálogo após adicionar
+        
+        // Salva no localStorage também
+        localStorage.setItem('selectedTemplate', newTemplate.id);
+        localStorage.setItem(`template_${newTemplate.id}`, JSON.stringify(newTemplate));
+        
+        // Aplicar o tema
+        applyTemplate(newTemplate);
+        
         toast.success('Template de cores criado com sucesso!');
       } else {
         toast.error('Erro ao criar template de cores');
@@ -83,6 +102,13 @@ export function useTemplates() {
         if (success) {
           // Atualizar estado local
           setTemplates(prev => prev.map(t => t.id === editingTemplate.id ? editingTemplate : t));
+          
+          // Se o template atualizado for o selecionado, aplicar as mudanças
+          if (selectedTemplate === editingTemplate.id) {
+            applyTemplate(editingTemplate);
+            localStorage.setItem(`template_${editingTemplate.id}`, JSON.stringify(editingTemplate));
+          }
+          
           setEditingTemplate(null);
           toast.success('Template atualizado com sucesso!');
         } else {
@@ -116,7 +142,16 @@ export function useTemplates() {
         if (selectedTemplate === templateId) {
           setSelectedTemplate("default");
           localStorage.setItem('selectedTemplate', 'default');
+          
+          // Aplicar o tema padrão
+          const defaultTemplate = templates.find(t => t.id === 'default');
+          if (defaultTemplate) {
+            applyTemplate(defaultTemplate);
+          }
         }
+        
+        // Remover do localStorage
+        localStorage.removeItem(`template_${templateId}`);
         
         toast.success('Template removido com sucesso!');
       } else {
@@ -133,6 +168,15 @@ export function useTemplates() {
   const handleSelectTemplate = (templateId: string) => {
     setSelectedTemplate(templateId);
     localStorage.setItem('selectedTemplate', templateId);
+    
+    // Buscar e aplicar o template selecionado
+    const selectedTemplateObj = templates.find(t => t.id === templateId);
+    if (selectedTemplateObj) {
+      applyTemplate(selectedTemplateObj);
+      
+      // Salvar no localStorage para uso offline
+      localStorage.setItem(`template_${templateId}`, JSON.stringify(selectedTemplateObj));
+    }
   };
   
   const handleEditTemplate = (template: ColorTemplate) => {
@@ -146,32 +190,51 @@ export function useTemplates() {
   };
 
   // Aplicar o template selecionado ao DOM
+  const applyTemplate = (template: ColorTemplate) => {
+    if (template) {
+      const colorVars = {
+        '--primary-color': template.primaryColor,
+        '--secondary-color': template.secondaryColor,
+        '--accent-color': template.accentColor,
+        '--background-color': template.backgroundColor,
+        '--text-color': template.textColor,
+        '--button-text-color': template.buttonTextColor || '#FFFFFF',
+        '--menu-text-color': template.menuTextColor || '#FFFFFF'
+      };
+      
+      // Aplicar em ambos document.documentElement e document.body
+      Object.entries(colorVars).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(key, value);
+        document.body.style.setProperty(key, value);
+      });
+      
+      console.log('Template aplicado:', template.name);
+      
+      // Notificar outros componentes sobre a mudança de tema
+      createThemeChangeEvent(template);
+      
+      return true;
+    }
+    return false;
+  };
+  
+  // Aplicar o template selecionado
   const applySelectedTemplate = () => {
     if (templates.length > 0) {
       const selectedTemplateObj = templates.find(t => t.id === selectedTemplate);
       if (selectedTemplateObj) {
-        const colorVars = {
-          '--primary-color': selectedTemplateObj.primaryColor,
-          '--secondary-color': selectedTemplateObj.secondaryColor,
-          '--accent-color': selectedTemplateObj.accentColor,
-          '--background-color': selectedTemplateObj.backgroundColor,
-          '--text-color': selectedTemplateObj.textColor,
-          '--button-text-color': selectedTemplateObj.buttonTextColor || '#FFFFFF',
-          '--menu-text-color': selectedTemplateObj.menuTextColor || '#FFFFFF'
-        };
-        
-        // Aplicar em ambos document.documentElement e document.body
-        Object.entries(colorVars).forEach(([key, value]) => {
-          document.documentElement.style.setProperty(key, value);
-          document.body.style.setProperty(key, value);
-        });
-        
-        console.log('Template aplicado:', selectedTemplateObj.name);
-        return true;
+        return applyTemplate(selectedTemplateObj);
       }
     }
     return false;
   };
+  
+  useEffect(() => {
+    // Aplicar o template selecionado quando os templates forem carregados
+    if (templates.length > 0 && selectedTemplate) {
+      applySelectedTemplate();
+    }
+  }, [templates, selectedTemplate]);
   
   return {
     templates,

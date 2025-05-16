@@ -84,32 +84,15 @@ export default function Messages() {
       />
       
       <div className="bg-white rounded-lg shadow-sm p-6 w-full">
-        <Tabs defaultValue="messages">
-          <TabsList className="border-b w-full mb-6">
-            <TabsTrigger value="messages">Mensagens de Contato</TabsTrigger>
-            <TabsTrigger value="subscriptions">Inscrições de Email</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="messages">
-            <h2 className="text-lg font-medium text-gray-800 mb-4">Mensagens de Contato</h2>
-            
-            <MessageList 
-              messages={messages}
-              onReply={setReplyTo}
-              onMarkAsRead={handleMarkAsRead}
-              onDelete={setShowDeleteConfirm}
-            />
-          </TabsContent>
-          
-          <TabsContent value="subscriptions">
-            <h2 className="text-lg font-medium text-gray-800 mb-4">Inscrições de Email</h2>
-            
-            <EmailSubscriptionList 
-              subscriptions={emailSubscriptions}
-              onDelete={setShowDeleteEmailConfirm}
-            />
-          </TabsContent>
-        </Tabs>
+        {/* Simplificamos aqui para mostrar apenas as mensagens de contato */}
+        <h2 className="text-lg font-medium text-gray-800 mb-4">Mensagens de Contato</h2>
+        
+        <MessageList 
+          messages={messages}
+          onReply={setReplyTo}
+          onMarkAsRead={handleMarkAsRead}
+          onDelete={setShowDeleteConfirm}
+        />
       </div>
       
       {/* Dialogs */}

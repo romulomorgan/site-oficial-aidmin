@@ -30,7 +30,7 @@ export default function SiteSettings() {
     embedButtonColor,
     embedButtonIcon,
     setCustomTemplate,
-    setEditingTemplate, // Corrigido o problema aqui
+    setEditingTemplate, 
     setOpenTemplateDialog,
     setFaviconUrl,
     setWebhookUrl,
@@ -55,7 +55,7 @@ export default function SiteSettings() {
   }
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto">
+    <div className="w-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Configurações do Site</h1>
       
       <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} className="bg-white rounded-lg shadow-sm w-full">
@@ -140,7 +140,7 @@ export default function SiteSettings() {
           open={!!editingTemplate}
           onOpenChange={(open) => !open && setEditingTemplate(null)}
           template={editingTemplate}
-          setTemplate={setEditingTemplate} // Corrigido o problema aqui
+          setTemplate={setEditingTemplate}
           onUpdateTemplate={handleUpdateTemplate}
         />
       )}
