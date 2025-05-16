@@ -40,6 +40,12 @@ export function TemplateDialogBase({
     });
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Enviando template para salvar:', template);
+    onSubmit();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md bg-white">
@@ -50,187 +56,210 @@ export function TemplateDialogBase({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="name" className="text-right font-medium">
-              Nome
-            </label>
-            <input
-              id="name"
-              name="name"
-              value={template.name}
-              onChange={handleChange}
-              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-            />
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="primaryColor" className="text-right font-medium">
-              Cor primária
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="name" className="text-right font-medium">
+                Nome
+              </label>
               <input
-                id="primaryColor"
-                name="primaryColor"
-                value={template.primaryColor}
+                id="name"
+                name="name"
+                value={template.name}
                 onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                required
+                className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
               />
-              <input
-                type="color"
-                value={template.primaryColor}
-                onChange={(e) => handleChange({ target: { name: 'primaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="primaryColor" className="text-right font-medium">
+                Cor primária
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="primaryColor"
+                  name="primaryColor"
+                  value={template.primaryColor}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.primaryColor}
+                  onChange={(e) => handleChange({ target: { name: 'primaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="secondaryColor" className="text-right font-medium">
+                Cor secundária
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="secondaryColor"
+                  name="secondaryColor"
+                  value={template.secondaryColor}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.secondaryColor}
+                  onChange={(e) => handleChange({ target: { name: 'secondaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="accentColor" className="text-right font-medium">
+                Cor de destaque
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="accentColor"
+                  name="accentColor"
+                  value={template.accentColor}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.accentColor}
+                  onChange={(e) => handleChange({ target: { name: 'accentColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="backgroundColor" className="text-right font-medium">
+                Cor de fundo
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="backgroundColor"
+                  name="backgroundColor"
+                  value={template.backgroundColor}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.backgroundColor}
+                  onChange={(e) => handleChange({ target: { name: 'backgroundColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="textColor" className="text-right font-medium">
+                Cor de texto
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="textColor"
+                  name="textColor"
+                  value={template.textColor}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.textColor}
+                  onChange={(e) => handleChange({ target: { name: 'textColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="buttonTextColor" className="text-right font-medium">
+                Cor texto botão
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="buttonTextColor"
+                  name="buttonTextColor"
+                  value={template.buttonTextColor || '#FFFFFF'}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.buttonTextColor || '#FFFFFF'}
+                  onChange={(e) => handleChange({ target: { name: 'buttonTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="menuTextColor" className="text-right font-medium">
+                Cor texto menu
+              </label>
+              <div className="col-span-3 flex items-center gap-2">
+                <input
+                  id="menuTextColor"
+                  name="menuTextColor"
+                  value={template.menuTextColor || '#FFFFFF'}
+                  onChange={handleChange}
+                  required
+                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                  title="Formato de cor hexadecimal: #RRGGBB"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                />
+                <input
+                  type="color"
+                  value={template.menuTextColor || '#FFFFFF'}
+                  onChange={(e) => handleChange({ target: { name: 'menuTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+              </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="secondaryColor" className="text-right font-medium">
-              Cor secundária
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="secondaryColor"
-                name="secondaryColor"
-                value={template.secondaryColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.secondaryColor}
-                onChange={(e) => handleChange({ target: { name: 'secondaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
+          <div className="bg-gray-50 -m-6 mt-2 p-6 rounded-b-lg">
+            <DialogFooter>
+              <CustomButton 
+                type="button" 
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="mr-2"
+              >
+                Cancelar
+              </CustomButton>
+              <CustomButton 
+                type="submit" 
+                variant="primary"
+              >
+                {submitButtonText}
+              </CustomButton>
+            </DialogFooter>
           </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="accentColor" className="text-right font-medium">
-              Cor de destaque
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="accentColor"
-                name="accentColor"
-                value={template.accentColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.accentColor}
-                onChange={(e) => handleChange({ target: { name: 'accentColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="backgroundColor" className="text-right font-medium">
-              Cor de fundo
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="backgroundColor"
-                name="backgroundColor"
-                value={template.backgroundColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.backgroundColor}
-                onChange={(e) => handleChange({ target: { name: 'backgroundColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="textColor" className="text-right font-medium">
-              Cor de texto
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="textColor"
-                name="textColor"
-                value={template.textColor}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.textColor}
-                onChange={(e) => handleChange({ target: { name: 'textColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="buttonTextColor" className="text-right font-medium">
-              Cor texto botão
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="buttonTextColor"
-                name="buttonTextColor"
-                value={template.buttonTextColor || '#FFFFFF'}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.buttonTextColor || '#FFFFFF'}
-                onChange={(e) => handleChange({ target: { name: 'buttonTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="menuTextColor" className="text-right font-medium">
-              Cor texto menu
-            </label>
-            <div className="col-span-3 flex items-center gap-2">
-              <input
-                id="menuTextColor"
-                name="menuTextColor"
-                value={template.menuTextColor || '#FFFFFF'}
-                onChange={handleChange}
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-              />
-              <input
-                type="color"
-                value={template.menuTextColor || '#FFFFFF'}
-                onChange={(e) => handleChange({ target: { name: 'menuTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-gray-50 -m-6 mt-2 p-6 rounded-b-lg">
-          <DialogFooter>
-            <CustomButton 
-              type="button" 
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="mr-2"
-            >
-              Cancelar
-            </CustomButton>
-            <CustomButton 
-              type="button" 
-              variant="primary"
-              onClick={onSubmit}
-            >
-              {submitButtonText}
-            </CustomButton>
-          </DialogFooter>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

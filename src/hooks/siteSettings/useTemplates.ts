@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { fetchColorTemplates, saveColorTemplate, deleteColorTemplate } from '@/utils/supabase/templates';
@@ -61,7 +60,7 @@ export function useTemplates() {
     const newTemplate = {
       ...customTemplate,
       id: `custom-${timestamp}`,
-      name: `Personalizado ${templates.filter(t => t.id.startsWith('custom')).length + 1}`
+      name: customTemplate.name || `Personalizado ${templates.filter(t => t.id.startsWith('custom')).length + 1}`
     };
     
     try {
@@ -69,17 +68,21 @@ export function useTemplates() {
       const success = await saveColorTemplate(newTemplate);
       
       if (success) {
-        // Atualizar estado local
-        setTemplates(prev => [...prev, newTemplate]);
-        setSelectedTemplate(newTemplate.id);
-        setOpenTemplateDialog(false); // Fechar o diálogo após adicionar
+        // Recarregar todos os templates para obter o novo ID do servidor
+        await loadTemplates();
         
-        // Salva no localStorage também
-        localStorage.setItem('selectedTemplate', newTemplate.id);
-        localStorage.setItem(`template_${newTemplate.id}`, JSON.stringify(newTemplate));
+        // Fechar o diálogo após adicionar
+        setOpenTemplateDialog(false);
         
         // Aplicar o tema
-        applyTemplate(newTemplate);
+        const updatedTemplates = await fetchColorTemplates();
+        const addedTemplate = updatedTemplates.find(t => t.name === newTemplate.name);
+        
+        if (addedTemplate) {
+          setSelectedTemplate(addedTemplate.id);
+          localStorage.setItem('selectedTemplate', addedTemplate.id);
+          applyTemplate(addedTemplate);
+        }
         
         toast.success('Template de cores criado com sucesso!');
       } else {
@@ -230,6 +233,11 @@ export function useTemplates() {
   };
   
   useEffect(() => {
+    // Carregar templates quando o componente for montado
+    loadTemplates();
+  }, []);
+  
+  useEffect(() => {
     // Aplicar o template selecionado quando os templates forem carregados
     if (templates.length > 0 && selectedTemplate) {
       applySelectedTemplate();
@@ -250,10 +258,10 @@ export function useTemplates() {
     setOpenTemplateDialog,
     loadTemplates,
     handleAddTemplate,
-    handleUpdateTemplate,
-    handleDeleteTemplate,
-    handleSelectTemplate,
-    handleEditTemplate,
+    handleUpdateTemplate: handleUpdateTemplate || (() => {}),
+    handleDeleteTemplate: handleDeleteTemplate || (() => {}),
+    handleSelectTemplate: handleSelectTemplate || (() => {}),
+    handleEditTemplate: handleEditTemplate || (() => {}),
     applySelectedTemplate
   };
 }
