@@ -55,12 +55,12 @@ export default function SiteSettings() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full animate-fade-in">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Configurações do Site</h1>
       
       <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} className="bg-white rounded-lg shadow-sm w-full">
         <Tabs defaultValue="appearance" className="w-full">
-          <TabsList className="border-b w-full rounded-t-lg bg-gray-50">
+          <TabsList className="border-b w-full rounded-t-lg bg-gray-50 flex flex-wrap">
             <TabsTrigger value="appearance" className="font-medium">Aparência</TabsTrigger>
             <TabsTrigger value="favicon" className="font-medium">Favicon</TabsTrigger>
             <TabsTrigger value="integration" className="font-medium">Integração</TabsTrigger>

@@ -10,7 +10,6 @@ import ExpansionSection from '@/components/admin/sections/ExpansionSection';
 import WhatsappSection from '@/components/admin/sections/WhatsappSection';
 import FooterSection from '@/components/admin/sections/FooterSection';
 import ContactSection from '@/components/admin/sections/ContactSection';
-import AdminLayout from '@/components/admin/AdminLayout';
 import { SectionHandlerProps } from '@/hooks/homeSections/types';
 import { useHomeSectionsData, useHomeSectionsHandlers } from '@/hooks/homeSections';
 
@@ -28,10 +27,10 @@ const HomePageSections = () => {
   };
   
   return (
-    <div className="p-6">
+    <div className="w-full animate-fade-in">
       <h1 className="text-2xl font-bold mb-6">Seções da Página Inicial</h1>
-      <Tabs defaultValue="header">
-        <TabsList className="mb-4">
+      <Tabs defaultValue="header" className="w-full">
+        <TabsList className="mb-4 w-full flex flex-wrap">
           <TabsTrigger value="header">Cabeçalho</TabsTrigger>
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="whatWeDo">O Que Fazemos</TabsTrigger>
@@ -41,31 +40,31 @@ const HomePageSections = () => {
           <TabsTrigger value="contact">Contato</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="header">
+        <TabsContent value="header" className="w-full">
           <HeaderSection {...sectionProps} />
         </TabsContent>
         
-        <TabsContent value="hero">
+        <TabsContent value="hero" className="w-full">
           <HeroSection {...sectionProps} />
         </TabsContent>
         
-        <TabsContent value="whatWeDo">
+        <TabsContent value="whatWeDo" className="w-full">
           <WhatWeDoSection {...sectionProps} />
         </TabsContent>
         
-        <TabsContent value="expansion">
+        <TabsContent value="expansion" className="w-full">
           <ExpansionSection {...sectionProps} />
         </TabsContent>
         
-        <TabsContent value="whatsapp">
+        <TabsContent value="whatsapp" className="w-full">
           <WhatsappSection {...sectionProps} />
         </TabsContent>
         
-        <TabsContent value="footer">
+        <TabsContent value="footer" className="w-full">
           <FooterSection {...sectionProps} />
         </TabsContent>
         
-        <TabsContent value="contact">
+        <TabsContent value="contact" className="w-full">
           <ContactSection {...sectionProps} />
         </TabsContent>
       </Tabs>
