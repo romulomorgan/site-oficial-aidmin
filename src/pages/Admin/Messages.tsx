@@ -1,13 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { ContactMessage, EmailSubscription } from '@/utils/supabase/types';
+import { ContactMessage } from '@/utils/supabase/types';
 import { MessageList } from '@/components/admin/messages/message';
 import { EmailSubscriptionList } from '@/components/admin/messages/subscription';
 import ReplyDialog from '@/components/admin/messages/ReplyDialog';
 import ConfirmDeleteDialog from '@/components/admin/messages/ConfirmDeleteDialog';
 import WebhookConfig from '@/components/admin/messages/WebhookConfig';
-import { useMessagesData } from '@/hooks/useMessagesData';
+import { useMessagesData } from '@/hooks/messages/useMessagesData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Messages() {
@@ -28,10 +28,6 @@ export default function Messages() {
   const [replyMessage, setReplyMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | string | null>(null);
   const [showDeleteSubscriptionConfirm, setShowDeleteSubscriptionConfirm] = useState<number | string | null>(null);
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   // Método para enviar resposta
   const handleSendReply = async () => {
