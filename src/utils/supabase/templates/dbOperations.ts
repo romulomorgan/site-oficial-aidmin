@@ -59,7 +59,7 @@ export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean
     };
     
     // Para templates existentes, atualize-os
-    if (!template.id.startsWith('custom-')) {
+    if (template.id && !template.id.startsWith('custom-')) {
       const { error } = await supabase
         .from('site_color_templates')
         .update(templateData)
@@ -75,7 +75,6 @@ export async function saveTemplateToDb(template: ColorTemplate): Promise<boolean
     }
     
     // Para novos templates, insira-os
-    // Remova o id para que o Supabase gere um UUID
     const { error } = await supabase
       .from('site_color_templates')
       .insert([{
