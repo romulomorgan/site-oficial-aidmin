@@ -91,7 +91,10 @@ export const useTemplateActions = (state: TemplateState): TemplateActions => {
       
       if (success) {
         // Atualizar estado local
-        setTemplates(prev => prev.map(t => t.id === editingTemplate.id ? editingTemplate : t));
+        const newTemplates = templates.map(t => 
+          t.id === editingTemplate.id ? editingTemplate : t
+        );
+        setTemplates(newTemplates);
         
         // Se o template atualizado for o selecionado, aplicar as mudanças
         if (selectedTemplate === editingTemplate.id) {
@@ -123,7 +126,8 @@ export const useTemplateActions = (state: TemplateState): TemplateActions => {
       
       if (success) {
         // Atualizar estado local
-        setTemplates(prev => prev.filter(t => t.id !== templateId));
+        const newTemplates = templates.filter(t => t.id !== templateId);
+        setTemplates(newTemplates);
         
         // Se o template excluído estava selecionado, selecionar o padrão
         if (selectedTemplate === templateId) {
@@ -188,11 +192,6 @@ export const useTemplateActions = (state: TemplateState): TemplateActions => {
   };
 
   return {
-    setTemplates,
-    setSelectedTemplate,
-    setCustomTemplate,
-    setEditingTemplate,
-    setOpenTemplateDialog,
     loadTemplates,
     handleAddTemplate,
     handleUpdateTemplate,

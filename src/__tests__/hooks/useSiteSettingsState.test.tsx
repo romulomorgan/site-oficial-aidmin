@@ -1,8 +1,8 @@
 
 import { renderHook, act } from '@testing-library/react-hooks';
 import { toast } from 'sonner';
-import { useSiteSettingsState } from '@/hooks/siteSettings';
-import * as useTemplatesModule from '@/hooks/siteSettings/useTemplates';
+import { useSiteSettingsState } from '@/hooks/siteSettings/useSiteSettingsState';
+import * as templatesModule from '@/hooks/siteSettings/templates';
 import * as useSiteTextsModule from '@/hooks/siteSettings/useSiteTexts';
 import * as useEmbedConfigModule from '@/hooks/siteSettings/useEmbedConfig';
 import * as useWebhookLogsModule from '@/hooks/siteSettings/useWebhookLogs';
@@ -30,13 +30,13 @@ describe('useSiteSettingsState', () => {
     jest.clearAllMocks();
     
     // Configurar mocks para os hooks individuais
-    jest.spyOn(useTemplatesModule, 'useTemplates').mockImplementation(() => ({
+    jest.spyOn(templatesModule, 'useTemplates').mockImplementation(() => ({
       templates: [],
       selectedTemplate: 'default',
       customTemplate: { id: 'custom', name: 'Personalizado', primaryColor: '', secondaryColor: '', accentColor: '', backgroundColor: '', textColor: '', buttonTextColor: '', menuTextColor: '' },
       editingTemplate: null,
       openTemplateDialog: false,
-      isLoading: false, // Adicionado a propriedade isLoading que estava faltando
+      isLoading: false,
       setTemplates: jest.fn(),
       setSelectedTemplate: jest.fn(),
       setCustomTemplate: jest.fn(),
