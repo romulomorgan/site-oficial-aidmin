@@ -8,14 +8,14 @@ export interface TemplateState {
   editingTemplate: ColorTemplate | null;
   openTemplateDialog: boolean;
   isLoading: boolean;
-}
-
-export interface TemplateActions {
   setTemplates: (templates: ColorTemplate[]) => void;
   setSelectedTemplate: (templateId: string) => void;
   setCustomTemplate: (template: ColorTemplate) => void;
   setEditingTemplate: (template: ColorTemplate | null) => void;
   setOpenTemplateDialog: (open: boolean) => void;
+}
+
+export interface TemplateActions {
   loadTemplates: () => Promise<void>;
   handleAddTemplate: () => Promise<void>;
   handleUpdateTemplate: () => Promise<void>;

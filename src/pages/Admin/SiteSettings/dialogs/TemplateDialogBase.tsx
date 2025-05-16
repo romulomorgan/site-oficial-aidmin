@@ -1,5 +1,8 @@
 
 import React from 'react';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogContent,
@@ -8,8 +11,30 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { ColorTemplate } from '@/utils/supabase/types';
+
+// Definindo o esquema de validação com Zod
+const templateFormSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido"),
+  secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido"),
+  accentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido"),
+  backgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido"),
+  textColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido"),
+  buttonTextColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido"),
+  menuTextColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Formato de cor hexadecimal inválido")
+});
+
+type TemplateFormValues = z.infer<typeof templateFormSchema>;
 
 interface TemplateDialogBaseProps {
   open: boolean;
@@ -32,17 +57,32 @@ export function TemplateDialogBase({
   description,
   submitButtonText
 }: TemplateDialogBaseProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  // Inicializar formulário com react-hook-form + zod
+  const form = useForm<TemplateFormValues>({
+    resolver: zodResolver(templateFormSchema),
+    defaultValues: {
+      name: template.name,
+      primaryColor: template.primaryColor,
+      secondaryColor: template.secondaryColor,
+      accentColor: template.accentColor,
+      backgroundColor: template.backgroundColor,
+      textColor: template.textColor,
+      buttonTextColor: template.buttonTextColor || '#FFFFFF',
+      menuTextColor: template.menuTextColor || '#FFFFFF'
+    }
+  });
+
+  // Lidar com mudanças nos campos do formulário
+  const handleValueChange = (name: string, value: string) => {
     setTemplate(prev => {
       if (!prev) return null;
       return { ...prev, [name]: value };
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Enviando template para salvar:', template);
+  // Lidar com o envio do formulário
+  const handleFormSubmit = (data: TemplateFormValues) => {
+    console.log('Enviando template para salvar:', data);
     onSubmit();
   };
 
@@ -56,210 +96,277 @@ export function TemplateDialogBase({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="name" className="text-right font-medium">
-                Nome
-              </label>
-              <input
-                id="name"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+            <div className="grid gap-4 py-4">
+              {/* Campo: Nome */}
+              <FormField
+                control={form.control}
                 name="name"
-                value={template.name}
-                onChange={handleChange}
-                required
-                className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Nome</FormLabel>
+                    <div className="col-span-3">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="w-full"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('name', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor Primária */}
+              <FormField
+                control={form.control}
+                name="primaryColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor primária</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('primaryColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('primaryColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor Secundária */}
+              <FormField
+                control={form.control}
+                name="secondaryColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor secundária</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('secondaryColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('secondaryColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor de Destaque */}
+              <FormField
+                control={form.control}
+                name="accentColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor de destaque</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('accentColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('accentColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor de Fundo */}
+              <FormField
+                control={form.control}
+                name="backgroundColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor de fundo</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('backgroundColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('backgroundColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor de Texto */}
+              <FormField
+                control={form.control}
+                name="textColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor de texto</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('textColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('textColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor de Texto do Botão */}
+              <FormField
+                control={form.control}
+                name="buttonTextColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor texto botão</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('buttonTextColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('buttonTextColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Campo: Cor de Texto do Menu */}
+              <FormField
+                control={form.control}
+                name="menuTextColor"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right font-medium">Cor texto menu</FormLabel>
+                    <div className="col-span-3 flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          className="flex-grow" 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleValueChange('menuTextColor', e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                      <Input 
+                        type="color" 
+                        value={field.value}
+                        className="w-10 h-10 rounded cursor-pointer p-0" 
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleValueChange('menuTextColor', e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormItem>
+                )}
               />
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="primaryColor" className="text-right font-medium">
-                Cor primária
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="primaryColor"
-                  name="primaryColor"
-                  value={template.primaryColor}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.primaryColor}
-                  onChange={(e) => handleChange({ target: { name: 'primaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
+            <div className="bg-gray-50 -m-6 mt-2 p-6 rounded-b-lg">
+              <DialogFooter>
+                <CustomButton 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                  className="mr-2"
+                >
+                  Cancelar
+                </CustomButton>
+                <CustomButton 
+                  type="submit" 
+                  variant="primary"
+                >
+                  {submitButtonText}
+                </CustomButton>
+              </DialogFooter>
             </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="secondaryColor" className="text-right font-medium">
-                Cor secundária
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="secondaryColor"
-                  name="secondaryColor"
-                  value={template.secondaryColor}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.secondaryColor}
-                  onChange={(e) => handleChange({ target: { name: 'secondaryColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="accentColor" className="text-right font-medium">
-                Cor de destaque
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="accentColor"
-                  name="accentColor"
-                  value={template.accentColor}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.accentColor}
-                  onChange={(e) => handleChange({ target: { name: 'accentColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="backgroundColor" className="text-right font-medium">
-                Cor de fundo
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="backgroundColor"
-                  name="backgroundColor"
-                  value={template.backgroundColor}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.backgroundColor}
-                  onChange={(e) => handleChange({ target: { name: 'backgroundColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="textColor" className="text-right font-medium">
-                Cor de texto
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="textColor"
-                  name="textColor"
-                  value={template.textColor}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.textColor}
-                  onChange={(e) => handleChange({ target: { name: 'textColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="buttonTextColor" className="text-right font-medium">
-                Cor texto botão
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="buttonTextColor"
-                  name="buttonTextColor"
-                  value={template.buttonTextColor || '#FFFFFF'}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.buttonTextColor || '#FFFFFF'}
-                  onChange={(e) => handleChange({ target: { name: 'buttonTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="menuTextColor" className="text-right font-medium">
-                Cor texto menu
-              </label>
-              <div className="col-span-3 flex items-center gap-2">
-                <input
-                  id="menuTextColor"
-                  name="menuTextColor"
-                  value={template.menuTextColor || '#FFFFFF'}
-                  onChange={handleChange}
-                  required
-                  pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Formato de cor hexadecimal: #RRGGBB"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-color focus:border-primary-color"
-                />
-                <input
-                  type="color"
-                  value={template.menuTextColor || '#FFFFFF'}
-                  onChange={(e) => handleChange({ target: { name: 'menuTextColor', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gray-50 -m-6 mt-2 p-6 rounded-b-lg">
-            <DialogFooter>
-              <CustomButton 
-                type="button" 
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="mr-2"
-              >
-                Cancelar
-              </CustomButton>
-              <CustomButton 
-                type="submit" 
-                variant="primary"
-              >
-                {submitButtonText}
-              </CustomButton>
-            </DialogFooter>
-          </div>
-        </form>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
