@@ -46,7 +46,7 @@ export function useEmailSubscriptions() {
       const { error } = await supabase
         .from('site_email_subscriptions')
         .delete()
-        .eq('id', id);
+        .eq('id', id.toString());
       
       if (error) {
         console.error('Erro ao excluir inscrição:', error);
