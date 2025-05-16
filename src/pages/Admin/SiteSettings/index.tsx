@@ -6,8 +6,7 @@ import { AppearanceTab } from './tabs/AppearanceTab';
 import { FaviconTab } from './tabs/FaviconTab';
 import { IntegrationTab } from './tabs/IntegrationTab';
 import { EmbedTab } from './tabs/EmbedTab';
-import { TemplateEditDialog } from './dialogs/TemplateEditDialog';
-import { TemplateCreateDialog } from './dialogs/TemplateCreateDialog';
+import { TemplateDialogs } from './components/TemplateDialogs';
 import { useSiteSettingsState } from '@/hooks/useSiteSettingsState';
 
 export default function SiteSettings() {
@@ -126,24 +125,17 @@ export default function SiteSettings() {
         </div>
       </form>
       
-      {/* Dialogs para templates */}
-      <TemplateCreateDialog
-        open={openTemplateDialog}
-        onOpenChange={setOpenTemplateDialog}
+      {/* Dialogs para templates extraídos para um componente separado */}
+      <TemplateDialogs 
+        openTemplateDialog={openTemplateDialog}
+        setOpenTemplateDialog={setOpenTemplateDialog}
         customTemplate={customTemplate}
         setCustomTemplate={setCustomTemplate}
         onAddTemplate={handleAddTemplate}
+        editingTemplate={editingTemplate}
+        setEditingTemplate={setEditingTemplate}
+        onUpdateTemplate={handleUpdateTemplate}
       />
-      
-      {editingTemplate && (
-        <TemplateEditDialog
-          open={!!editingTemplate}
-          onOpenChange={(open) => !open && setEditingTemplate(null)}
-          template={editingTemplate}
-          setTemplate={setEditingTemplate}
-          onUpdateTemplate={handleUpdateTemplate}
-        />
-      )}
     </div>
   );
 }
