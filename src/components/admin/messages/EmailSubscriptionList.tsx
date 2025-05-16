@@ -2,6 +2,7 @@
 import React from 'react';
 import { Trash } from 'lucide-react';
 import { EmailSubscription } from '@/utils/supabase/types';
+import { Button } from '@/components/ui/button';
 
 interface EmailSubscriptionListProps {
   subscriptions: EmailSubscription[];
@@ -33,26 +34,27 @@ const EmailSubscriptionList: React.FC<EmailSubscriptionListProps> = ({
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-50">
-            <th className="py-2 px-4 text-left border-b">Email</th>
-            <th className="py-2 px-4 text-left border-b">Data</th>
-            <th className="py-2 px-4 text-left border-b">Origem</th>
-            <th className="py-2 px-4 text-right border-b">Ações</th>
+            <th className="py-2 px-4 text-left border-b text-gray-700">Email</th>
+            <th className="py-2 px-4 text-left border-b text-gray-700">Data</th>
+            <th className="py-2 px-4 text-left border-b text-gray-700">Origem</th>
+            <th className="py-2 px-4 text-right border-b text-gray-700">Ações</th>
           </tr>
         </thead>
         <tbody>
           {subscriptions.map((subscription) => (
             <tr key={subscription.id} className="hover:bg-gray-50">
-              <td className="py-2 px-4 border-b">{subscription.email}</td>
-              <td className="py-2 px-4 border-b">{formatDate(subscription.created_at)}</td>
-              <td className="py-2 px-4 border-b">{subscription.source}</td>
+              <td className="py-2 px-4 border-b text-gray-800">{subscription.email}</td>
+              <td className="py-2 px-4 border-b text-gray-800">{formatDate(subscription.created_at)}</td>
+              <td className="py-2 px-4 border-b text-gray-800">{subscription.source || 'Website'}</td>
               <td className="py-2 px-4 border-b text-right">
-                <button
+                <Button
                   onClick={() => onDelete(subscription.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
-                  aria-label="Excluir inscrição"
+                  variant="ghost"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+                  size="sm"
                 >
-                  <Trash className="h-5 w-5" />
-                </button>
+                  <Trash className="h-4 w-4" />
+                </Button>
               </td>
             </tr>
           ))}

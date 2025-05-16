@@ -2,6 +2,7 @@
 import React from 'react';
 import { Mail, Check, Trash } from 'lucide-react';
 import { ContactMessage } from '@/utils/supabase/types';
+import { Button } from '@/components/ui/button';
 
 interface MessageListProps {
   messages: ContactMessage[];
@@ -37,55 +38,58 @@ const MessageList: React.FC<MessageListProps> = ({
       {messages.map((message) => (
         <div 
           key={message.id} 
-          className={`border rounded-lg p-4 transition-colors ${!message.read ? 'bg-blue-50' : ''}`}
+          className={`border rounded-lg p-4 transition-colors ${!message.read ? 'bg-blue-50 border-blue-200' : 'border-gray-200'}`}
         >
           <div className="flex justify-between mb-3">
             <div>
-              <h3 className="font-medium flex items-center">
+              <h3 className="font-medium text-gray-800 flex items-center">
                 {message.firstname} {message.lastname}
                 {!message.read && (
-                  <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
+                  <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
                     Nova
                   </span>
                 )}
               </h3>
-              <p className="text-sm text-gray-500">
-                {message.email} | {message.phone}
+              <p className="text-sm text-gray-600">
+                {message.email} | {message.phone || 'Sem telefone'}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500">
                 Recebida em: {formatDate(message.date)}
               </p>
             </div>
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={() => onReply(message)}
-                className="text-blue-500 hover:text-blue-700 transition-colors flex items-center"
-                title="Responder"
+                variant="outline"
+                size="sm"
+                className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700"
               >
-                <Mail className="h-5 w-5 mr-1" />
+                <Mail className="h-4 w-4 mr-1" />
                 Responder
-              </button>
+              </Button>
               
               {!message.read && (
-                <button
+                <Button
                   onClick={() => onMarkAsRead(message.id)}
-                  className="text-green-500 hover:text-green-700 transition-colors"
-                  title="Marcar como lida"
+                  variant="outline"
+                  size="sm"
+                  className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
                 >
-                  <Check className="h-5 w-5" />
-                </button>
+                  <Check className="h-4 w-4" />
+                </Button>
               )}
               
-              <button
+              <Button
                 onClick={() => onDelete(message.id)}
-                className="text-red-500 hover:text-red-700 transition-colors"
-                aria-label="Excluir mensagem"
+                variant="outline"
+                size="sm"
+                className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
               >
-                <Trash className="h-5 w-5" />
-              </button>
+                <Trash className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-          <p className="text-gray-700 border-t pt-3 mt-2">{message.message}</p>
+          <p className="text-gray-700 border-t border-gray-200 pt-3 mt-2">{message.message}</p>
         </div>
       ))}
     </div>

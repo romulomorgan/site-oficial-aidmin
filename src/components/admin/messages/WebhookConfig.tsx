@@ -72,7 +72,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6 w-full">
       <h2 className="text-lg font-medium text-gray-800 mb-4">Configurar Webhook</h2>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-600 mb-4">
         Configure um endpoint para receber automaticamente as mensagens de contato em seu sistema.
         Todas as mensagens enviadas através do formulário de contato serão enviadas para esse URL.
       </p>
@@ -83,7 +83,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
           value={webhookUrl}
           onChange={(e) => onWebhookChange(e.target.value)}
           placeholder="https://seu-site.com/api/webhook"
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md w-full"
+          className="flex-1 px-3 py-2 border border-gray-300 rounded-md w-full text-gray-800"
         />
         <div className="flex gap-2 mt-2 sm:mt-0">
           <CustomButton 
@@ -107,7 +107,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
       </div>
       
       <div className="mt-2 flex items-center justify-between">
-        <div className="text-xs text-gray-500 flex items-center">
+        <div className="text-xs text-gray-600 flex items-center">
           <ExternalLink size={12} className="mr-1" />
           {webhookUrl ? `As mensagens serão enviadas via POST para: ${webhookUrl}` : 'Configure um URL para receber as mensagens'}
         </div>
@@ -123,7 +123,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
       
       {showWebhookLogs && (
         <div className="mt-4 border rounded overflow-auto max-h-60">
-          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b text-gray-700">
             Logs recentes de Webhook
           </div>
           
@@ -133,7 +133,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
                 <div key={index} className="border-b p-2 text-xs">
                   <div className="flex items-center gap-1">
                     <span className={`inline-block w-2 h-2 rounded-full ${log.success ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                    <span className="font-medium">{new Date(log.timestamp).toLocaleString()}</span>
+                    <span className="font-medium text-gray-700">{new Date(log.timestamp).toLocaleString()}</span>
                     <span className="text-gray-500 ml-2">({log.type || 'mensagem'})</span>
                   </div>
                   <div className="text-gray-600 ml-3 mt-1">
@@ -151,13 +151,13 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
       )}
       
       <div className="mt-4 pt-4 border-t">
-        <h3 className="text-sm font-medium mb-2 flex items-center">
+        <h3 className="text-sm font-medium mb-2 flex items-center text-gray-700">
           <Bot className="h-4 w-4 mr-1" />
           Exemplos de payload enviados
         </h3>
         
         <div className="mt-2 border rounded overflow-hidden">
-          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b text-gray-700">
             Mensagem de Contato
           </div>
           <pre className="bg-black/90 text-white text-xs p-3 overflow-x-auto">
@@ -176,7 +176,7 @@ const WebhookConfig: React.FC<WebhookConfigProps> = ({
         </div>
         
         <div className="mt-3 border rounded overflow-hidden">
-          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b">
+          <div className="bg-gray-50 px-3 py-2 text-xs font-medium border-b text-gray-700">
             Resposta à Mensagem
           </div>
           <pre className="bg-black/90 text-white text-xs p-3 overflow-x-auto">

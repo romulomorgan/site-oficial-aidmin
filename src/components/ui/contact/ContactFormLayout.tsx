@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { FormField } from './FormField';
-import { CustomButton } from '../CustomButton';
+import { CustomButton } from '@/components/ui/CustomButton';
 
 interface ContactFormLayoutProps {
   firstName: string;
@@ -16,10 +15,10 @@ interface ContactFormLayoutProps {
   setEmail: (value: string) => void;
   setPhone: (value: string) => void;
   setMessage: (value: string) => void;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export function ContactFormLayout({
+export const ContactFormLayout: React.FC<ContactFormLayoutProps> = ({
   firstName,
   lastName,
   email,
@@ -33,72 +32,104 @@ export function ContactFormLayout({
   setPhone,
   setMessage,
   handleSubmit
-}: ContactFormLayoutProps) {
+}) => {
+  // Classes dinâmicas baseadas na prop isDark
+  const labelClass = isDark ? "text-white" : "text-gray-700";
+  const inputClass = `w-full rounded px-4 py-2 ${
+    isDark 
+      ? 'bg-transparent border border-white/50 text-white placeholder:text-white/60' 
+      : 'bg-white border border-gray-300 text-gray-800 placeholder:text-gray-400'
+  } focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent`;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          id="firstName"
-          label="Nome"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          placeholder="Seu nome"
-          required
-          isDark={isDark}
-        />
-        <FormField
-          id="lastName"
-          label="Sobrenome"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          placeholder="Seu sobrenome"
-          isDark={isDark}
-        />
+    <form onSubmit={handleSubmit} className="w-full space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="firstName" className={`block text-sm font-medium mb-1 ${labelClass}`}>
+            Nome<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="firstName"
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="Seu nome"
+            required
+            className={inputClass}
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="lastName" className={`block text-sm font-medium mb-1 ${labelClass}`}>
+            Sobrenome
+          </label>
+          <input
+            id="lastName"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Seu sobrenome"
+            className={inputClass}
+          />
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          id="email"
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="seu@email.com"
-          required
-          isDark={isDark}
-        />
-        <FormField
-          id="phone"
-          label="Telefone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="(11) 98765-4321"
-          isDark={isDark}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="email" className={`block text-sm font-medium mb-1 ${labelClass}`}>
+            Email<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="seu@email.com"
+            required
+            className={inputClass}
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="phone" className={`block text-sm font-medium mb-1 ${labelClass}`}>
+            Telefone
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(00) 00000-0000"
+            className={inputClass}
+          />
+        </div>
       </div>
-      
-      <FormField
-        id="message"
-        label="Mensagem"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Como podemos ajudar?"
-        required
-        isDark={isDark}
-        isTextarea
-      />
       
       <div>
-        <CustomButton 
-          type="submit" 
-          variant="primary" 
-          className="w-full mt-4" 
+        <label htmlFor="message" className={`block text-sm font-medium mb-1 ${labelClass}`}>
+          Mensagem<span className="text-red-500">*</span>
+        </label>
+        <textarea
+          id="message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Como podemos ajudar?"
+          required
+          rows={4}
+          className={inputClass}
+        />
+      </div>
+      
+      <div>
+        <CustomButton
+          type="submit"
+          variant="primary"
+          className="w-full"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
+          {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
         </CustomButton>
       </div>
     </form>
   );
-}
+};

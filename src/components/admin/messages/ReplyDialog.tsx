@@ -89,16 +89,16 @@ const ReplyDialog: React.FC<ReplyDialogProps> = ({
     <Dialog open={!!message} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Responder à Mensagem</DialogTitle>
+          <DialogTitle className="text-gray-800">Responder à Mensagem</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          <div className="bg-gray-50 p-3 rounded text-sm">
-            <p>
+          <div className="bg-blue-50 p-3 rounded text-sm border border-blue-100">
+            <p className="text-gray-800">
               <strong>Para:</strong> {message.firstname} {message.lastname} ({message.email})
             </p>
-            <p><strong>Mensagem original:</strong></p>
-            <p className="italic text-gray-600">{message.message}</p>
+            <p className="text-gray-800 mt-2"><strong>Mensagem original:</strong></p>
+            <p className="italic text-gray-700 mt-1">{message.message}</p>
           </div>
           
           <div>
@@ -111,12 +111,12 @@ const ReplyDialog: React.FC<ReplyDialogProps> = ({
               onChange={(e) => onReplyChange(e.target.value)}
               rows={6}
               placeholder="Digite sua resposta aqui..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
           
           {!webhookUrl && (
-            <div className="bg-yellow-50 p-3 rounded text-sm text-yellow-700">
+            <div className="bg-yellow-50 p-3 rounded text-sm text-yellow-700 border border-yellow-200">
               <p>Configure o Webhook para habilitar o envio de respostas.</p>
             </div>
           )}
