@@ -3,15 +3,31 @@ import React from 'react';
 import { EmailSubscription } from '@/utils/supabase/types';
 import EmailSubscriptionItem from './EmailSubscriptionItem';
 import EmptyState from './EmptyState';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { SortField, SortOrder } from '@/hooks/messages/useEmailSubscriptions';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface EmailSubscriptionListProps {
   subscriptions: EmailSubscription[];
   onDelete: (subscriptionId: string | number) => void;
+  sortField?: SortField;
+  sortOrder?: SortOrder;
+  onSort?: (field: SortField) => void;
 }
 
 const EmailSubscriptionList: React.FC<EmailSubscriptionListProps> = ({ 
   subscriptions, 
-  onDelete 
+  onDelete,
+  sortField = 'created_at',
+  sortOrder = 'desc',
+  onSort
 }) => {
   // Format date to a more readable format
   const formatDate = (dateString: string) => {
@@ -25,22 +41,54 @@ const EmailSubscriptionList: React.FC<EmailSubscriptionListProps> = ({
     }).format(date);
   };
 
+  const renderSortIcon = (field: SortField) => {
+    if (field !== sortField) return null;
+    
+    return sortOrder === 'asc' ? 
+      <ChevronUp className="ml-1 h-4 w-4" /> : 
+      <ChevronDown className="ml-1 h-4 w-4" />;
+  };
+
+  const handleHeaderClick = (field: SortField) => {
+    if (onSort) {
+      onSort(field);
+    }
+  };
+
   if (subscriptions.length === 0) {
     return <EmptyState message="Nenhuma inscrição encontrada." />;
   }
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-50">
-            <th className="py-2 px-4 text-left border-b text-gray-700">Email</th>
-            <th className="py-2 px-4 text-left border-b text-gray-700">Data</th>
-            <th className="py-2 px-4 text-left border-b text-gray-700">Origem</th>
-            <th className="py-2 px-4 text-right border-b text-gray-700">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead 
+              className="cursor-pointer hover:bg-gray-100"
+              onClick={() => handleHeaderClick('email')}
+            >
+              <div className="flex items-center">
+                Email
+                {renderSortIcon('email')}
+              </div>
+            </TableHead>
+            
+            <TableHead 
+              className="cursor-pointer hover:bg-gray-100"
+              onClick={() => handleHeaderClick('created_at')}
+            >
+              <div className="flex items-center">
+                Data
+                {renderSortIcon('created_at')}
+              </div>
+            </TableHead>
+            
+            <TableHead>Origem</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {subscriptions.map((subscription) => (
             <EmailSubscriptionItem
               key={subscription.id}
@@ -49,8 +97,8 @@ const EmailSubscriptionList: React.FC<EmailSubscriptionListProps> = ({
               formatDate={formatDate}
             />
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

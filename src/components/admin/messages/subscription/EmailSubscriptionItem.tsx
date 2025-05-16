@@ -3,6 +3,7 @@ import React from 'react';
 import { Trash } from 'lucide-react';
 import { EmailSubscription } from '@/utils/supabase/types';
 import { Button } from '@/components/ui/button';
+import { TableCell, TableRow } from "@/components/ui/table";
 
 interface EmailSubscriptionItemProps {
   subscription: EmailSubscription;
@@ -16,11 +17,11 @@ const EmailSubscriptionItem: React.FC<EmailSubscriptionItemProps> = ({
   formatDate 
 }) => {
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="py-2 px-4 border-b text-gray-800">{subscription.email}</td>
-      <td className="py-2 px-4 border-b text-gray-800">{formatDate(subscription.created_at)}</td>
-      <td className="py-2 px-4 border-b text-gray-800">{subscription.source || 'Website'}</td>
-      <td className="py-2 px-4 border-b text-right">
+    <TableRow className="hover:bg-gray-50">
+      <TableCell>{subscription.email}</TableCell>
+      <TableCell>{formatDate(subscription.created_at)}</TableCell>
+      <TableCell>{subscription.source || 'Website'}</TableCell>
+      <TableCell className="text-right">
         <Button
           onClick={() => onDelete(subscription.id)}
           variant="ghost"
@@ -29,8 +30,8 @@ const EmailSubscriptionItem: React.FC<EmailSubscriptionItemProps> = ({
         >
           <Trash className="h-4 w-4" />
         </Button>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 };
 

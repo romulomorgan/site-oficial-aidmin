@@ -9,6 +9,7 @@ import ConfirmDeleteDialog from '@/components/admin/messages/ConfirmDeleteDialog
 import WebhookConfig from '@/components/admin/messages/WebhookConfig';
 import { useMessagesData } from '@/hooks/messages/useMessagesData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SortField } from '@/hooks/messages/useEmailSubscriptions';
 
 export default function Messages() {
   const { 
@@ -17,13 +18,16 @@ export default function Messages() {
     webhookUrl, 
     isLoading, 
     searchQuery,
+    sortField,
+    sortOrder,
     loadData, 
     setWebhookUrl,
     handleDeleteMessage,
     handleDeleteEmailSubscription,
     handleMarkAsRead,
     handleReply,
-    handleSearch
+    handleSearch,
+    handleSort
   } = useMessagesData();
   
   const [replyTo, setReplyTo] = useState<ContactMessage | null>(null);
@@ -58,6 +62,10 @@ export default function Messages() {
     } catch (error) {
       toast.error('Erro ao salvar URL do webhook');
     }
+  };
+
+  const handleSortColumn = (field: SortField) => {
+    handleSort(field);
   };
 
   return (
@@ -98,6 +106,9 @@ export default function Messages() {
             <EmailSubscriptionList
               subscriptions={emailSubscriptions}
               onDelete={setShowDeleteSubscriptionConfirm}
+              sortField={sortField}
+              sortOrder={sortOrder}
+              onSort={handleSortColumn}
             />
           </TabsContent>
         </Tabs>

@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { useContactMessages } from './useContactMessages';
-import { useEmailSubscriptions } from './useEmailSubscriptions';
+import { useEmailSubscriptions, SortField } from './useEmailSubscriptions';
 import { useWebhookSettings } from './useWebhookSettings';
 import { useMessageActions } from './useMessageActions';
 import { ContactMessage } from '@/utils/supabase/types';
@@ -17,7 +17,16 @@ export function useMessagesData() {
     handleSearch 
   } = useContactMessages();
   
-  const { emailSubscriptions, loadEmailSubscriptions, handleDeleteEmailSubscription, isLoading: subscriptionsLoading } = useEmailSubscriptions();
+  const { 
+    emailSubscriptions, 
+    loadEmailSubscriptions, 
+    handleDeleteEmailSubscription, 
+    isLoading: subscriptionsLoading,
+    sortField,
+    sortOrder,
+    handleSort
+  } = useEmailSubscriptions();
+  
   const { webhookUrl, setWebhookUrl, loadWebhookUrl, isLoading: webhookLoading } = useWebhookSettings();
   const { handleReply, isLoading: actionLoading } = useMessageActions();
 
@@ -59,12 +68,15 @@ export function useMessagesData() {
     webhookUrl,
     isLoading,
     searchQuery,
+    sortField,
+    sortOrder,
     loadData,
     setWebhookUrl,
     handleDeleteMessage,
     handleDeleteEmailSubscription,
     handleMarkAsRead,
     handleReply: handleReplyWithUpdate,
-    handleSearch
+    handleSearch,
+    handleSort
   };
 }
