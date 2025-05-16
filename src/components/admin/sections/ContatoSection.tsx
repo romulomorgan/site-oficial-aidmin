@@ -20,10 +20,10 @@ const ContatoSection: React.FC<ContatoSectionProps> = ({
   handleSaveSection
 }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="bg-white p-6 rounded-lg shadow-sm w-full">
       <h3 className="text-lg font-medium mb-4">Seção de Contato</h3>
       
-      <div className="space-y-4">
+      <div className="space-y-4 max-w-4xl">
         <div>
           <label htmlFor="contatoTitle" className="block text-sm font-medium text-gray-700 mb-1">
             Título da Página
@@ -92,6 +92,6 @@ const ContatoSection: React.FC<ContatoSectionProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default ContatoSection;
