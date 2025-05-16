@@ -62,7 +62,8 @@ export const InputMask: React.FC<InputMaskProps> = ({
     
     if (mask === 'phone') {
       // Para telefone, formatar o display e passar apenas os números para o onChange
-      setDisplayValue(formatPhoneNumber(newValue));
+      const formattedValue = formatPhoneNumber(newValue);
+      setDisplayValue(formattedValue);
       // Remove tudo que não for número antes de passar para o onChange
       onChange(newValue.replace(/\D/g, ''));
     } else {
@@ -72,7 +73,7 @@ export const InputMask: React.FC<InputMaskProps> = ({
     }
   };
 
-  // Aplicar estilos condicionais com base no tema escuro/claro - usando exatamente o mesmo estilo dos outros campos
+  // Aplicar estilos condicionais com base no tema escuro/claro
   const inputClass = isDark
     ? "bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
     : "bg-white border border-gray-300 text-gray-900 focus:border-gray-400";

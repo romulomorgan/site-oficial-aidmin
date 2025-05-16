@@ -36,7 +36,7 @@ export function FormField({
   return (
     <div className={className}>
       <label htmlFor={id} className={`block text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'} mb-1`}>
-        {label}{required && '*'}
+        {label}{required && <span className="text-red-500">*</span>}
       </label>
       {isTextarea ? (
         <textarea

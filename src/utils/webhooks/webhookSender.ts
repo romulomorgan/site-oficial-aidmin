@@ -23,7 +23,7 @@ export async function sendWebhook(
     console.log(`Enviando webhook para ${url} com dados:`, data);
     
     // Gerar payload com base nos dados fornecidos
-    const payload = generateWebhookPayload(data, data.type || 'contact_message');
+    const payload = data.type ? data : generateWebhookPayload(data, data.type || 'contact_message');
     
     // Enviar payload para o webhook
     const response = await fetch(url, {
@@ -66,11 +66,11 @@ export async function sendWebhook(
     });
     
     if (result.success) {
-      toast.success('Mensagem enviada com sucesso!');
+      console.log('Webhook enviado com sucesso');
       onSuccess?.();
       return true;
     } else {
-      toast.error(`Erro ao enviar mensagem: ${result.message || 'Erro desconhecido'}`);
+      console.error(`Erro ao enviar webhook: ${result.message}`);
       onError?.(result);
       return false;
     }
@@ -94,7 +94,6 @@ export async function sendWebhook(
       type: data.type || 'contact_message'
     });
     
-    toast.error('Erro ao enviar mensagem');
     onError?.(error);
     return false;
   }
@@ -168,6 +167,26 @@ export async function sendEmailSubscriptionWebhook(
     return result.success;
   } catch (error) {
     console.error('Erro ao enviar inscrição para webhook:', error);
+    
+    try {
+      // Salvar log de erro
+      await saveWebhookLog({
+        url,
+        payload: JSON.stringify({
+          type: 'email_subscription',
+          email: email,
+          source: source
+        }),
+        status: 0,
+        success: false,
+        response: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
+        type: 'email_subscription'
+      });
+    } catch (logError) {
+      console.error('Erro ao salvar log de webhook:', logError);
+    }
+    
     return false;
   }
 }

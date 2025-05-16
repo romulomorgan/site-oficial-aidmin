@@ -58,6 +58,7 @@ export function useContactForm() {
       
       // Objeto de dados de contato
       const contactData = {
+        type: 'contact_message',
         firstName,
         lastName,
         email,
@@ -69,7 +70,6 @@ export function useContactForm() {
       };
       
       console.log('Dados do formulário:', contactData);
-      console.log('URL do webhook:', webhookUrl);
       
       // Salvar no localStorage para compatibilidade com código legado
       saveContactMessage({
@@ -100,40 +100,19 @@ export function useContactForm() {
         throw error;
       }
       
-      // Enviar para webhook diretamente se URL estiver configurada
+      // Carregar URL do webhook caso ainda não esteja definida
+      if (!webhookUrl) {
+        await loadWebhookUrl();
+      }
+
+      // Enviar para webhook se URL estiver configurada
       if (webhookUrl && webhookUrl.trim() !== '') {
-        console.log('Enviando diretamente para webhook (método fetch):', webhookUrl);
+        console.log('Enviando para webhook:', webhookUrl);
         
-        try {
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              type: 'contact_message',
-              firstName,
-              lastName,
-              email,
-              phone: phone || 'Não informado',
-              message,
-              date: new Date().toISOString(),
-              threadId,
-              contactId
-            })
-          });
-          
-          console.log('Resposta do webhook direto:', response.status, await response.text());
-        } catch (webhookError) {
-          console.error('Erro ao enviar diretamente para webhook:', webhookError);
-        }
-        
-        // Usar também o método do hook
-        console.log('Enviando para webhook (método hook):', webhookUrl);
         const success = await sendWebhook(webhookUrl, contactData);
         
         if (!success) {
-          console.warn('Falha ao enviar para webhook usando o hook, mas mensagem foi salva no banco de dados');
+          console.warn('Falha ao enviar para webhook, mas mensagem foi salva no banco de dados');
         }
       } else {
         console.warn('URL de webhook não configurada. Pulando envio de webhook.');

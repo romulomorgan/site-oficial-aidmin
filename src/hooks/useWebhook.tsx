@@ -51,7 +51,17 @@ export function useWebhook(options: UseWebhookOptions = {}) {
   };
 
   const handleEmailSubscription = async (url: string, email: string, source: string = 'website') => {
-    return sendEmailSubscriptionWebhook(url, email, source);
+    if (!url || url.trim() === '') {
+      console.error('Webhook URL não configurada para inscrição de email');
+      return false;
+    }
+    
+    try {
+      return await sendEmailSubscriptionWebhook(url, email, source);
+    } catch (error) {
+      console.error('Erro ao enviar inscrição de email para webhook:', error);
+      return false;
+    }
   };
 
   const handleGetLogs = async (): Promise<WebhookLog[]> => {
