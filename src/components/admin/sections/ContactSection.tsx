@@ -10,7 +10,7 @@ const ContactSection: React.FC<Omit<SectionProps, 'handleSwitchChange'>> = ({
   handleSaveSection 
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-white rounded-lg shadow-sm p-6 w-full">
       <h2 className="text-lg font-medium text-gray-800 mb-4">Seção "Contato"</h2>
       
       <div className="space-y-4">

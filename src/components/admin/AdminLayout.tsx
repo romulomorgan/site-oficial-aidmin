@@ -47,9 +47,9 @@ const AdminLayout: React.FC = () => {
         LogoutIcon={LogOut}
       />
 
-      {/* Conteúdo principal */}
+      {/* Conteúdo principal com largura padronizada */}
       <div className="flex-1 overflow-y-auto bg-gray-50">
-        <div className="py-6 px-2 sm:px-4 w-full max-w-full">
+        <div className="py-6 px-4 sm:px-6 max-w-5xl mx-auto w-full">
           <Outlet />
         </div>
       </div>
