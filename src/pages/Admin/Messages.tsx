@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ContactMessage, EmailSubscription } from '@/utils/supabase/types';
 import MessageList from '@/components/admin/messages/MessageList';
-import EmailSubscriptionList from '@/components/admin/messages/EmailSubscriptionList';
+import { EmailSubscriptionList } from '@/components/admin/messages/subscription';
 import ReplyDialog from '@/components/admin/messages/ReplyDialog';
 import ConfirmDeleteDialog from '@/components/admin/messages/ConfirmDeleteDialog';
 import WebhookConfig from '@/components/admin/messages/WebhookConfig';
