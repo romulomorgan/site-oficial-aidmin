@@ -30,7 +30,9 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
           [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '30px',
           transform: isMaximized ? 'translateX(-50%)' : 'none',
           bottom: isMaximized ? '10%' : '120px',
-          top: 'auto'
+          top: 'auto',
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
         <div className="flex flex-col h-full">
@@ -40,8 +42,18 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
             isMaximized={isMaximized}
             isDesktop={true}
           />
-          <div className="flex-1 overflow-hidden embed-content-container">
-            <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full embed-iframe-wrapper" />
+          <div className="flex-1 overflow-hidden">
+            <div 
+              dangerouslySetInnerHTML={{ __html: embedConfig.code }} 
+              className="w-full h-full embed-content"
+              style={{
+                height: '100%',
+                width: '100%', 
+                overflow: 'auto',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            />
           </div>
         </div>
       </DialogContent>

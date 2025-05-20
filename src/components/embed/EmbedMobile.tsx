@@ -25,8 +25,18 @@ const EmbedMobile: React.FC<EmbedMobileProps> = ({
             toggleEmbed={toggleEmbed} 
             isDesktop={false}
           />
-          <div className="flex-1 overflow-hidden embed-content-container">
-            <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full embed-iframe-wrapper" />
+          <div className="flex-1 overflow-hidden">
+            <div 
+              dangerouslySetInnerHTML={{ __html: embedConfig.code }} 
+              className="w-full h-full embed-content"
+              style={{
+                height: '100%',
+                width: '100%', 
+                overflow: 'auto',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            />
           </div>
         </div>
       </DrawerContent>
