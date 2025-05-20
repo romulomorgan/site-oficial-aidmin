@@ -91,3 +91,47 @@ footer {
 .embed-header {
   user-select: none;
 }
+
+/* Estilos para resolver problemas de sobreposição no chat embed */
+.embed-content-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.embed-iframe-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.embed-iframe-wrapper iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Garantir que o conteúdo não ultrapasse os limites do container */
+.embed-content-container > div,
+.embed-iframe-wrapper > div,
+.embed-iframe-wrapper iframe > div {
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto !important;
+}
+
+/* Garantir que os elementos de entrada fiquem visíveis e não se sobreponham */
+.embed-iframe-wrapper input,
+.embed-iframe-wrapper button,
+.embed-iframe-wrapper textarea {
+  position: relative;
+  z-index: 5;
+  margin-bottom: 8px;
+}

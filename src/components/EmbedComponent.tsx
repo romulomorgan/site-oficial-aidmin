@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Maximize } from 'lucide-react';
+import { X, Maximize, Minimize } from 'lucide-react';
 import { fetchEmbedConfig } from '@/utils/supabase/embedConfig';
 import { fetchSiteTexts } from '@/utils/supabaseClient';
 import { EmbedConfig } from '@/utils/supabase/types';
@@ -95,7 +95,7 @@ const EmbedComponent: React.FC = () => {
             )}
 
             <Drawer open={isOpen} onOpenChange={setIsOpen}>
-              <DrawerContent className="h-[80vh] p-0 rounded-t-xl">
+              <DrawerContent className="h-[85vh] p-0 rounded-t-xl">
                 <div className="flex flex-col h-full">
                   <div className="bg-gray-800 text-white py-3 px-4 flex items-center justify-between rounded-t-xl">
                     <div className="flex items-center gap-2">
@@ -116,8 +116,8 @@ const EmbedComponent: React.FC = () => {
                       <X size={20} />
                     </button>
                   </div>
-                  <div className="flex-1 overflow-hidden">
-                    <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full" />
+                  <div className="flex-1 overflow-hidden embed-content-container">
+                    <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full embed-iframe-wrapper" />
                   </div>
                 </div>
               </DrawerContent>
@@ -151,7 +151,7 @@ const EmbedComponent: React.FC = () => {
 
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent 
-              className={`p-0 border-0 shadow-2xl ${isMaximized ? 'w-5/6 h-5/6 max-w-none' : 'w-[400px] h-[500px] max-w-none'}`}
+              className={`p-0 border-0 shadow-2xl ${isMaximized ? 'w-5/6 h-5/6 max-w-none' : 'w-[400px] h-[600px] max-w-none'}`}
               style={{ 
                 position: 'fixed',
                 [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '30px',
@@ -176,9 +176,9 @@ const EmbedComponent: React.FC = () => {
                     <button 
                       onClick={toggleMaximize} 
                       className="text-white hover:text-gray-300"
-                      aria-label="Maximizar"
+                      aria-label={isMaximized ? "Minimizar" : "Maximizar"}
                     >
-                      <Maximize size={18} />
+                      {isMaximized ? <Minimize size={18} /> : <Maximize size={18} />}
                     </button>
                     <button 
                       onClick={toggleEmbed}
@@ -189,8 +189,8 @@ const EmbedComponent: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <div className="flex-1 overflow-hidden">
-                  <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full" />
+                <div className="flex-1 overflow-hidden embed-content-container">
+                  <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full embed-iframe-wrapper" />
                 </div>
               </div>
             </DialogContent>
