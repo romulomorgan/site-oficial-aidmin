@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { X, Maximize, Minimize } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { EmbedConfig } from '@/utils/supabase/types';
+import EmbedHeader from './EmbedHeader';
 
 interface EmbedDesktopProps {
   isOpen: boolean;
@@ -34,34 +34,12 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
         }}
       >
         <div className="flex flex-col h-full">
-          <div className="bg-gray-800 text-white py-3 px-4 flex items-center justify-between rounded-t-md">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-700 rounded-full overflow-hidden">
-                <img 
-                  src="/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png" 
-                  alt="Suporte"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="font-medium">Suporte</h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={toggleMaximize} 
-                className="text-white hover:text-gray-300"
-                aria-label={isMaximized ? "Minimizar" : "Maximizar"}
-              >
-                {isMaximized ? <Minimize size={18} /> : <Maximize size={18} />}
-              </button>
-              <button 
-                onClick={toggleEmbed}
-                className="text-white hover:text-gray-300"
-                aria-label="Fechar"
-              >
-                <X size={20} />
-              </button>
-            </div>
-          </div>
+          <EmbedHeader 
+            toggleEmbed={toggleEmbed}
+            toggleMaximize={toggleMaximize}
+            isMaximized={isMaximized}
+            isDesktop={true}
+          />
           <div className="flex-1 overflow-hidden embed-content-container">
             <div dangerouslySetInnerHTML={{ __html: embedConfig.code }} className="h-full embed-iframe-wrapper" />
           </div>
