@@ -81,7 +81,6 @@ const EmbedComponent: React.FC = () => {
             {!isOpen && (
               <button
                 onClick={toggleEmbed}
-                style={{ backgroundColor: buttonColor }}
                 className="fixed text-white p-3 rounded-full shadow-lg m-4 hover:scale-110 transition-all pulse-btn z-50"
                 aria-label="Abrir suporte"
                 id="embed-chat-button"
