@@ -60,3 +60,34 @@ footer {
 .theme-enabled {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Estilos específicos para o EmbedComponent */
+#embed-chat-button {
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+#embed-chat-button:hover {
+  transform: scale(1.1);
+}
+
+.pulse-btn {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 25, 110, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 25, 110, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 25, 110, 0);
+  }
+}
+
+/* Estilo para o cabeçalho do chat embed */
+.embed-header {
+  user-select: none;
+}
