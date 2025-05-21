@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { fetchEmbedConfig } from '@/utils/supabase/embedConfig';
 import { fetchSiteTexts } from '@/utils/supabaseClient';
@@ -7,6 +6,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import EmbedButton from './embed/EmbedButton';
 import EmbedMobile from './embed/EmbedMobile';
 import EmbedDesktop from './embed/EmbedDesktop';
+import '@/styles/embed.css';
 
 const EmbedComponent: React.FC = () => {
   const [embedConfig, setEmbedConfig] = useState<EmbedConfig | null>(null);
