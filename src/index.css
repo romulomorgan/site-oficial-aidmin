@@ -90,111 +90,116 @@ footer {
 /* Estilo para o cabeçalho do chat embed */
 .embed-header {
   user-select: none;
+  z-index: 30;
 }
 
-/* Estilos para resolver problemas de sobreposição no chat embed */
+/* CONFIGURAÇÕES PRINCIPAIS PARA EMBED CONTAINER */
 .embed-container {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
+/* CONFIGURAÇÕES DO CONTEÚDO PRINCIPAL */
 .embed-content {
   width: 100% !important;
   height: 100% !important;
-  overflow: auto !important;
+  overflow: hidden !important;
+  position: relative !important;
   display: flex !important;
   flex-direction: column !important;
-  position: relative !important;
 }
 
+/* IFRAME DENTRO DO CONTAINER */
 .embed-content iframe {
   width: 100% !important;
   height: 100% !important;
   border: none !important;
-  flex: 1 !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 
-/* Garantir que os elementos internos também sejam responsivos */
-.embed-content * {
-  max-width: 100% !important;
-}
-
-/* Estilos para inputs e botões dentro do iframe */
-.embed-content input,
-.embed-content button,
-.embed-content textarea {
-  position: relative !important;
-  z-index: 5 !important;
-  margin-bottom: 8px !important;
-}
-
-/* Garantir que o conteúdo não flutue para fora do container */
+/* ESTRUTURA DO CONTEÚDO PRINCIPAL */
 .embed-content > div {
   width: 100% !important;
-  height: auto !important;
-  box-sizing: border-box !important;
+  height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
+  overflow: hidden !important;
 }
 
-/* Estilos para área de formulário no chat embed sempre na parte inferior */
-.embed-form-area {
-  position: sticky !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  padding: 10px !important;
-  background-color: #f8f9fa !important; 
-  border-top: 1px solid #e9ecef !important;
-  z-index: 10 !important;
-  margin-top: auto !important;
-}
-
-/* Certificar que as áreas de entrada fiquem na parte inferior do chat */
-.embed-content form,
-.embed-content .input-area,
-.embed-content .chat-footer {
-  position: sticky !important;
-  bottom: 0 !important;
-  margin-top: auto !important;
-  width: 100% !important;
-  background-color: white !important;
-  z-index: 10 !important;
-}
-
-/* Estilos para a área de conversa do chat */
+/* ÁREA DE MENSAGENS - ROLÁVEL */
 .embed-content .chat-messages,
 .embed-content .conversation,
 .embed-content .messages-container {
-  flex: 1 !important;
+  flex: 1 1 auto !important;
   overflow-y: auto !important;
-  padding-bottom: 60px !important; /* Espaço para o formulário de entrada */
+  padding-bottom: 70px !important; /* Espaço para o formulário */
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important; /* Importante para flexbox */
 }
 
-/* Estilo para o container do input */
-.embed-content .input-container {
-  position: sticky !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  padding: 10px !important;
-  background-color: white !important;
-  border-top: 1px solid #e9ecef !important;
-  z-index: 20 !important;
-}
-
-/* Garantir que mensagens de chat não fiquem sob a área de input */
+/* ÁREA DE MENSAGENS INDIVIDUAIS */
 .embed-content .message,
 .embed-content .chat-bubble {
-  margin-bottom: 5px !important;
+  margin-bottom: 8px !important;
   max-width: 85% !important;
   word-break: break-word !important;
+  z-index: 5 !important;
 }
 
-/* Estilos para botões de envio dentro do chat */
+/* ÁREA DE FORMULÁRIO - FIXA NO FINAL */
+.embed-content form,
+.embed-content .input-area,
+.embed-content .chat-footer,
+.embed-content .form-container,
+.embed-content .bottom-area,
+.embed-form-area {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background-color: white !important;
+  border-top: 1px solid #e9ecef !important;
+  padding: 10px !important;
+  z-index: 25 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* CONTAINER DE INPUT */
+.embed-content .input-container {
+  position: relative !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  z-index: 30 !important;
+}
+
+/* BOTÕES DENTRO DO FORMULÁRIO */
 .embed-content .send-button,
-.embed-content button[type="submit"] {
-  position: static !important;
-  z-index: 15 !important;
+.embed-content button[type="submit"],
+.embed-content .action-button {
+  position: relative !important;
+  z-index: 30 !important;
+}
+
+/* INPUTS E TEXTAREAS */
+.embed-content input,
+.embed-content textarea,
+.embed-content select {
+  position: relative !important;
+  z-index: 30 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Garante que o último elemento não fique escondido pelo form */
+.embed-content .chat-messages > :last-child,
+.embed-content .conversation > :last-child,
+.embed-content .messages-container > :last-child {
+  margin-bottom: 80px !important;
 }

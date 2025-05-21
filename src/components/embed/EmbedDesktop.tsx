@@ -27,15 +27,21 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
         className={`p-0 border-0 shadow-2xl ${isMaximized ? 'w-5/6 h-5/6 max-w-none' : 'w-[400px] h-[600px] max-w-none'}`}
         style={{ 
           position: 'fixed',
-          [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '10px', // Posição mais próxima do botão
-          transform: isMaximized ? 'translateX(-50%)' : 'none',
-          bottom: isMaximized ? '10%' : '80px', // Mais próximo do botão
+          [embedConfig.position === 'left' ? 'left' : 'right']: '20px', // Posicionado exatamente ao lado do botão
+          transform: 'none',
+          bottom: '80px', // Alinhado com o botão
           top: 'auto',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          ...(isMaximized && {
+            left: '50%',
+            right: 'auto',
+            transform: 'translateX(-50%)',
+            bottom: '10%'
+          })
         }}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full overflow-hidden">
           <EmbedHeader 
             toggleEmbed={toggleEmbed}
             toggleMaximize={toggleMaximize}

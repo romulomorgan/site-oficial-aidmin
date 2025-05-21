@@ -20,7 +20,7 @@ const EmbedMobile: React.FC<EmbedMobileProps> = ({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerContent className="h-[85vh] p-0 rounded-t-xl">
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full overflow-hidden">
           <EmbedHeader 
             toggleEmbed={toggleEmbed} 
             isDesktop={false}
