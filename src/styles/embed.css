@@ -78,12 +78,13 @@
   flex: 1 1 auto !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  padding-bottom: 20px !important; /* Espaço fixo para o formulário */
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important; /* Importante para flexbox */
   scrollbar-width: thin !important; /* Firefox */
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important; /* Firefox */
+  padding: 15px !important;
+  padding-bottom: 120px !important; /* Aumentado para dar mais espaço entre última mensagem e formulário */
 }
 
 /* Estilo da barra de rolagem para Chrome/Safari/Edge */
@@ -133,7 +134,8 @@
   z-index: 25 !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important; /* Sombra suave */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
+  margin-top: 30px !important; /* Adiciona espaço acima do input */
 }
 
 /* CONTAINER DE INPUT */
@@ -162,25 +164,32 @@
   margin-bottom: 0 !important;
 }
 
-/* Garante que o último elemento não fique escondido pelo form */
+/* Espaço após a última mensagem e antes do input */
 .embed-content .chat-messages > :last-child,
 .embed-content .conversation > :last-child,
 .embed-content .messages-container > :last-child {
-  margin-bottom: 80px !important; /* Espaço suficiente para não ficar sob o form */
+  margin-bottom: 40px !important; /* Aumentar o espaço entre a última mensagem e o formulário */
 }
 
-/* Espaçamento consistente entre elementos */
+/* Espaçamento consistente entre mensagens */
 .embed-content .chat-messages > *,
 .embed-content .conversation > *,
 .embed-content .messages-container > * {
-  margin-bottom: 12px !important;
+  margin-bottom: 16px !important; /* Levemente aumentado para dar mais respiro */
 }
 
-/* Padding interno para os contêineres de mensagens */
-.embed-content .chat-messages,
-.embed-content .conversation,
-.embed-content .messages-container {
-  padding: 15px !important;
-  padding-bottom: 90px !important; /* Espaço maior para garantir visibilidade */
+/* Estilização clara para separar a área de mensagens da área de input */
+.embed-content form::before,
+.embed-content .input-area::before,
+.embed-content .chat-footer::before,
+.embed-content .form-container::before,
+.embed-content .bottom-area::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9));
+  pointer-events: none;
 }
-
