@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { fetchEmbedConfig } from '@/utils/supabase/embedConfig';
 import { fetchSiteTexts } from '@/utils/supabaseClient';
