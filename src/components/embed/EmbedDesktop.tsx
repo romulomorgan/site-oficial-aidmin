@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { EmbedConfig } from '@/utils/supabase/types';
 import EmbedHeader from './EmbedHeader';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface EmbedDesktopProps {
   isOpen: boolean;
@@ -41,6 +42,7 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
           })
         }}
       >
+        <DialogTitle className="sr-only">Chat Dialog</DialogTitle>
         <div className="flex flex-col h-full overflow-hidden">
           <EmbedHeader 
             toggleEmbed={toggleEmbed}
@@ -48,12 +50,12 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
             isMaximized={isMaximized}
             isDesktop={true}
           />
-          <div className="flex-1 overflow-hidden embed-container">
+          <ScrollArea className="flex-1 embed-container">
             <div 
               dangerouslySetInnerHTML={{ __html: embedConfig.code }} 
               className="w-full h-full embed-content"
             />
-          </div>
+          </ScrollArea>
         </div>
       </DialogContent>
     </Dialog>

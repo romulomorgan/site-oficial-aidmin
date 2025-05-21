@@ -3,6 +3,7 @@ import React from 'react';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { EmbedConfig } from '@/utils/supabase/types';
 import EmbedHeader from './EmbedHeader';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface EmbedMobileProps {
   isOpen: boolean;
@@ -25,12 +26,12 @@ const EmbedMobile: React.FC<EmbedMobileProps> = ({
             toggleEmbed={toggleEmbed} 
             isDesktop={false}
           />
-          <div className="flex-1 overflow-hidden embed-container">
+          <ScrollArea className="flex-1 embed-container">
             <div 
               dangerouslySetInnerHTML={{ __html: embedConfig.code }} 
               className="w-full h-full embed-content"
             />
-          </div>
+          </ScrollArea>
         </div>
       </DrawerContent>
     </Drawer>
