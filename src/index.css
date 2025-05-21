@@ -93,12 +93,19 @@ footer {
 }
 
 /* Estilos para resolver problemas de sobreposição no chat embed */
+.embed-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .embed-content {
   width: 100% !important;
   height: 100% !important;
   overflow: auto !important;
   display: flex !important;
   flex-direction: column !important;
+  position: relative !important;
 }
 
 .embed-content iframe {
@@ -126,4 +133,25 @@ footer {
 .embed-content > div {
   width: 100% !important;
   box-sizing: border-box !important;
+}
+
+/* Estilos para área de formulário no chat embed sempre na parte inferior */
+.embed-form-area {
+  position: relative !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  padding: 10px !important;
+  background-color: #f8f9fa !important; 
+  border-top: 1px solid #e9ecef !important;
+  z-index: 10 !important;
+  margin-top: auto !important;
+}
+
+/* Certificar que as áreas de entrada fiquem na parte inferior do chat */
+.embed-content form,
+.embed-content .input-area,
+.embed-content .chat-footer {
+  position: relative !important;
+  margin-top: auto !important;
+  width: 100% !important;
 }

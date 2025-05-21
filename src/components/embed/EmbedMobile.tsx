@@ -25,17 +25,10 @@ const EmbedMobile: React.FC<EmbedMobileProps> = ({
             toggleEmbed={toggleEmbed} 
             isDesktop={false}
           />
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden embed-container">
             <div 
               dangerouslySetInnerHTML={{ __html: embedConfig.code }} 
               className="w-full h-full embed-content"
-              style={{
-                height: '100%',
-                width: '100%', 
-                overflow: 'auto',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
             />
           </div>
         </div>

@@ -27,9 +27,9 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
         className={`p-0 border-0 shadow-2xl ${isMaximized ? 'w-5/6 h-5/6 max-w-none' : 'w-[400px] h-[600px] max-w-none'}`}
         style={{ 
           position: 'fixed',
-          [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '30px',
+          [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '20px', // Ajustado para ficar mais próximo do botão
           transform: isMaximized ? 'translateX(-50%)' : 'none',
-          bottom: isMaximized ? '10%' : '120px',
+          bottom: isMaximized ? '10%' : '100px', // Ajustado para ficar mais próximo do botão
           top: 'auto',
           display: 'flex',
           flexDirection: 'column'
@@ -42,17 +42,10 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
             isMaximized={isMaximized}
             isDesktop={true}
           />
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden embed-container">
             <div 
               dangerouslySetInnerHTML={{ __html: embedConfig.code }} 
               className="w-full h-full embed-content"
-              style={{
-                height: '100%',
-                width: '100%', 
-                overflow: 'auto',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
             />
           </div>
         </div>
