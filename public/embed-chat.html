@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Embed</title>
+  <style>
+    /* Estilos Gerais */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      font-size: 16px;
+    }
+
+    /* Botão de Chat */
+    #chat-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #FF196E;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+      z-index: 9999;
+    }
+
+    #chat-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Container do Chat */
+    #chat-container {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+      display: none;
+    }
+
+    /* Cabeçalho do Chat */
+    #chat-header {
+      background-color: #1F2937;
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    #header-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #header-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #374151;
+      overflow: hidden;
+    }
+
+    #header-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #header-title {
+      font-weight: 500;
+    }
+
+    #header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    #header-actions button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    #header-actions button:hover {
+      opacity: 1;
+    }
+
+    /* Conteúdo do Chat */
+    #chat-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background-color: #111827;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQ1IiBoZWlnaHQ9IjM0NSIgdmlld0JveD0iMCAwIDM0NSAzNDUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0wIDIzMC44MzlDMCAxNzIuMzMyIDQ3LjUyMSAxMjUuMTQ4IDEwNi4xMDEgMTI1LjE0OEMxNjQuNjgyIDEyNS4xNDggMjEyLjIwMyAxNzIuMzMyIDIxMi4yMDMgMjMwLjgzOUMyMTIuMjAzIDI4OS4zNDYgMTY0LjY4MiAzMzYuNTMgMTA2LjEwMSAzMzYuNTNDNDcuNTIxIDMzNi41MyAwIDI4OS4zNDYgMCAyMzAuODM5WiIgZmlsbD0idXJsKCNwYWludDBfcmFkaWFsXzYzMl8xMDkwKSIgZmlsbC1vcGFjaXR5PSIwLjA1Ii8+CjxwYXRoIGQ9Ik0xMzYgMjM5LjgzOUMxMzYgMTgxLjMzMiAxODMuNTIxIDEzNC4xNDggMjQyLjEwMSAxMzQuMTQ4QzMwMC42ODIgMTM0LjE0OCAzNDguMjAzIDE4MS4zMzIgMzQ4LjIwMyAyMzkuODM5QzM0OC4yMDMgMjk4LjM0NiAzMDAuNjgyIDM0NS41MyAyNDIuMTAxIDM0NS41M0MxODMuNTIxIDM0NS41MyAxMzYgMjk4LjM0NiAxMzYgMjM5LjgzOVoiIGZpbGw9InVybCgjcGFpbnQxX3JhZGlhbF82MzJfMTA5MCkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPgo8cGF0aCBkPSJNMTU0IDE1QzE1NCA2LjcxNTczIDE0Ny4yODQgMCAxMzkgMEMxMzAuNzE2IDAgMTI0IDYuNzE1NzMgMTI0IDE1QzEyNCAyMy4yODQzIDEzMC43MTYgMzAgMTM5IDMwQzE0Ny4yODQgMzAgMTU0IDIzLjI4NDMgMTU0IDE1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wOSIvPgo8cGF0aCBkPSJNNTQgMjAyQzU0IDE5My43MTYgNDcuMjg0MyAxODcgMzkgMTg3QzMwLjcxNTcgMTg3IDI0IDE5My43MTYgMjQgMjAyQzI0IDIxMC4yODQgMzAuNzE1NyAyMTcgMzkgMjE3QzQ3LjI4NDMgMjE3IDU0IDIxMC4yODQgNTQgMjAyWiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPgo8cGF0aCBkPSJNMjg0IDEwNUMyODQgOTYuNzE1NyAyNzcuMjg0IDkwIDI2OSA5MEMyNjAuNzE2IDkwIDI1NCA5Ni43MTU3IDI1NCAxMDVDMjU0IDExMy4yODQgMjYwLjcxNiAxMjAgMjY5IDEyMEMyNzcuMjg0IDEyMCAyODQgMTEzLjI4NCAyODQgMTA1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPgo8cGF0aCBkPSJNMzI0IDIxNUMzMjQgMjA2LjcxNiAzMTcuMjg0IDIwMCAzMDkgMjAwQzMwMC43MTYgMjAwIDI5NCAyMDYuNzE2IDI5NCAyMTVDMjk0IDIyMy4yODQgMzAwLjcxNiAyMzAgMzA5IDIzMEMzMTcuMjg0IDIzMCAzMjQgMjIzLjI4NCAzMjQgMjE1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPgo8ZGVmcz4KPHJhZGlhbEdyYWRpZW50IGlkPSJwYWludDBfcmFkaWFsXzYzMl8xMDkwIiBjeD0iMCIgY3k9IjAiIHI9IjEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKDEwNi4xMDEgMjMwLjgzOSkgc2NhbGUoMTA2LjEwMSkiPgo8c3RvcC8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIwIi8+CjwvcmFkaWFsR3JhZGllbnQ+CjxyYWRpYWxHcmFkaWVudCBpZD0icGFpbnQxX3JhZGlhbF82MzJfMTA5MCIgY3g9IjAiIGN5PSIwIiByPSIxIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgyNDIuMTAxIDIzOS44Mzkpec2NhbGUoMTA2LjEwMSkiPgo8c3RvcC8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIwIi8+CjwvcmFkaWFsR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+Cg==');
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+
+    #chat-content::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    #chat-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #chat-content::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.2);
+      border-radius: 10px;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      max-width: 85%;
+    }
+
+    .message-assistant {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .message-assistant-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin-right: 8px;
+      overflow: hidden;
+    }
+
+    .message-assistant-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .message-content {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .message-assistant .message-content {
+      background-color: #253245;
+      color: white;
+      border-top-left-radius: 4px;
+    }
+
+    .option-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+      margin-bottom: 40px; /* Espaço extra antes do input */
+    }
+
+    .option-button {
+      padding: 16px;
+      border-radius: 10px;
+      background-color: #10B981;
+      color: white;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 500;
+      transition: transform 0.2s, background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-button:hover {
+      background-color: #059669;
+      transform: translateY(-2px);
+    }
+
+    .option-button span {
+      margin-right: 8px;
+    }
+
+    /* Formulário de Input */
+    #chat-input-area {
+      padding: 12px;
+      border-top: 1px solid #e5e7eb;
+      background-color: white;
+      position: relative;
+    }
+
+    #chat-input-area::before {
+      content: "";
+      position: absolute;
+      top: -30px;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(to bottom, transparent, rgba(17, 24, 39, 0.9));
+      pointer-events: none;
+    }
+
+    #chat-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    #chat-input:focus {
+      border-color: #FF196E;
+      box-shadow: 0 0 0 2px rgba(255, 25, 110, 0.2);
+    }
+
+    #send-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #FF196E;
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Botão do Chat -->
+  <div id="chat-button">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </div>
+
+  <!-- Container do Chat -->
+  <div id="chat-container">
+    <!-- Cabeçalho do Chat -->
+    <div id="chat-header">
+      <div id="header-info">
+        <div id="header-avatar">
+          <img src="/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png" alt="Suporte">
+        </div>
+        <div id="header-title">Suporte</div>
+      </div>
+      <div id="header-actions">
+        <button id="maximize-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </button>
+        <button id="close-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Conteúdo do Chat -->
+    <div id="chat-content">
+      <div class="message message-assistant">
+        <div class="message-assistant-avatar">
+          <img src="/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png" alt="Assistente">
+        </div>
+        <div class="message-content">
+          Oi! Eu sou a Lia, assistente virtual do Grupo Lumis 🏢 💛
+        </div>
+      </div>
+
+      <div class="option-buttons">
+        <button class="option-button">
+          <span>🏠</span> Quero informações sobre imóveis Lumis
+        </button>
+        <button class="option-button">
+          <span>📝</span> Já sou cliente e preciso de atendimento
+        </button>
+        <button class="option-button">
+          <span>💛</span> Gostaria de ser corretor parceiro
+        </button>
+        <button class="option-button">
+          <span>🛠️</span> Quero ser fornecedor da Lumis
+        </button>
+      </div>
+    </div>
+
+    <!-- Área de Input -->
+    <div id="chat-input-area">
+      <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Digite sua mensagem..." autofocus>
+        <button type="submit" id="send-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Script para controlar a funcionalidade do chat
+    document.addEventListener('DOMContentLoaded', function() {
+      const chatButton = document.getElementById('chat-button');
+      const chatContainer = document.getElementById('chat-container');
+      const closeBtn = document.getElementById('close-btn');
+      const maximizeBtn = document.getElementById('maximize-btn');
+      const chatForm = document.getElementById('chat-form');
+      const chatInput = document.getElementById('chat-input');
+      const chatContent = document.getElementById('chat-content');
+      const optionButtons = document.querySelectorAll('.option-button');
+      
+      let isMaximized = false;
+      
+      // Função para abrir o chat
+      function openChat() {
+        chatContainer.style.display = 'flex';
+        chatButton.style.display = 'none';
+        chatInput.focus();
+      }
+      
+      // Função para fechar o chat
+      function closeChat() {
+        chatContainer.style.display = 'none';
+        chatButton.style.display = 'flex';
+        if (isMaximized) {
+          toggleMaximize();
+        }
+      }
+      
+      // Função para maximizar/minimizar o chat
+      function toggleMaximize() {
+        isMaximized = !isMaximized;
+        
+        if (isMaximized) {
+          chatContainer.style.width = '80%';
+          chatContainer.style.height = '80%';
+          chatContainer.style.right = '10%';
+          chatContainer.style.bottom = '10%';
+          maximizeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 14 10 14 10 20"></polyline>
+              <polyline points="20 10 14 10 14 4"></polyline>
+              <line x1="14" y1="10" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          `;
+        } else {
+          chatContainer.style.width = '350px';
+          chatContainer.style.height = '500px';
+          chatContainer.style.right = '20px';
+          chatContainer.style.bottom = '80px';
+          maximizeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" y1="3" x2="14" y2="10"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          `;
+        }
+      }
+      
+      // Função para adicionar uma mensagem do usuário
+      function addUserMessage(text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.style.marginLeft = 'auto';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.style.backgroundColor = '#10B981';
+        messageContent.style.color = 'white';
+        messageContent.style.borderTopRightRadius = '4px';
+        messageContent.innerText = text;
+        
+        messageDiv.appendChild(messageContent);
+        chatContent.appendChild(messageDiv);
+        
+        // Scroll para o final
+        chatContent.scrollTop = chatContent.scrollHeight;
+      }
+      
+      // Função para adicionar uma mensagem do assistente
+      function addAssistantMessage(text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message message-assistant';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-assistant-avatar';
+        
+        const avatarImg = document.createElement('img');
+        avatarImg.src = '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png';
+        avatarImg.alt = 'Assistente';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.innerText = text;
+        
+        avatarDiv.appendChild(avatarImg);
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(messageContent);
+        chatContent.appendChild(messageDiv);
+        
+        // Scroll para o final
+        chatContent.scrollTop = chatContent.scrollHeight;
+      }
+      
+      // Event Listeners
+      chatButton.addEventListener('click', openChat);
+      closeBtn.addEventListener('click', closeChat);
+      maximizeBtn.addEventListener('click', toggleMaximize);
+      
+      chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageText = chatInput.value.trim();
+        
+        if (messageText) {
+          addUserMessage(messageText);
+          chatInput.value = '';
+          
+          // Simular resposta do assistente (aqui você pode integrar com uma API real)
+          setTimeout(() => {
+            addAssistantMessage('Entendi sua mensagem. Como posso te ajudar?');
+          }, 1000);
+        }
+      });
+      
+      // Listener para os botões de opção
+      optionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const optionText = this.textContent.trim();
+          addUserMessage(optionText);
+          
+          // Remover os botões de opção após uma escolha
+          document.querySelector('.option-buttons').style.display = 'none';
+          
+          // Simular resposta com base na opção escolhida
+          setTimeout(() => {
+            if (optionText.includes('informações sobre imóveis')) {
+              addAssistantMessage('Ótimo! Estou aqui para te ajudar com informações sobre nossos imóveis. Você está interessado em alguma região específica?');
+            } else if (optionText.includes('cliente')) {
+              addAssistantMessage('Olá! Para clientes, temos canais de atendimento exclusivos. Por favor, me informe seu número de contrato ou CPF para que eu possa te atender melhor.');
+            } else if (optionText.includes('corretor')) {
+              addAssistantMessage('Que ótimo saber do seu interesse em ser corretor parceiro! Para isso, precisamos de algumas informações. Você já possui CRECI?');
+            } else if (optionText.includes('fornecedor')) {
+              addAssistantMessage('Agradecemos seu interesse em ser fornecedor da Lumis! Poderia me informar qual é a área de atuação da sua empresa?');
+            }
+          }, 1000);
+        });
+      });
+
+      // Script para incorporar o chat em qualquer site
+      window.LumisChat = {
+        init: function(options = {}) {
+          const position = options.position || 'right';
+          const color = options.buttonColor || '#FF196E';
+          const avatar = options.avatarUrl || '/lovable-uploads/c739c386-c6c9-4bb8-9996-98b3a3161fad.png';
+          
+          // Ajustar posição
+          if (position === 'left') {
+            chatButton.style.right = 'auto';
+            chatButton.style.left = '20px';
+            chatContainer.style.right = 'auto';
+            chatContainer.style.left = '20px';
+          }
+          
+          // Ajustar cor
+          chatButton.style.backgroundColor = color;
+          document.getElementById('send-button').style.backgroundColor = color;
+          
+          // Ajustar avatar
+          document.querySelectorAll('.message-assistant-avatar img, #header-avatar img').forEach(img => {
+            img.src = avatar;
+          });
+        }
+      };
+    });
+  </script>
+</body>
+</html>
