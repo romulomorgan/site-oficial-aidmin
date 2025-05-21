@@ -24,7 +24,7 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Efeito de botão pulsante */
+/* Efeito de botão com hover */
 .pulse-btn {
   position: relative;
   overflow: hidden;

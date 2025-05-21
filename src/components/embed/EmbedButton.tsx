@@ -13,7 +13,7 @@ const EmbedButton: React.FC<EmbedButtonProps> = ({ onClick, position, buttonColo
   return (
     <button
       onClick={onClick}
-      className="fixed text-white p-3 rounded-full shadow-lg m-4 hover:scale-110 transition-all pulse-btn z-50"
+      className="fixed text-white p-3 rounded-full shadow-lg m-4 hover:scale-110 transition-all z-50"
       aria-label="Abrir suporte"
       id="embed-chat-button"
       style={{ 
