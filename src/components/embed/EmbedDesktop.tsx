@@ -27,9 +27,9 @@ const EmbedDesktop: React.FC<EmbedDesktopProps> = ({
         className={`p-0 border-0 shadow-2xl ${isMaximized ? 'w-5/6 h-5/6 max-w-none' : 'w-[400px] h-[600px] max-w-none'}`}
         style={{ 
           position: 'fixed',
-          [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '20px', // Ajustado para ficar mais próximo do botão
+          [embedConfig.position === 'left' ? 'left' : 'right']: isMaximized ? '50%' : '10px', // Posição mais próxima do botão
           transform: isMaximized ? 'translateX(-50%)' : 'none',
-          bottom: isMaximized ? '10%' : '100px', // Ajustado para ficar mais próximo do botão
+          bottom: isMaximized ? '10%' : '80px', // Mais próximo do botão
           top: 'auto',
           display: 'flex',
           flexDirection: 'column'

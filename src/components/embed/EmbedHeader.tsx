@@ -16,7 +16,7 @@ const EmbedHeader: React.FC<EmbedHeaderProps> = ({
   isDesktop = false 
 }) => {
   return (
-    <div className={`bg-gray-800 text-white py-3 px-4 flex items-center justify-between ${isDesktop ? 'rounded-t-md' : 'rounded-t-xl'}`}>
+    <div className={`bg-gray-800 text-white py-3 px-4 flex items-center justify-between ${isDesktop ? 'rounded-t-md' : 'rounded-t-xl'} embed-header`}>
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gray-700 rounded-full overflow-hidden">
           <img 
